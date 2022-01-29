@@ -4,7 +4,10 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    fontFamily: {
+      heading: ["Square"],
+      body: ["sans"],
+    },
   },
   plugins: [],
 };
