@@ -3,7 +3,7 @@ module.exports = {
   reactStrictMode: true,
   webpack(config) {
     config.module.rules.push({
-      test: /\.svg$/i,
+      test: /\.svgr$/i,
       issuer: /\.[jt]sx?$/,
       use: [
         {
