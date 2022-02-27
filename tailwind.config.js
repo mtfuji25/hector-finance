@@ -3,8 +3,8 @@ module.exports = {
   darkMode: "class",
   theme: {
     fontFamily: {
-      heading: ["Square"],
-      body: ["sans"],
+      logo: ["Glacial Indifference", "sans-serif"],
+      body: ["Square", "sans-serif"],
     },
   },
   plugins: [],
