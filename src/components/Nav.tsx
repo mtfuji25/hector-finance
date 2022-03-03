@@ -138,7 +138,7 @@ const SocialNav: FC<{ href: string; title: string }> = ({
   <a
     href={href}
     title={title}
-    className="rounded px-3 py-3 text-gray-400 hover:bg-gray-200/80 hover:text-gray-900"
+    className="rounded p-3.5 text-gray-400 hover:bg-gray-200/80 hover:text-gray-800"
   >
     {children}
   </a>
