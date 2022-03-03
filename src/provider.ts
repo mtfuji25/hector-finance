@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ok, err, Result } from "src/util";
 
 /** Returns the balance of an address in wei */
 export async function getBalanceAtBlock(
@@ -195,18 +196,6 @@ export async function watchAsset(
       (isOk) => ok(z.boolean().parse(isOk)),
       (e) => err(ProviderRpcError.parse(e))
     );
-}
-
-type Result<Value, Error> =
-  | { isOk: true; value: Value }
-  | { isOk: false; error: Error };
-
-function ok<T, E>(value: T): Result<T, E> {
-  return { isOk: true, value };
-}
-
-function err<E, T>(error: E): Result<T, E> {
-  return { isOk: false, error };
 }
 
 export interface Provider {
