@@ -142,7 +142,7 @@ function decimalFromInput(input: string): {
   }
 
   // Remove all commas because they can't be processed by `Decimal`.
-  input = input.replaceAll(/,/g, "");
+  input = input.replace(/,/g, "");
 
   return { isValid: true, decimal: new Decimal(input) };
 }
