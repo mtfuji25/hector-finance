@@ -80,7 +80,7 @@ export enum WalletState {
   Connected = "Connected",
 }
 
-type Wallet =
+export type Wallet =
   | { state: WalletState.NoWallet }
   | { state: WalletState.Disconnected; connect: () => Promise<void> }
   | {
