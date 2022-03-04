@@ -60,7 +60,7 @@ export interface DecimalInput {
 }
 
 export function useDecimalInput(
-  initial: string
+  initial: string,
 ): [Decimal, DecimalInput, (value: string) => void] {
   const [input, setInput] = useState(initial);
   return useMemo(() => {

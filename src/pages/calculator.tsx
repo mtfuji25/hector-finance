@@ -114,7 +114,7 @@ const Input: VFC<{
     <input
       className={classes(
         "w-full rounded px-3 py-2",
-        value.isValid ? "bg-slate-100" : "bg-red-100 text-red-800"
+        value.isValid ? "bg-slate-100" : "bg-red-100 text-red-800",
       )}
       pattern="[0-9]*"
       inputMode="decimal"
