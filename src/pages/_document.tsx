@@ -28,7 +28,7 @@ export default function Document() {
         <link rel="manifest" href="/site.webmanifest" />
         <link rel="mask-icon" href="/favicon-mask.svg" color="#be7c40" />
       </Head>
-      <body>
+      <body className="text-gray-900">
         <Main />
         <NextScript />
       </body>
