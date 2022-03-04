@@ -16,11 +16,14 @@ export default function Home() {
         <title>Calculator — Hector Finance</title>
       </Head>
       <TopNav />
-      <hr className="mx-auto max-w-3xl" />
       <div className="mx-auto max-w-3xl">
         <div className="flex gap-8 p-8">
           <SideNav />
-          <main className="flex-grow">
+          <main className="flex-grow space-y-6">
+            <div>
+              <h1 className="text-2xl font-medium">Calculator</h1>
+              <h2>Plan for the future</h2>
+            </div>
             <Calculator />
           </main>
         </div>
@@ -52,12 +55,7 @@ const Calculator: VFC = () => {
   const roi = finalHec.minus(initialHec).div(initialHec).times(100);
 
   return (
-    <div className="max-w-sm space-y-6 text-slate-900">
-      <div>
-        <h1 className="text-2xl">Calculator</h1>
-        <h2>Plan for the future</h2>
-      </div>
-
+    <>
       <Input
         label="sHEC amount"
         value={initialHecInput}
@@ -102,7 +100,7 @@ const Calculator: VFC = () => {
           <div>{roi.toFixed(0)}%</div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
