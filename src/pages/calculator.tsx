@@ -1,6 +1,6 @@
 import Head from "next/head";
 import React, { useState, VFC } from "react";
-import { Nav } from "src/components/Nav";
+import { SideNav, TopNav } from "src/components/Nav";
 import {
   classes,
   DecimalInput,
@@ -15,11 +15,15 @@ export default function Home() {
       <Head>
         <title>Calculator — Hector Finance</title>
       </Head>
-      <div className="flex min-h-screen">
-        <Nav />
-        <main className="flex-grow p-6">
-          <Calculator />
-        </main>
+      <TopNav />
+      <hr className="mx-auto max-w-3xl" />
+      <div className="mx-auto max-w-3xl">
+        <div className="flex gap-8 p-8">
+          <SideNav />
+          <main className="flex-grow">
+            <Calculator />
+          </main>
+        </div>
       </div>
     </>
   );
