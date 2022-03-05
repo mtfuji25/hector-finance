@@ -5,7 +5,7 @@ import { ok, err, Result } from "src/util";
 export async function getBalanceAtBlock(
   provider: Provider,
   address: string,
-  block: string | "latest" | "earliest" | "pending"
+  block: string | "latest" | "earliest" | "pending",
 ): Promise<Result<string, ProviderRpcError>> {
   return provider
     .request({
@@ -17,49 +17,49 @@ export async function getBalanceAtBlock(
         const balance = z.string().parse(_balance);
         return ok(balance);
       },
-      (e) => err(ProviderRpcError.parse(e))
+      (e) => err(ProviderRpcError.parse(e)),
     );
 }
 
 export async function getBalance(
   provider: Provider,
-  address: string
+  address: string,
 ): Promise<Result<string, ProviderRpcError>> {
   return getBalanceAtBlock(provider, address, "latest");
 }
 
 /** Returns the number of the most recent block seen by this client */
 export async function getBlockNumber(
-  provider: Provider
+  provider: Provider,
 ): Promise<Result<string, ProviderRpcError>> {
   return provider.request({ method: "eth_blockNumber" }).then(
     (_block) => {
       const block = z.string().parse(_block);
       return ok(block);
     },
-    (e) => err(ProviderRpcError.parse(e))
+    (e) => err(ProviderRpcError.parse(e)),
   );
 }
 
 export async function getChain(
-  provider: Provider
+  provider: Provider,
 ): Promise<Result<string, ProviderRpcError>> {
   return provider.request({ method: "eth_chainId" }).then(
     (chain) => ok(z.string().parse(chain)),
-    (e) => err(ProviderRpcError.parse(e))
+    (e) => err(ProviderRpcError.parse(e)),
   );
 }
 
 /** Returns a list of addresses owned by client.  */
 export async function getAccount(
-  provider: Provider
+  provider: Provider,
 ): Promise<Result<string[], ProviderRpcError>> {
   return provider.request({ method: "eth_accounts" }).then(
     (_addresses) => {
       const addresses = z.array(z.string()).max(1).parse(_addresses);
       return ok(addresses);
     },
-    (e) => err(ProviderRpcError.parse(e))
+    (e) => err(ProviderRpcError.parse(e)),
   );
 }
 
@@ -67,7 +67,7 @@ export async function getAccount(
  * @returns Current address.
  */
 export async function getAccountsPermission(
-  provider: Provider
+  provider: Provider,
 ): Promise<Result<string[], ProviderRpcError>> {
   return provider.request({ method: "eth_requestAccounts" }).then(
     (_addresses) => {
@@ -76,7 +76,7 @@ export async function getAccountsPermission(
       const addresses = z.array(z.string()).max(1).parse(_addresses);
       return ok(addresses);
     },
-    (e) => err(ProviderRpcError.parse(e))
+    (e) => err(ProviderRpcError.parse(e)),
   );
 }
 
@@ -106,7 +106,7 @@ export async function addEthereumChain(
   tokenSymbol: string,
   tokenDecimals: number,
   rpcUrls: string[],
-  blockExplorerUrls?: string[]
+  blockExplorerUrls?: string[],
 ): Promise<Result<null, ProviderRpcError>> {
   return provider
     .request({
@@ -127,14 +127,14 @@ export async function addEthereumChain(
     })
     .then(
       (value) => ok(z.null().parse(value)),
-      (e) => err(ProviderRpcError.parse(e))
+      (e) => err(ProviderRpcError.parse(e)),
     );
 }
 
 export async function switchEthereumChain(
   provider: Provider,
   /** Chain to switch to, by `0x`-prefixed hexadecimal chain id. */
-  chainId: string
+  chainId: string,
 ): Promise<Result<null, ProviderRpcError>> {
   return provider
     .request({
@@ -143,7 +143,7 @@ export async function switchEthereumChain(
     })
     .then(
       (value) => ok(z.null().parse(value)),
-      (e) => err(ProviderRpcError.parse(e))
+      (e) => err(ProviderRpcError.parse(e)),
     );
 }
 
@@ -156,11 +156,11 @@ export async function switchEthereumChain(
  * This lets MetaMask redirect the user back to your site after onboarding has completed.
  */
 export async function registerOnboarding(
-  provider: Provider
+  provider: Provider,
 ): Promise<Result<boolean, ProviderRpcError>> {
   return provider.request({ method: "wallet_registerOnboarding" }).then(
     (isOk) => ok(z.boolean().parse(isOk)),
-    (e) => err(ProviderRpcError.parse(e))
+    (e) => err(ProviderRpcError.parse(e)),
   );
 }
 
@@ -172,7 +172,7 @@ export async function watchAsset(
   address: string,
   symbol: string,
   decimals: number,
-  image: string
+  image: string,
 ): Promise<Result<boolean, ProviderRpcError>> {
   return provider
     .request({
@@ -194,7 +194,7 @@ export async function watchAsset(
     })
     .then(
       (isOk) => ok(z.boolean().parse(isOk)),
-      (e) => err(ProviderRpcError.parse(e))
+      (e) => err(ProviderRpcError.parse(e)),
     );
 }
 
@@ -219,12 +219,12 @@ export interface Provider {
 
   on: <K extends keyof ProviderEventMap>(
     eventName: K,
-    listener: ProviderEventMap[K]
+    listener: ProviderEventMap[K],
   ) => void;
 
   removeListener: <K extends keyof ProviderEventMap>(
     eventName: K,
-    listener: ProviderEventMap[K]
+    listener: ProviderEventMap[K],
   ) => void;
 
   /** Property set by MetaMask. Non-standard. */
