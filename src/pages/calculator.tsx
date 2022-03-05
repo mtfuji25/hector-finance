@@ -85,8 +85,10 @@ const Calculator: VFC = () => {
         />
       </label>
 
-      <div className="space-y-2 rounded bg-emerald-50 p-6 text-emerald-900">
-        <div className="text-xs font-bold uppercase opacity-30">Results</div>
+      <div className="space-y-2 rounded bg-green-50 p-6 text-green-800">
+        <div className="text-xs font-bold uppercase text-green-400">
+          Results
+        </div>
         <div className="flex justify-between">
           <div>Initial balance:</div>
           <div>${initialUsd.toFixed(2)}</div>
@@ -114,7 +116,7 @@ const Input: VFC<{
     <input
       className={classes(
         "w-full rounded px-3 py-2",
-        value.isValid ? "bg-slate-100" : "bg-red-100 text-red-800",
+        value.isValid ? "bg-gray-100" : "bg-red-100 text-red-800", // TODO: FIX THE ERROR COLORS
       )}
       pattern="[0-9]*"
       inputMode="decimal"

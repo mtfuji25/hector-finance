@@ -20,6 +20,9 @@ import Telegram from "src/icons/telegram-brands.svgr";
 import Twitter from "src/icons/twitter-brands.svgr";
 import Tor from "src/icons/tor.svgr";
 import ArrowUpRightFromSquareRegular from "src/icons/arrow-up-right-from-square-regular.svgr";
+import WalletRegular from "src/icons/wallet-regular.svgr";
+import { useWallet, WalletState } from "src/wallet";
+import { ellipsisBetween } from "src/util";
 
 export const TopNav: VFC = () => (
   <>
@@ -28,7 +31,7 @@ export const TopNav: VFC = () => (
       <div className="flex flex-row items-center gap-1.5">
         <StaticImg src={HectorLogo} className="h-7 w-7" alt="Hector Finance " />
         <div className="text-center font-logo text-2xl">
-          <span className="font-bold text-amber-800/70">Hector</span>{" "}
+          <span className="font-bold text-orange-700">Hector</span>{" "}
           <span className="text-gray-500">Finance</span>
         </div>
       </div>
@@ -37,16 +40,47 @@ export const TopNav: VFC = () => (
       <div className="flex-grow" />
 
       {/* Controls */}
-      <button className="rounded-lg bg-amber-600/10 px-4 py-2 text-amber-700">
-        Connect
-      </button>
+      <Wallet />
     </div>
     <hr className="mx-auto max-w-3xl" />
   </>
 );
 
+const Wallet: VFC = () => {
+  const wallet = useWallet();
+  return (
+    <>
+      {wallet.state === WalletState.NoWallet && (
+        <a
+          target="_blank"
+          href="https://metamask.io/download/"
+          title="MetaMask download"
+          className="flex items-center gap-1 rounded bg-orange-50 px-4 py-2 text-orange-800"
+        >
+          Install MetaMask
+          <ArrowUpRightFromSquareRegular className="h-3 w-3 opacity-50" />
+        </a>
+      )}
+      {wallet.state === WalletState.Disconnected && (
+        <button
+          className="rounded bg-orange-50 px-4 py-2 text-orange-800"
+          onClick={() => wallet.connect()}
+        >
+          Connect
+        </button>
+      )}
+      {wallet.state === WalletState.Connected && (
+        <div className="flex items-center gap-2 rounded bg-gray-100 px-4 py-2 text-gray-500">
+          <WalletRegular className="h-4 w-4" />
+          {ellipsisBetween(6, 4, wallet.address)}
+        </div>
+      )}
+    </>
+  );
+};
+
 export const SideNav: VFC = () => (
-  <nav className="h-fit flex-shrink-0 flex-grow-0 space-y-5 rounded-lg bg-slate-50 p-5">
+  <nav className="h-fit flex-shrink-0 flex-grow-0 space-y-4 rounded-md bg-gray-50 p-4">
     <div>
       <InternalNav href="/">
         <SquarePollVerticalLight width={16} height={16} />
@@ -85,7 +119,7 @@ export const SideNav: VFC = () => (
         Calculator
       </InternalNav>
     </div>
-    <hr className="mx-2.5 border-t-2" />
+    <hr className="mx-2.5 border-t border-gray-300" />
     <div>
       <ExternalNav href="https://hectorbank.com/">
         <BuildingColumnsLight width={16} height={16} />
@@ -100,7 +134,7 @@ export const SideNav: VFC = () => (
         Docs
       </ExternalNav>
     </div>
-    <hr className="mx-2.5 border-t-2" />
+    <hr className="mx-2.5 border-t border-gray-300" />
     <div className="flex items-center justify-center">
       <SocialNav href="https://discord.gg/hector" title="Discord">
         <Discord width={16} height={16} />
@@ -123,7 +157,7 @@ export const SideNav: VFC = () => (
 
 const InternalNav: FC<{ href: string }> = ({ children, href }) => (
   <Link href={href}>
-    <a className="flex items-center gap-2 rounded px-3 py-2 text-gray-600 hover:bg-gray-200/80 hover:text-gray-800">
+    <a className="flex items-center gap-2 rounded px-3 py-2 text-gray-600 hover:bg-gray-200/75 hover:text-gray-800">
       {children}
     </a>
   </Link>
@@ -132,7 +166,7 @@ const InternalNav: FC<{ href: string }> = ({ children, href }) => (
 const ExternalNav: FC<{ href: string }> = ({ children, href }) => (
   <a
     href={href}
-    className="group flex items-center gap-2 rounded px-3 py-2 text-gray-600 hover:bg-gray-200/80 hover:text-gray-800"
+    className="group flex items-center gap-2 rounded px-3 py-2 text-gray-600 hover:bg-gray-200/75 hover:text-gray-800"
   >
     {children}
     <ArrowUpRightFromSquareRegular

@@ -146,3 +146,25 @@ function decimalFromInput(input: string): {
 
   return { isValid: true, decimal: new Decimal(input) };
 }
+
+/**
+ * Replace all characters between a `left` and `right` index with ellipsis.
+ * Very useful for shortening addresses!
+ *
+ * For example:
+ * ```ts
+ * ellipsisBetween(6, 4, "0x2F354A88651B1C9F84") === "0x2F35...9F84";
+ * ```
+ */
+export function ellipsisBetween(
+  charsFromLeft: number,
+  charsFromRight: number,
+  str: string,
+): string {
+  if (charsFromLeft + charsFromRight >= str.length) {
+    return str;
+  }
+  const left = str.slice(0, charsFromLeft);
+  const right = str.slice(str.length - charsFromRight);
+  return `${left}...${right}`;
+}
