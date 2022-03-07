@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   getProvider,
   getAccount,
@@ -23,16 +23,6 @@ export function useWallet(): Wallet {
     if (!provider) {
       return;
     }
-    const onChainChanged = (chainId: string) => {
-      setNetwork(chainId);
-    };
-
-    const onAccountsChanged = (accounts: string[]) => {
-      setAddress(accounts[0]);
-    };
-
-    provider.on("chainChanged", onChainChanged);
-    provider.on("accountsChanged", onAccountsChanged);
 
     getAccount(provider).then((result) => {
       if (!result.isOk) {
@@ -48,30 +38,42 @@ export function useWallet(): Wallet {
       setNetwork(result.value);
     });
 
+    const onChainChanged = (chainId: string) => {
+      setNetwork(chainId);
+    };
+
+    const onAccountsChanged = (accounts: string[]) => {
+      setAddress(accounts[0]);
+    };
+
+    provider.on("chainChanged", onChainChanged);
+    provider.on("accountsChanged", onAccountsChanged);
     return () => {
       provider.removeListener("chainChanged", onChainChanged);
       provider.removeListener("accountsChanged", onAccountsChanged);
     };
   }, [provider]);
 
-  if (!provider) {
-    return { state: WalletState.NoWallet };
-  }
+  return useMemo(() => {
+    if (!provider) {
+      return { state: WalletState.NoWallet };
+    }
 
-  if (!network || !address) {
-    return {
-      state: WalletState.Disconnected,
-      connect: async () => {
-        const accounts = await getAccountsPermission(provider);
-        if (!accounts.isOk) {
-          return;
-        }
-        setAddress(accounts.value[0]);
-      },
-    };
-  }
+    if (!network || !address) {
+      return {
+        state: WalletState.Disconnected,
+        connect: async () => {
+          const accounts = await getAccountsPermission(provider);
+          if (!accounts.isOk) {
+            return;
+          }
+          setAddress(accounts.value[0]);
+        },
+      };
+    }
 
-  return { state: WalletState.Connected, address, network, provider };
+    return { state: WalletState.Connected, address, network, provider };
+  }, [provider, address, network]);
 }
 
 export enum WalletState {
