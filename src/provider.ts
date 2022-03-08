@@ -223,6 +223,35 @@ export async function call(
     );
 }
 
+export interface TransactionOptions {
+  /** transaction sender */
+  from: string;
+  /** transaction recipient */
+  to?: string;
+  /** gas provided for transaction execution */
+  gas?: string;
+  /** price in wei of each gas used */
+  gasPrice?: string;
+  /** value in wei sent with this transaction */
+  value?: string;
+  /** contract code or a hashed method call with encoded args */
+  data?: string;
+  /** unique number identifying this transaction */
+  nonce?: string;
+}
+
+export async function sendTransaction(
+  provider: Provider,
+  options: TransactionOptions,
+): Promise<Result<string, ProviderRpcError>> {
+  return provider
+    .request({ method: "eth_sendTransaction", params: [options] })
+    .then(
+      (data) => ok(z.string().parse(data)),
+      (e) => err(ProviderRpcError.parse(e)),
+    );
+}
+
 export interface Provider {
   /**
    * Note that this method has nothing to do with the user's accounts.
