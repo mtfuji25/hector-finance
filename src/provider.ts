@@ -347,7 +347,7 @@ const ProviderRpcError = z.object({
   message: z.string(),
   code: z.nativeEnum(ProviderErrorCode).or(z.nativeEnum(RpcErrorCode)),
   data: z.optional(z.unknown()),
-  stack: z.string(),
+  stack: z.optional(z.string()),
 });
 
 type ProviderRpcError = z.infer<typeof ProviderRpcError>;
