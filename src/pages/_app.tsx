@@ -1,6 +1,6 @@
 import "styles/globals.css";
 import type { AppProps } from "next/app";
-import { Decimal } from "decimal.js-light";
+import { Decimal } from "decimal.js";
 
 function MyApp({ Component, pageProps }: AppProps) {
   // The default precision of `Decimal` is too low.

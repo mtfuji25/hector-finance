@@ -7,7 +7,7 @@ import {
   useDecimalInput,
   validateEther,
 } from "src/util";
-import { Decimal } from "decimal.js-light";
+import { Decimal } from "decimal.js";
 
 export default function Home() {
   return (
