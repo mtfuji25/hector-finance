@@ -5,7 +5,7 @@ import { ok, err, Result } from "src/util";
 export async function getBalanceAtBlock(
   provider: Provider,
   address: string,
-  block: string | "latest" | "earliest" | "pending",
+  block: "latest" | "earliest" | "pending" = "latest",
 ): Promise<Result<string, ProviderRpcError>> {
   return provider
     .request({
