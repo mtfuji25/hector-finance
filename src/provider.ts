@@ -350,4 +350,4 @@ const ProviderRpcError = z.object({
   stack: z.optional(z.string()),
 });
 
-type ProviderRpcError = z.infer<typeof ProviderRpcError>;
+export type ProviderRpcError = z.infer<typeof ProviderRpcError>;
