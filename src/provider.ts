@@ -198,6 +198,31 @@ export async function watchAsset(
     );
 }
 
+export interface CallOptions {
+  from?: string;
+  to: string;
+  gas?: string;
+  gasPrice?: string;
+  value?: string;
+  data?: string;
+}
+
+export async function call(
+  provider: Provider,
+  options: CallOptions,
+  block: "latest" | "earliest" | "pending" = "latest",
+): Promise<Result<string, ProviderRpcError>> {
+  return provider
+    .request({
+      method: "eth_call",
+      params: [options, block],
+    })
+    .then(
+      (data) => ok(z.string().parse(data)),
+      (e) => err(ProviderRpcError.parse(e)),
+    );
+}
+
 export interface Provider {
   /**
    * Note that this method has nothing to do with the user's accounts.
