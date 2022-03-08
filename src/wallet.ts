@@ -1,4 +1,11 @@
-import { useState, useEffect, useMemo } from "react";
+import {
+  useState,
+  useEffect,
+  useMemo,
+  Dispatch,
+  SetStateAction,
+  useRef,
+} from "react";
 import {
   getProvider,
   getAccount,
@@ -76,10 +83,23 @@ export function useWallet(): Wallet {
   }, [provider, address, network]);
 }
 
-export enum WalletState {
-  NoWallet = "NoWallet",
-  Disconnected = "Disconnected",
-  Connected = "Connected",
+/**
+ * Wrapper for `useState` that resets to the given `initialState` whenever the wallet changes.
+ *
+ * You always want `useWalletState` instead of `useState` when displaying
+ * wallet-related data like balances and transactions!
+ */
+export function useWalletState<S>(
+  initialState: (() => S) | S,
+): [S, Dispatch<SetStateAction<S>>] {
+  const wallet = useWallet();
+  const ref = useRef(initialState); // Using a ref to save the initialState forever
+  const state = useState(initialState);
+  useEffect(() => {
+    const [_, setState] = state;
+    setState(ref.current);
+  }, [wallet]);
+  return state;
 }
 
 export type Wallet =
@@ -91,3 +111,9 @@ export type Wallet =
       network: string;
       provider: Provider;
     };
+
+export enum WalletState {
+  NoWallet = "NoWallet",
+  Disconnected = "Disconnected",
+  Connected = "Connected",
+}
