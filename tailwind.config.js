@@ -13,6 +13,10 @@ module.exports = {
       // Don't add black here. You don't want black, you want gray-900.
       white: colors.white,
       gray: colors.zinc,
+      red: {
+        50: "#ffebe6",
+        700: "#ea011a",
+      },
       green: {
         50: "#ecf3ed",
         400: "#96b49d",
