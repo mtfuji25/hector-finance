@@ -92,6 +92,11 @@ function decimalFromInput(input: string): {
     return { isValid: true, decimal: new Decimal("0") };
   }
 
+  if (input[0] === ",") {
+    // Decimals can't contain leading commas.
+    return INVALID_DECIMAL;
+  }
+
   if (input.match(/[^0-9,\.]/)) {
     // First ensure only valid characters exist in the input.
     return INVALID_DECIMAL;
