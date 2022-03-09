@@ -29,10 +29,10 @@ export const TopNav: VFC = () => (
     <div className="mx-auto flex max-w-3xl flex-row px-8 py-6">
       {/* Logo */}
       <div className="flex flex-row items-center gap-1.5">
-        <StaticImg src={HectorLogo} className="h-7 w-7" alt="Hector Finance " />
+        <StaticImg src={HectorLogo} className="h-7 w-7 shrink-0" alt="Hector Finance " />
         <div className="text-center font-logo text-2xl">
           <span className="font-bold text-orange-700">Hector</span>{" "}
-          <span className="text-gray-500">Finance</span>
+          <span className="text-gray-500 hidden sm:inline">Finance</span>
         </div>
       </div>
 
@@ -80,7 +80,7 @@ const Wallet: VFC = () => {
 };
 
 export const SideNav: VFC = () => (
-  <nav className="h-fit flex-shrink-0 flex-grow-0 space-y-4 rounded-md bg-gray-50 p-4">
+  <nav className="hidden h-fit flex-shrink-0 flex-grow-0 space-y-4 rounded-md bg-gray-50 p-4 sm:block">
     <div>
       <InternalNav href="/">
         <SquarePollVerticalLight width={16} height={16} />
