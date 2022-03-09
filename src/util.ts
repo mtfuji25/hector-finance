@@ -168,3 +168,47 @@ export function ellipsisBetween(
   const right = str.slice(str.length - charsFromRight);
   return `${left}...${right}`;
 }
+
+/**
+ * Use this inside `useEffect`s that need to run some async functions.
+ * If `abort` is ever true, you should immediately clean up and exit
+ * the function.
+ *
+ * ```ts
+ * useEffect(() => {
+ *   return asyncEffect(async (signal) => {
+ *     // Imagine this fetch takes a while...
+ *     const response = await fetch(url);
+ *     if (signal.abort) {
+ *       // `abort` was set while the fetch was happening.
+ *       // You should do nothing else; return immediately!
+ *       return;
+ *     }
+ *     setStatus(response.status);
+ *   });
+ * }, [url]); // Update every time the url changes
+ * ```
+ */
+function asyncEffect(
+  callback: (signal: { abort: boolean }) => Promise<void>,
+): () => void {
+  const status = { abort: false };
+  callback(status);
+  return () => {
+    status.abort = true;
+  };
+}
+
+/**
+ * Intended as a convenient alternative to `useEffect` for async functions.
+ *
+ * **!! IMPORTANT !!**
+ * - You MUST return as soon as possible when `signal.abort` is `true`.
+ * - You MUST NOT destructure `signal` in the `callback` parameter.
+ */
+export function useAsyncEffect(
+  callback: (signal: { abort: boolean }) => Promise<void>,
+  deps: React.DependencyList,
+) {
+  return useEffect(() => asyncEffect(callback), deps);
+}
