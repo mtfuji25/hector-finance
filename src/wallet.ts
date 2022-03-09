@@ -13,18 +13,14 @@ import {
   getAccountsPermission,
   Provider,
 } from "./provider";
+import { useAsyncEffect } from "./util";
 
 export function useWallet(): Wallet {
   const [provider, setProvider] = useState<Provider>();
   const [address, setAddress] = useState<string>();
   const [network, setNetwork] = useState<string>();
 
-  useEffect(() => {
-    (async function () {
-      const provider = await getProvider();
-      setProvider(provider);
-    })();
-  }, []);
+  useAsyncEffect(() => getProvider().then(setProvider), []);
 
   useEffect(() => {
     if (!provider) {
