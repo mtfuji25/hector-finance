@@ -53,6 +53,7 @@ const Wallet: VFC = () => {
       {wallet.state === WalletState.NoWallet && (
         <a
           target="_blank"
+          rel="noreferrer"
           href="https://metamask.io/download/"
           title="MetaMask download"
           className="flex items-center gap-1 rounded bg-orange-50 px-4 py-2 text-orange-800"
