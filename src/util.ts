@@ -175,6 +175,16 @@ export function ellipsisBetween(
   return `${left}...${right}`;
 }
 
+/**
+ * This is a rough estimate of the Fantom block time.
+ * You should use this when polling the blockchain for changes!
+ */
+// TODO: Block times can vary based on chain and congestion.
+// Polling could be made more efficient if the `BLOCK_TIME` was
+// dynamically updated. There's no reason to poll more often than
+// the blocks are actually produced.
+export const FANTOM_BLOCK_TIME: number = 2_000;
+
 export interface Erc20Token {
   symbol: string;
   address: TokenAddress;
