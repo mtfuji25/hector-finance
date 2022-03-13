@@ -1,3 +1,5 @@
+import { Decimal } from "decimal.js";
+import { NextPage } from "next";
 import Head from "next/head";
 import React, { useState, VFC } from "react";
 import { SideNav, TopNav } from "src/components/Nav";
@@ -7,30 +9,27 @@ import {
   useDecimalInput,
   validateEther,
 } from "src/util";
-import { Decimal } from "decimal.js";
 
-export default function Home() {
-  return (
-    <>
-      <Head>
-        <title>Calculator — Hector Finance</title>
-      </Head>
-      <TopNav />
-      <div className="mx-auto max-w-3xl">
-        <div className="flex gap-8 p-8">
-          <SideNav />
-          <main className="flex-grow space-y-6">
-            <div>
-              <h1 className="text-2xl font-medium">Calculator</h1>
-              <h2>Plan for the future</h2>
-            </div>
-            <Calculator />
-          </main>
-        </div>
+const CalculatorPage: NextPage = () => (
+  <>
+    <Head>
+      <title>Calculator — Hector Finance</title>
+    </Head>
+    <TopNav />
+    <div className="mx-auto max-w-3xl">
+      <div className="flex gap-8 p-8">
+        <SideNav />
+        <main className="flex-grow space-y-6">
+          <div>
+            <h1 className="text-2xl font-medium">Calculator</h1>
+            <h2>Plan for the future</h2>
+          </div>
+          <Calculator />
+        </main>
       </div>
-    </>
-  );
-}
+    </div>
+  </>
+);
 
 const Calculator: VFC = () => {
   const [initialHec, initialHecInput, setInitialHecInput] =
@@ -125,3 +124,5 @@ const Input: VFC<{
     />
   </label>
 );
+
+export default CalculatorPage;
