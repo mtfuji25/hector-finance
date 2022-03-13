@@ -14,4 +14,8 @@
     -webkit-user-select: none;
     -ms-user-select: none;
   }
+
+  input::placeholder {
+    @apply text-gray-400;
+  }
 }
