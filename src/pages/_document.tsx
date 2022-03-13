@@ -5,8 +5,6 @@ export default function Document() {
     <Html>
       <Head>
         <link rel="icon" href="/favicon.ico" />
-        <link href="/fonts/euclid-square.css" rel="stylesheet" />
-        <link href="/fonts/glacial-indifference.css" rel="stylesheet" />
 
         <link
           rel="apple-touch-icon"

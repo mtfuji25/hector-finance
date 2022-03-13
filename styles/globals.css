@@ -1,3 +1,6 @@
+@import "styles/fonts/euclid-square.css";
+@import "styles/fonts/glacial-indifference.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
