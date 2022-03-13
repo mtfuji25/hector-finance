@@ -217,3 +217,10 @@ export function useAsyncEffect(
 ) {
   return useEffect(() => asyncEffect(callback), deps);
 }
+
+/** Your typical sleep function, for async tasks. */
+export async function sleep(millis: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(), millis);
+  });
+}
