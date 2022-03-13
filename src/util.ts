@@ -174,6 +174,52 @@ export function ellipsisBetween(
   return `${left}...${right}`;
 }
 
+export interface Erc20Token {
+  symbol: string;
+  address: TokenAddress;
+
+  /**
+   * The number of decimal places this token can represent.
+   * Otherwise known as _precision_.
+   *
+   * Most tokens are 18 decimals, some are not.
+   *
+   * Don't use this property for converting to/from wei. Use {@link wei} for that.
+   */
+  decimals: number;
+
+  /**
+   * The amount of wei in a single token. You should use this
+   * when converting to/from values used by the blockchain!
+   * ```ts
+   * balance.mul(token.wei); // From tokens to wei
+   * balance.div(token.wei); // From wei to tokens
+   * ```
+   */
+  wei: Decimal;
+}
+
+export const FANTOM_DAI: Erc20Token = {
+  symbol: "DAI",
+  address: "0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E",
+  decimals: 18,
+  wei: new Decimal(10 ** 18),
+};
+
+export const FANTOM_USDC: Erc20Token = {
+  symbol: "USDC",
+  address: "0x04068da6c83afcfa0e13ba15a6696662335d5b75",
+  decimals: 6,
+  wei: new Decimal(10 ** 6),
+};
+
+export const FANTOM_TOR: Erc20Token = {
+  symbol: "TOR",
+  address: "0x74E23dF9110Aa9eA0b6ff2fAEE01e740CA1c642e",
+  decimals: 18,
+  wei: new Decimal(10 ** 18),
+};
+
 /**
  * Use this inside `useEffect`s that need to run some async functions.
  * If `abort` is ever true, you should immediately clean up and exit
