@@ -240,10 +240,11 @@ export interface TransactionOptions {
   nonce?: string;
 }
 
+/** Creates, signs, and sends a new transaction to the network. */
 export async function sendTransaction(
   provider: Provider,
   options: TransactionOptions,
-): Promise<Result<string, ProviderRpcError>> {
+): Promise<Result<TransactionAddress, ProviderRpcError>> {
   return provider
     .request({ method: "eth_sendTransaction", params: [options] })
     .then(
@@ -329,7 +330,7 @@ interface ProviderEventMap {
    * The Provider emits accountsChanged if the accounts returned from
    * the Provider (eth_accounts) change.
    */
-  accountsChanged: (accounts: [string] | []) => void;
+  accountsChanged: (accounts: [AccountAddress] | []) => void;
 
   /**
    * The Provider emits message to communicate arbitrary messages to the consumer.
@@ -339,8 +340,14 @@ interface ProviderEventMap {
   message: (message: { type: string; data: unknown }) => void;
 }
 
-// interface ProviderRpcError extends Error {
-// }
+/** Address of a transaction. This isn't very type-safe, so be careful. */
+export type TransactionAddress = string;
+
+/** Address of an ERC20 token. This isn't very type-safe, so be careful. */
+export type TokenAddress = string;
+
+/** Address of an account. This isn't very type-safe, so be careful! */
+export type AccountAddress = string;
 
 enum ProviderErrorCode {
   /** The user rejected the request. */
