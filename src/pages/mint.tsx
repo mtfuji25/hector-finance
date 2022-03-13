@@ -38,7 +38,7 @@ const MintPage: NextPage = () => (
         <main className="flex-grow space-y-6">
           <div>
             <h1 className="text-2xl font-medium">Mint</h1>
-            <h2>Buy and sell Tor — Hector's stablecoin</h2>
+            <h2>Buy and sell Tor — Hector&apos;s stablecoin</h2>
           </div>
           <Mint />
         </main>
@@ -404,7 +404,7 @@ function useAllowance(token: Erc20Token, wallet: Wallet): Allowance {
         },
       };
     }
-  }, [wallet, allowance]);
+  }, [wallet, allowance, setAllowance, token]);
 }
 
 /** A value that could be either fresh or stale. Ideally, values
