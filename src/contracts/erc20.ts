@@ -28,6 +28,9 @@ export async function allowance(
   if (!result.isOk) {
     return result;
   }
+  if (result.value === "0x") {
+    result.value = "0x0";
+  }
   const allowance = new Decimal(result.value).mul(token.wei);
   return ok(allowance);
 }
@@ -68,6 +71,9 @@ export async function balanceOf(
   });
   if (!result.isOk) {
     return result;
+  }
+  if (result.value === "0x") {
+    result.value = "0x0";
   }
   const balance = new Decimal(result.value).div(token.wei);
   return ok(balance);
