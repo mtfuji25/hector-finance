@@ -61,8 +61,8 @@ export interface DecimalInput {
 }
 
 export function useDecimalInput(
-  initial: string,
-): [Decimal, DecimalInput, (value: string) => void] {
+  initial: string = "",
+): [Decimal, DecimalInput, Dispatch<SetStateAction<string>>] {
   const [input, setInput] = useState(initial);
   return useMemo(() => {
     const { isValid, decimal } = decimalFromInput(input);

@@ -49,8 +49,8 @@ const MintPage: NextPage = () => (
 
 const Mint: VFC = () => {
   const wallet = useWallet();
-  const [dai, daiInput, setDaiInput] = useDecimalInput("");
-  const [tor, torInput, setTorInput] = useDecimalInput("");
+  const [dai, daiInput, setDaiInput] = useDecimalInput();
+  const [tor, torInput, setTorInput] = useDecimalInput();
   const [view, setView] = useState<"mint" | "redeem">("mint");
 
   const daiAllowance = useAllowance(FANTOM_DAI, wallet);
