@@ -28,7 +28,7 @@ interface Output {
   type: string;
 }
 
-enum InterfaceType {
+export enum InterfaceType {
   Function = "function",
   Constructor = "constructor",
   /** https://docs.soliditylang.org/en/v0.8.12/contracts.html#fallback-function */
@@ -37,7 +37,7 @@ enum InterfaceType {
   Receive = "receive",
 }
 
-enum StateMutability {
+export enum StateMutability {
   /** Won't read blockchain. */
   Pure = "pure",
   /** Will read but won't modify blockchain. */
