@@ -124,7 +124,7 @@ export const SideNav: VFC = () => (
         Calculator
       </InternalNav>
     </div>
-    <hr className="mx-2.5 border-t border-gray-300" />
+    <Divider />
     <div>
       <ExternalNav href="https://hectorbank.com/">
         <BuildingColumnsLight width={16} height={16} />
@@ -139,7 +139,7 @@ export const SideNav: VFC = () => (
         Docs
       </ExternalNav>
     </div>
-    <hr className="mx-2.5 border-t border-gray-300" />
+    <Divider />
     <div className="flex items-center justify-center">
       <SocialNav href="https://discord.gg/hector" title="Discord">
         <Discord width={16} height={16} />
@@ -195,3 +195,5 @@ const SocialNav: FC<{ href: string; title: string }> = ({
     {children}
   </a>
 );
+
+const Divider: VFC = () => <hr className="mx-2.5 border-t border-gray-300" />;
