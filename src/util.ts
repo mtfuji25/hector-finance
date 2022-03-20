@@ -1,5 +1,5 @@
 import { Decimal } from "decimal.js";
-import { useEffect, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { TokenAddress } from "./provider";
 
 /**
@@ -188,6 +188,7 @@ export const FANTOM_BLOCK_TIME: number = 2_000;
 export interface Erc20Token {
   symbol: string;
   address: TokenAddress;
+  chain: number;
 
   /**
    * The number of decimal places this token can represent.
@@ -213,6 +214,7 @@ export interface Erc20Token {
 export const FANTOM_DAI: Erc20Token = {
   symbol: "DAI",
   address: "0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E",
+  chain: 0xfa,
   decimals: 18,
   wei: new Decimal(10 ** 18),
 };
@@ -220,6 +222,7 @@ export const FANTOM_DAI: Erc20Token = {
 export const FANTOM_USDC: Erc20Token = {
   symbol: "USDC",
   address: "0x04068da6c83afcfa0e13ba15a6696662335d5b75",
+  chain: 0xfa,
   decimals: 6,
   wei: new Decimal(10 ** 6),
 };
@@ -227,6 +230,23 @@ export const FANTOM_USDC: Erc20Token = {
 export const FANTOM_TOR: Erc20Token = {
   symbol: "TOR",
   address: "0x74E23dF9110Aa9eA0b6ff2fAEE01e740CA1c642e",
+  chain: 0xfa,
+  decimals: 18,
+  wei: new Decimal(10 ** 18),
+};
+
+export const FANTOM_WFTM: Erc20Token = {
+  symbol: "wFTM",
+  address: "0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83",
+  chain: 0xfa,
+  decimals: 18,
+  wei: new Decimal(10 ** 18),
+};
+
+export const FANTOM_CURVE = {
+  symbol: "crvLP",
+  address: "0x24699312CB27C26Cfc669459D670559E5E44EE60",
+  chain: 0xfa,
   decimals: 18,
   wei: new Decimal(10 ** 18),
 };
