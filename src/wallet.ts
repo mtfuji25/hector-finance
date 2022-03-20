@@ -90,12 +90,11 @@ export function useWalletState<S>(
 ): [S, Dispatch<SetStateAction<S>>] {
   const wallet = useWallet();
   const ref = useRef(initialState); // Using a ref to save the initialState forever
-  const state = useState(initialState);
+  const [state, setState] = useState(initialState);
   useEffect(() => {
-    const [_, setState] = state;
     setState(ref.current);
   }, [wallet]);
-  return state;
+  return useMemo(() => [state, setState], [state, setState]);
 }
 
 export type Wallet =
