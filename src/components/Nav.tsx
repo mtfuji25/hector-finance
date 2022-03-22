@@ -26,7 +26,7 @@ import { ellipsisBetween } from "src/util";
 
 export const TopNav: VFC = () => (
   <>
-    <div className="mx-auto flex max-w-3xl flex-row px-8 py-6">
+    <div className="flex flex-row px-8 py-6">
       {/* Logo */}
       <div className="flex flex-row items-center gap-1.5">
         <StaticImg
@@ -46,7 +46,7 @@ export const TopNav: VFC = () => (
       {/* Controls */}
       <Wallet />
     </div>
-    <hr className="mx-auto max-w-3xl" />
+    <hr />
   </>
 );
 
@@ -85,7 +85,7 @@ const Wallet: VFC = () => {
 };
 
 export const SideNav: VFC = () => (
-  <nav className="hidden h-fit flex-shrink-0 flex-grow-0 space-y-4 rounded-md bg-gray-50 p-4 sm:block">
+  <nav className="hidden h-fit flex-shrink-0 flex-grow-0 space-y-4 rounded-md sm:block">
     <div>
       <InternalNav href="/">
         <SquarePollVerticalLight width={16} height={16} />
@@ -162,7 +162,7 @@ export const SideNav: VFC = () => (
 
 const InternalNav: FC<{ href: string }> = ({ children, href }) => (
   <Link href={href}>
-    <a className="flex items-center gap-2 rounded px-3 py-2 text-gray-600 hover:bg-gray-200/75 hover:text-gray-800">
+    <a className="flex items-center gap-2 rounded px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800">
       {children}
     </a>
   </Link>
@@ -171,7 +171,7 @@ const InternalNav: FC<{ href: string }> = ({ children, href }) => (
 const ExternalNav: FC<{ href: string }> = ({ children, href }) => (
   <a
     href={href}
-    className="group flex items-center gap-2 rounded px-3 py-2 text-gray-600 hover:bg-gray-200/75 hover:text-gray-800"
+    className="group flex items-center gap-2 rounded px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800"
   >
     {children}
     <ArrowUpRightFromSquareRegular
@@ -190,7 +190,7 @@ const SocialNav: FC<{ href: string; title: string }> = ({
   <a
     href={href}
     title={title}
-    className="rounded p-3 text-gray-400 hover:bg-gray-200/80 hover:text-gray-800"
+    className="rounded p-3 text-gray-400 hover:bg-gray-100 hover:text-gray-800"
   >
     {children}
   </a>

@@ -2,7 +2,6 @@ import { Decimal } from "decimal.js";
 import { NextPage } from "next";
 import Head from "next/head";
 import React, { useState, VFC } from "react";
-import { SideNav, TopNav } from "src/components/Nav";
 import {
   classes,
   DecimalInput,
@@ -10,28 +9,7 @@ import {
   validateEther,
 } from "src/util";
 
-const CalculatorPage: NextPage = () => (
-  <>
-    <Head>
-      <title>Calculator — Hector Finance</title>
-    </Head>
-    <TopNav />
-    <div className="mx-auto max-w-3xl">
-      <div className="flex gap-8 p-8">
-        <SideNav />
-        <main className="flex-grow space-y-6">
-          <div>
-            <h1 className="text-2xl font-medium">Calculator</h1>
-            <h2>Plan for the future</h2>
-          </div>
-          <Calculator />
-        </main>
-      </div>
-    </div>
-  </>
-);
-
-const Calculator: VFC = () => {
+const CalculatorPage: NextPage = () => {
   const [initialHec, initialHecInput, setInitialHecInput] =
     useDecimalInput("0.01234295");
   const [apy, apyInput, setApyInput] = useDecimalInput("213.5");
@@ -54,7 +32,16 @@ const Calculator: VFC = () => {
   const roi = finalHec.minus(initialHec).div(initialHec).times(100);
 
   return (
-    <>
+    <main className="w-full space-y-4">
+      <Head>
+        <title>Calculator — Hector Finance</title>
+      </Head>
+
+      <div>
+        <h1 className="text-2xl font-semibold">Calculator</h1>
+        <h2>Plan for the future</h2>
+      </div>
+
       <Input
         label="sHEC amount"
         value={initialHecInput}
@@ -101,7 +88,7 @@ const Calculator: VFC = () => {
           <div>{roi.toFixed(0)}%</div>
         </div>
       </div>
-    </>
+    </main>
   );
 };
 

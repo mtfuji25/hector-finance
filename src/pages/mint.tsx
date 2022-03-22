@@ -4,7 +4,6 @@ import Head from "next/head";
 import DaiLogo from "public/icons/dai.svg";
 import TorLogo from "public/icons/tor.svg";
 import React, { FC, useMemo, useReducer, useState, VFC } from "react";
-import { SideNav, TopNav } from "src/components/Nav";
 import { StaticImg } from "src/components/StaticImg";
 import * as Erc20 from "src/contracts/erc20";
 import {
@@ -26,28 +25,7 @@ import {
 } from "src/util";
 import { useWallet, useWalletState, Wallet, WalletState } from "src/wallet";
 
-const MintPage: NextPage = () => (
-  <>
-    <Head>
-      <title>Mint — Hector Finance</title>
-    </Head>
-    <TopNav />
-    <div className="mx-auto max-w-3xl">
-      <div className="flex gap-8 p-8">
-        <SideNav />
-        <main className="flex-grow space-y-6">
-          <div>
-            <h1 className="text-2xl font-medium">Mint</h1>
-            <h2>Buy and sell Tor — Hector&apos;s stablecoin</h2>
-          </div>
-          <Mint />
-        </main>
-      </div>
-    </div>
-  </>
-);
-
-const Mint: VFC = () => {
+const MintPage: NextPage = () => {
   const wallet = useWallet();
   const [dai, daiInput, setDaiInput] = useDecimalInput();
   const [tor, torInput, setTorInput] = useDecimalInput();
@@ -59,7 +37,16 @@ const Mint: VFC = () => {
   const [torBalance, refreshTorBalance] = useBalance(FANTOM_TOR, wallet);
 
   return (
-    <>
+    <main className="w-full space-y-4">
+      <Head>
+        <title>Mint — Hector Finance</title>
+      </Head>
+      <div>
+        <h1 className="text-2xl font-semibold">Mint</h1>
+        <h2>Buy and sell Tor — Hector&apos;s stablecoin</h2>
+      </div>
+
+      {/* Choose mint or redeem. */}
       <div className="space-y-1">
         <Radio
           checked={view === "mint"}
@@ -84,6 +71,8 @@ const Mint: VFC = () => {
           Redeem
         </Radio>
       </div>
+
+      {/* Mint */}
       {view === "mint" && (
         <>
           <Selling
@@ -118,6 +107,8 @@ const Mint: VFC = () => {
             )}
         </>
       )}
+
+      {/* Redeem */}
       {view === "redeem" && (
         <>
           <Selling
@@ -152,7 +143,7 @@ const Mint: VFC = () => {
             )}
         </>
       )}
-    </>
+    </main>
   );
 };
 
