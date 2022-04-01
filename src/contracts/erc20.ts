@@ -1,6 +1,11 @@
 import { Decimal } from "decimal.js";
-import { hex256, Interface, methodId } from "src/abi";
-import _abi from "./erc20.json";
+import {
+  hex256,
+  Interface,
+  InterfaceType,
+  methodId,
+  StateMutability,
+} from "src/abi";
 import {
   call,
   Provider,
@@ -9,9 +14,6 @@ import {
 } from "src/provider";
 import { Erc20Token, ok, Result } from "src/util";
 
-const abi = _abi as Interface[];
-
-const ALLOWANCE_ABI = abi.find((a) => a.name === "allowance")!;
 export async function allowance(
   provider: Provider,
   token: Erc20Token,
@@ -35,7 +37,28 @@ export async function allowance(
   return ok(allowance);
 }
 
-const APPROVE_ABI = abi.find((a) => a.name === "approve")!;
+const ALLOWANCE_ABI: Interface = {
+  name: "allowance",
+  type: InterfaceType.Function,
+  stateMutability: StateMutability.View,
+  inputs: [
+    {
+      name: "_owner",
+      type: "address",
+    },
+    {
+      name: "_spender",
+      type: "address",
+    },
+  ],
+  outputs: [
+    {
+      name: "",
+      type: "uint256",
+    },
+  ],
+};
+
 export async function approve(
   provider: Provider,
   token: Erc20Token,
@@ -58,7 +81,28 @@ export async function approve(
   return ok(isSuccess);
 }
 
-const BALANCE_ABI = abi.find((a) => a.name === "balanceOf")!;
+const APPROVE_ABI = {
+  name: "approve",
+  type: InterfaceType.Function,
+  stateMutability: StateMutability.NonPayable,
+  inputs: [
+    {
+      name: "_spender",
+      type: "address",
+    },
+    {
+      name: "_value",
+      type: "uint256",
+    },
+  ],
+  outputs: [
+    {
+      name: "",
+      type: "bool",
+    },
+  ],
+};
+
 export async function balanceOf(
   provider: Provider,
   token: Erc20Token,
@@ -78,3 +122,21 @@ export async function balanceOf(
   const balance = new Decimal(result.value).div(token.wei);
   return ok(balance);
 }
+
+const BALANCE_ABI: Interface = {
+  name: "balanceOf",
+  type: InterfaceType.Function,
+  stateMutability: StateMutability.View,
+  inputs: [
+    {
+      name: "_owner",
+      type: "address",
+    },
+  ],
+  outputs: [
+    {
+      name: "balance",
+      type: "uint256",
+    },
+  ],
+};
