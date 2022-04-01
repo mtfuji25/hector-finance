@@ -108,7 +108,7 @@ export type Wallet =
     };
 
 export enum WalletState {
-  NoWallet = "NoWallet",
-  Disconnected = "Disconnected",
-  Connected = "Connected",
+  NoWallet,
+  Disconnected,
+  Connected,
 }
