@@ -1,3 +1,5 @@
+import { StaticImageData } from "next/image";
+
 export const StaticImg: React.VFC<StaticImgProps> = ({ src, alt, ...img }) => {
   return (
     <img
