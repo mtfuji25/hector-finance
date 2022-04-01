@@ -1,6 +1,11 @@
 import { Decimal } from "decimal.js";
-import { hex256, Interface, methodId } from "src/abi";
-import _abi from "./torMinter.json";
+import {
+  hex256,
+  Interface,
+  methodId,
+  StateMutability,
+  InterfaceType,
+} from "src/abi";
 import {
   Provider,
   ProviderRpcError,
@@ -9,11 +14,8 @@ import {
 } from "src/provider";
 import { FANTOM_DAI, FANTOM_TOR, Result } from "src/util";
 
-const abi = _abi as Interface[];
-
 export const TOR_MINTER_ADDRESS = "0x9b0c6FfA7d0Ec29EAb516d3F2dC809eE43DD60ca";
 
-const MINT_WITH_DAI_ABI = abi.find((a) => a.name === "mintWithDai")!;
 export async function mintWithDai(
   provider: Provider,
   owner: string,
@@ -28,8 +30,24 @@ export async function mintWithDai(
   });
   return result;
 }
+const MINT_WITH_DAI_ABI: Interface = {
+  inputs: [
+    {
+      name: "_daiAmount",
+      type: "uint256",
+    },
+  ],
+  name: "mintWithDai",
+  outputs: [
+    {
+      name: "_torAmount",
+      type: "uint256",
+    },
+  ],
+  stateMutability: StateMutability.NonPayable,
+  type: InterfaceType.Function,
+};
 
-const REDEEM_TO_DAI_ABI = abi.find((a) => a.name === "redeemToDai")!;
 export async function redeemToDai(
   provider: Provider,
   owner: string,
@@ -44,3 +62,21 @@ export async function redeemToDai(
   });
   return result;
 }
+
+const REDEEM_TO_DAI_ABI: Interface = {
+  inputs: [
+    {
+      name: "_torAmount",
+      type: "uint256",
+    },
+  ],
+  name: "redeemToDai",
+  outputs: [
+    {
+      name: "_daiAmount",
+      type: "uint256",
+    },
+  ],
+  stateMutability: StateMutability.NonPayable,
+  type: InterfaceType.Function,
+};
