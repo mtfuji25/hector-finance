@@ -1,7 +1,7 @@
 import { Decimal } from "decimal.js";
 import { NextPage } from "next";
 import Head from "next/head";
-import { StaticImageData } from "next/image";
+// import { StaticImageData } from "next/image";
 import DaiLogo from "public/icons/dai.svg";
 import TorLogo from "public/icons/tor.svg";
 import React, { FC, useMemo, useReducer, useState, VFC } from "react";
