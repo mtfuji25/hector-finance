@@ -1,5 +1,6 @@
 import { Decimal } from "decimal.js";
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { FANTOM } from "./constants";
 import { TokenAddress } from "./provider";
 
 /**
@@ -251,6 +252,21 @@ export const FANTOM_CURVE = {
   wei: new Decimal(10 ** 18),
 };
 
+export const FANTOM_HECTOR = {
+  symbol: "HEC",
+  address: FANTOM.HEC_ADDRESS,
+  chain: 0xfa,
+  decimals: 9,
+  wei: new Decimal(10 ** 9),
+};
+export const FANTOM_sHEC = {
+  symbol: "sHEC",
+  address: FANTOM.SHEC_ADDRESS,
+  chain: 0xfa,
+  decimals: 9,
+  wei: new Decimal(10 ** 9),
+};
+
 /**
  * Use this inside `useEffect`s that need to run some async functions.
  * If `abort` is ever true, you should immediately clean up and exit
@@ -300,4 +316,50 @@ export async function sleep(millis: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(() => resolve(), millis);
   });
+}
+
+// for getting object values from contract
+export function getParameter(index: number, value: string): string {
+  let offset = 0;
+  if (value.startsWith("0x")) {
+    offset = 2;
+  }
+  return "0x" + value.slice(offset + index * 64, offset + (index + 1) * 64);
+}
+
+export function prettifySeconds(seconds: Decimal, resolution?: string) {
+  if (!seconds.eq(0) && !seconds) {
+    return "";
+  }
+
+  const d = seconds.div(3600 * 24).floor();
+  const h = seconds
+    .mod(3600 * 24)
+    .div(3600)
+    .floor();
+  const m = seconds.mod(3600).div(60).floor();
+
+  if (resolution === "day") {
+    return d + (d.eq(1) ? " day" : " days");
+  }
+
+  const dDisplay = d.greaterThan(0) ? d + (d.eq(1) ? " day, " : " days, ") : "";
+  const hDisplay = h.greaterThan(0) ? h + (h.eq(1) ? " hr, " : " hrs, ") : "";
+  const mDisplay = m.greaterThan(0) ? m + (m.eq(1) ? " min" : " mins") : "";
+
+  let result = dDisplay + hDisplay + mDisplay;
+  if (mDisplay === "") {
+    result = result.slice(0, result.length - 2);
+  }
+
+  return result;
+}
+
+export function formatCurrency(c: number, precision = 0) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: precision,
+    minimumFractionDigits: precision,
+  }).format(c);
 }
