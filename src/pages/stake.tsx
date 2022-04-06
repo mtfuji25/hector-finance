@@ -1,6 +1,6 @@
 import Decimal from "decimal.js";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useEffect, useState, VFC } from "react";
 import RebaseTimer from "src/components/RebaseTimer";
 import { FANTOM, THE_GRAPH_URL } from "src/constants";
 import { balanceOf } from "src/contracts/erc20";
@@ -91,18 +91,75 @@ export default function StakePage() {
   }, []);
 
   return (
-    <main>
+    <main className="w-full">
       <Head>
         <title>Stake — Hector Finance</title>
       </Head>
-      <div>
+      <div className="mb-7">
         <h1 className="text-2xl font-semibold">Stake v2 (3,3)</h1>
-        <h2>Buy and sell Tor — Hector&apos;s stablecoin</h2>
+        <RebaseTimer />
       </div>
-      <RebaseTimer />
-      <div>{stakingAPY?.toFixed(0)}%</div>
-      <div>{stakingTVL}</div>
-      <div>{currentIndex?.toFixed(2)}</div>
+      <div className="flex justify-between text-center">
+        <div>
+          <div>APY</div>
+          {stakingAPY && (
+            <div className="text-xl font-semibold">
+              {stakingAPY?.toFixed(0)}%
+            </div>
+          )}
+        </div>
+        <div>
+          <div>Total Deposited</div>
+          <div className="text-xl font-semibold">{stakingTVL}</div>
+        </div>
+        <div>
+          <div>Current Index</div>
+          {currentIndex && (
+            <div className="text-xl font-semibold">
+              {currentIndex?.toFixed(2)}
+            </div>
+          )}
+        </div>
+      </div>
+      {hecBalance && <Stake hecBalance={hecBalance} />}
     </main>
   );
 }
+
+const Stake: VFC<{
+  hecBalance: Decimal;
+}> = ({ hecBalance }) => {
+  return (
+    <div></div>
+    // <div className="block space-y-2">
+    //   <div className="flex">
+    //     <div>Stake</div>
+    //     <div className="flex-grow" />
+    //     <button
+    //       className="-m-2 p-2"
+    //       onClick={() => onChange(hecBalance.toString())}
+    //     >
+    //       MAX {hecBalance.toFixed(2)}
+    //     </button>
+    //   </div>
+    //   <div className="relative">
+    //     <div className="pointer-events-none absolute top-1/2 left-3 flex -translate-y-1/2 gap-2">
+    //       <StaticImg src={tokenImage} alt={tokenName} className="h-6 w-6" />
+    //       <div>{tokenName}</div>
+    //     </div>
+    //     <input
+    //       className={classes(
+    //         "w-full rounded px-3 py-3 pl-11 text-right",
+    //         amount.isValid ? "bg-gray-100" : "bg-red-50 text-red-700",
+    //       )}
+    //       title={`${tokenName} sell amount`}
+    //       pattern="[0-9]*"
+    //       inputMode="decimal"
+    //       value={amount.input}
+    //       onChange={(e) => onChange(validateEther(e.target.value))}
+    //       placeholder="0.00"
+    //     />
+    //   </div>
+    // </div>
+  );
+};

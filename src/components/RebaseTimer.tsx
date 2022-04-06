@@ -92,7 +92,7 @@ function RebaseTimer() {
       {currentBlock ? (
         secondsToRebase?.greaterThan(0) ? (
           <>
-            <strong>{rebaseString}</strong> to next rebase
+            <span className="font-medium">{rebaseString}</span> to next rebase
           </>
         ) : (
           <strong>rebasing</strong>
