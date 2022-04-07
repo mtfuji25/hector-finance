@@ -5,6 +5,7 @@ import { StaticImageData } from "next/image";
 import DaiLogo from "public/icons/dai.svg";
 import TorLogo from "public/icons/tor.svg";
 import React, { FC, useMemo, useReducer, useState, VFC } from "react";
+import CoinInput from "src/components/CoinInput";
 import Radio from "src/components/Radio";
 import { StaticImg } from "src/components/StaticImg";
 import * as Erc20 from "src/contracts/erc20";
@@ -77,12 +78,13 @@ const MintPage: NextPage = () => {
       {/* Mint */}
       {view === "mint" && (
         <>
-          <Selling
+          <CoinInput
             amount={daiInput}
             onChange={setDaiInput}
             tokenImage={DaiLogo}
             tokenName="Dai"
             balance={daiBalance}
+            label={"Selling"}
           />
           <Buying amount={dai} tokenImage={TorLogo} tokenName="Tor" />
           {wallet.state !== WalletState.Connected && (
@@ -113,12 +115,13 @@ const MintPage: NextPage = () => {
       {/* Redeem */}
       {view === "redeem" && (
         <>
-          <Selling
+          <CoinInput
             amount={torInput}
             onChange={setTorInput}
             tokenImage={TorLogo}
             tokenName="Tor"
             balance={torBalance}
+            label={"Selling"}
           />
           <Buying amount={tor} tokenImage={DaiLogo} tokenName="Dai" />
           {wallet.state !== WalletState.Connected && (
@@ -148,42 +151,6 @@ const MintPage: NextPage = () => {
     </main>
   );
 };
-
-const Selling: VFC<{
-  amount: DecimalInput;
-  tokenImage: StaticImageData;
-  tokenName: string;
-  balance: Decimal;
-  onChange: (input: string) => void;
-}> = ({ amount, tokenImage, tokenName, balance, onChange }) => (
-  <div className="block space-y-2">
-    <div className="flex">
-      <div>Selling</div>
-      <div className="flex-grow" />
-      <button className="-m-2 p-2" onClick={() => onChange(balance.toString())}>
-        MAX {balance.toFixed(2)}
-      </button>
-    </div>
-    <div className="relative">
-      <div className="pointer-events-none absolute top-1/2 left-3 flex -translate-y-1/2 gap-2">
-        <StaticImg src={tokenImage} alt={tokenName} className="h-6 w-6" />
-        <div>{tokenName}</div>
-      </div>
-      <input
-        className={classes(
-          "w-full rounded px-3 py-3 pl-11 text-right",
-          amount.isValid ? "bg-gray-100" : "bg-red-50 text-red-700",
-        )}
-        title={`${tokenName} sell amount`}
-        pattern="[0-9]*"
-        inputMode="decimal"
-        value={amount.input}
-        onChange={(e) => onChange(validateEther(e.target.value))}
-        placeholder="0.00"
-      />
-    </div>
-  </div>
-);
 
 const Buying: VFC<{
   amount: Decimal;

@@ -24,6 +24,7 @@ import {
 } from "src/util";
 import { useWallet, WalletState } from "src/wallet";
 import Radio from "src/components/Radio";
+import CoinInput from "src/components/CoinInput";
 
 export default function StakePage() {
   const [hec, hecInput, setHecInput] = useDecimalInput();
@@ -156,53 +157,15 @@ export default function StakePage() {
         </Radio>
       </div>
       {hecBalance && (
-        <Stake
+        <CoinInput
           amount={hecInput}
           tokenImage={hectorImg}
+          tokenName="Hec"
           onChange={setHecInput}
-          hecBalance={hecBalance}
+          balance={hecBalance}
+          label={"Stake"}
         />
       )}
     </main>
   );
 }
-
-const Stake: VFC<{
-  hecBalance: Decimal;
-  tokenImage: StaticImageData;
-  amount: DecimalInput;
-  onChange: (input: string) => void;
-}> = ({ hecBalance, tokenImage, amount, onChange }) => {
-  return (
-    <div className="block space-y-2">
-      <div className="flex">
-        <div>Stake</div>
-        <div className="flex-grow" />
-        <button
-          className="-m-2 p-2"
-          onClick={() => onChange(hecBalance.toString())}
-        >
-          MAX {hecBalance.toFixed(2)}
-        </button>
-      </div>
-      <div className="relative">
-        <div className="pointer-events-none absolute top-1/2 left-3 flex -translate-y-1/2 gap-2">
-          <StaticImg src={tokenImage} alt={"Hec"} className="h-6 w-6" />
-          <div>Hec</div>
-        </div>
-        <input
-          className={classes(
-            "w-full rounded px-3 py-3 pl-11 text-right",
-            amount.isValid ? "bg-gray-100" : "bg-red-50 text-red-700",
-          )}
-          title={`Hec sell amount`}
-          pattern="[0-9]*"
-          inputMode="decimal"
-          value={amount.input}
-          onChange={(e) => onChange(validateEther(e.target.value))}
-          placeholder="0.00"
-        />
-      </div>
-    </div>
-  );
-};
