@@ -1,7 +1,10 @@
 import Decimal from "decimal.js";
 import Head from "next/head";
-import { useEffect, useState, VFC } from "react";
+import { StaticImageData } from "next/image";
+import { FC, useEffect, useState, VFC } from "react";
 import RebaseTimer from "src/components/RebaseTimer";
+import { StaticImg } from "src/components/StaticImg";
+import hectorImg from "public/icons/hector.svg";
 import { FANTOM, THE_GRAPH_URL } from "src/constants";
 import { balanceOf } from "src/contracts/erc20";
 import {
@@ -10,10 +13,19 @@ import {
   getStakingIndex,
   HEC_DECIMAL,
 } from "src/contracts/stakingContract";
-import { FANTOM_HECTOR, FANTOM_sHEC, formatCurrency } from "src/util";
+import {
+  classes,
+  DecimalInput,
+  FANTOM_HECTOR,
+  FANTOM_sHEC,
+  formatCurrency,
+  useDecimalInput,
+  validateEther,
+} from "src/util";
 import { useWallet, WalletState } from "src/wallet";
 
 export default function StakePage() {
+  const [hec, hecInput, setHecInput] = useDecimalInput();
   const [stakingAPY, setStakingAPY] = useState<Decimal>();
   const [stakingTVL, setStakingTVL] = useState<string>();
   const [currentIndex, setCurrentIndex] = useState<Decimal>();
@@ -22,6 +34,7 @@ export default function StakePage() {
   const [nextRewardAmount, setNextRewardAmount] = useState<Decimal>();
   const [nextRewardYield, setNextRewardYield] = useState<Decimal>();
   const [ROI, setROI] = useState<Decimal>();
+  const [view, setView] = useState<"stake" | "unstake">();
   const wallet = useWallet();
 
   useEffect(() => {
@@ -99,67 +112,127 @@ export default function StakePage() {
         <h1 className="text-2xl font-semibold">Stake v2 (3,3)</h1>
         <RebaseTimer />
       </div>
-      <div className="flex justify-between text-center">
+      <div className="mb-10 flex justify-between text-center">
         <div>
           <div>APY</div>
           {stakingAPY && (
-            <div className="text-xl font-semibold">
+            <div className="text-xl font-semibold text-orange-500">
               {stakingAPY?.toFixed(0)}%
             </div>
           )}
         </div>
         <div>
           <div>Total Deposited</div>
-          <div className="text-xl font-semibold">{stakingTVL}</div>
+          <div className="text-xl font-semibold text-orange-500">
+            {stakingTVL}
+          </div>
         </div>
         <div>
           <div>Current Index</div>
           {currentIndex && (
-            <div className="text-xl font-semibold">
+            <div className="text-xl font-semibold text-orange-500">
               {currentIndex?.toFixed(2)}
             </div>
           )}
         </div>
       </div>
-      {hecBalance && <Stake hecBalance={hecBalance} />}
+      <div className="space-y-1">
+        <Radio
+          checked={view === "stake"}
+          onCheck={() => {
+            setView("stake");
+          }}
+        >
+          Stake
+        </Radio>
+        <Radio
+          checked={view === "unstake"}
+          onCheck={() => {
+            setView("unstake");
+          }}
+        >
+          Unstake
+        </Radio>
+      </div>
+      {hecBalance && (
+        <Stake
+          amount={hecInput}
+          tokenImage={hectorImg}
+          onChange={setHecInput}
+          hecBalance={hecBalance}
+        />
+      )}
     </main>
   );
 }
 
 const Stake: VFC<{
   hecBalance: Decimal;
-}> = ({ hecBalance }) => {
+  tokenImage: StaticImageData;
+  amount: DecimalInput;
+  onChange: (input: string) => void;
+}> = ({ hecBalance, tokenImage, amount, onChange }) => {
   return (
-    <div></div>
-    // <div className="block space-y-2">
-    //   <div className="flex">
-    //     <div>Stake</div>
-    //     <div className="flex-grow" />
-    //     <button
-    //       className="-m-2 p-2"
-    //       onClick={() => onChange(hecBalance.toString())}
-    //     >
-    //       MAX {hecBalance.toFixed(2)}
-    //     </button>
-    //   </div>
-    //   <div className="relative">
-    //     <div className="pointer-events-none absolute top-1/2 left-3 flex -translate-y-1/2 gap-2">
-    //       <StaticImg src={tokenImage} alt={tokenName} className="h-6 w-6" />
-    //       <div>{tokenName}</div>
-    //     </div>
-    //     <input
-    //       className={classes(
-    //         "w-full rounded px-3 py-3 pl-11 text-right",
-    //         amount.isValid ? "bg-gray-100" : "bg-red-50 text-red-700",
-    //       )}
-    //       title={`${tokenName} sell amount`}
-    //       pattern="[0-9]*"
-    //       inputMode="decimal"
-    //       value={amount.input}
-    //       onChange={(e) => onChange(validateEther(e.target.value))}
-    //       placeholder="0.00"
-    //     />
-    //   </div>
-    // </div>
+    <div className="block space-y-2">
+      <div className="flex">
+        <div>Stake</div>
+        <div className="flex-grow" />
+        <button
+          className="-m-2 p-2"
+          onClick={() => onChange(hecBalance.toString())}
+        >
+          MAX {hecBalance.toFixed(2)}
+        </button>
+      </div>
+      <div className="relative">
+        <div className="pointer-events-none absolute top-1/2 left-3 flex -translate-y-1/2 gap-2">
+          <StaticImg src={tokenImage} alt={"Hec"} className="h-6 w-6" />
+          <div>Hec</div>
+        </div>
+        <input
+          className={classes(
+            "w-full rounded px-3 py-3 pl-11 text-right",
+            amount.isValid ? "bg-gray-100" : "bg-red-50 text-red-700",
+          )}
+          title={`Hec sell amount`}
+          pattern="[0-9]*"
+          inputMode="decimal"
+          value={amount.input}
+          onChange={(e) => onChange(validateEther(e.target.value))}
+          placeholder="0.00"
+        />
+      </div>
+    </div>
   );
 };
+
+const Radio: FC<{ checked: boolean; onCheck: () => void }> = ({
+  children,
+  checked,
+  onCheck,
+}) => (
+  <label
+    className={classes(
+      "flex cursor-pointer items-center gap-2.5 rounded px-4 py-3",
+      checked
+        ? "bg-gray-200"
+        : "bg-gray-100 text-gray-700 hover:bg-gray-200/70",
+    )}
+  >
+    <div
+      className={classes(
+        "flex h-5 w-5 items-center justify-center rounded-full border-2 ",
+        checked ? "border-gray-900" : "border-gray-700",
+      )}
+    >
+      {checked && <div className="h-3 w-3 rounded-full bg-gray-800"></div>}
+    </div>
+    {children}
+    <input
+      type="radio"
+      className="appearance-none"
+      checked={checked}
+      onChange={onCheck}
+    />
+  </label>
+);
