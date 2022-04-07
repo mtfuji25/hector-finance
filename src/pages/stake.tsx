@@ -36,7 +36,7 @@ export default function StakePage() {
   const [nextRewardAmount, setNextRewardAmount] = useState<Decimal>();
   const [nextRewardYield, setNextRewardYield] = useState<Decimal>();
   const [ROI, setROI] = useState<Decimal>();
-  const [view, setView] = useState<"stake" | "unstake">();
+  const [view, setView] = useState<"stake" | "unstake">("stake");
   const wallet = useWallet();
 
   useEffect(() => {
@@ -138,7 +138,7 @@ export default function StakePage() {
           )}
         </div>
       </div>
-      <div className="space-y-1">
+      <div className="mb-7 space-y-1">
         <Radio
           checked={view === "stake"}
           onCheck={() => {
@@ -156,7 +156,7 @@ export default function StakePage() {
           Unstake
         </Radio>
       </div>
-      {hecBalance && (
+      {hecBalance && view === "stake" && (
         <CoinInput
           amount={hecInput}
           tokenImage={hectorImg}
@@ -164,6 +164,16 @@ export default function StakePage() {
           onChange={setHecInput}
           balance={hecBalance}
           label={"Stake"}
+        />
+      )}
+      {sHecBalance && view === "unstake" && (
+        <CoinInput
+          amount={hecInput}
+          tokenImage={hectorImg}
+          tokenName="Hec"
+          onChange={setHecInput}
+          balance={sHecBalance}
+          label={"Unstake"}
         />
       )}
     </main>

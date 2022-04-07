@@ -8,6 +8,7 @@ import React, { FC, useMemo, useReducer, useState, VFC } from "react";
 import CoinInput from "src/components/CoinInput";
 import Radio from "src/components/Radio";
 import { StaticImg } from "src/components/StaticImg";
+import Submit from "src/components/Submit";
 import * as Erc20 from "src/contracts/erc20";
 import {
   mintWithDai,
@@ -172,25 +173,6 @@ const Buying: VFC<{
       )}
     </div>
   </div>
-);
-
-const Submit: FC<{
-  label: string;
-  disabled?: boolean;
-  onClick?: () => void;
-}> = ({ label, onClick, disabled = false }) => (
-  <input
-    type="submit"
-    className={classes(
-      "ml-auto block rounded px-10 py-3",
-      !disabled
-        ? "cursor-pointer bg-orange-500 text-white"
-        : "cursor-not-allowed bg-gray-200 text-gray-400",
-    )}
-    disabled={disabled}
-    value={label}
-    onClick={onClick}
-  />
 );
 
 /// ===========================================================================
