@@ -12,6 +12,7 @@ import {
   getHecCircSupply,
   getStakingIndex,
   HEC_DECIMAL,
+  stake,
 } from "src/contracts/stakingContract";
 import {
   classes,
@@ -25,6 +26,7 @@ import {
 import { useWallet, WalletState } from "src/wallet";
 import Radio from "src/components/Radio";
 import CoinInput from "src/components/CoinInput";
+import Submit from "src/components/Submit";
 
 export default function StakePage() {
   const [hec, hecInput, setHecInput] = useDecimalInput();
@@ -38,6 +40,8 @@ export default function StakePage() {
   const [ROI, setROI] = useState<Decimal>();
   const [view, setView] = useState<"stake" | "unstake">("stake");
   const wallet = useWallet();
+
+  const unStake = () => {};
 
   useEffect(() => {
     const getStakingData = async () => {
@@ -110,7 +114,7 @@ export default function StakePage() {
       <Head>
         <title>Stake — Hector Finance</title>
       </Head>
-      <div className="mb-7">
+      <div className="mb-5">
         <h1 className="text-2xl font-semibold">Stake v2 (3,3)</h1>
         <RebaseTimer />
       </div>
@@ -138,7 +142,7 @@ export default function StakePage() {
           )}
         </div>
       </div>
-      <div className="mb-7 space-y-1">
+      <div className="mb-5 space-y-1">
         <Radio
           checked={view === "stake"}
           onCheck={() => {
@@ -175,6 +179,18 @@ export default function StakePage() {
           balance={sHecBalance}
           label={"Unstake"}
         />
+      )}
+      {wallet.state === WalletState.Connected && hecBalance && (
+        <div className="mt-5">
+          <Submit
+            onClick={() =>
+              view === "stake"
+                ? stake(wallet.provider, wallet.address, hecBalance)
+                : unStake()
+            }
+            label={view === "stake" ? "Stake" : "Unstake"}
+          ></Submit>
+        </div>
       )}
     </main>
   );

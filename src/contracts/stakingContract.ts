@@ -5,9 +5,15 @@ import {
   methodId,
   StateMutability,
 } from "src/abi";
-import { getParameter, ok } from "src/util";
+import { FANTOM_HECTOR, getParameter, ok } from "src/util";
 import { FANTOM } from "src/constants";
-import { call, Provider, ProviderRpcError } from "src/provider";
+import {
+  call,
+  Provider,
+  ProviderRpcError,
+  sendTransaction,
+  TransactionAddress,
+} from "src/provider";
 import { Result } from "src/util";
 import { Decimal } from "decimal.js";
 
@@ -109,5 +115,37 @@ const STAKING_INDEX: Interface = {
   name: "index",
   outputs: [{ name: "", type: "uint256" }],
   stateMutability: StateMutability.View,
+  type: InterfaceType.Function,
+};
+
+export async function stake(
+  provider: Provider,
+  owner: string,
+  hec: Decimal,
+): Promise<Result<TransactionAddress, ProviderRpcError>> {
+  const wei = hex256(hec.mul(FANTOM_HECTOR.wei).trunc().toHex());
+  const method = await methodId(STAKE);
+  const result = await sendTransaction(provider, {
+    from: owner,
+    to: FANTOM.STAKING_HELPER_ADDRESS,
+    data: "0x" + method + wei,
+  });
+  return result;
+}
+
+const STAKE: Interface = {
+  inputs: [
+    {
+      name: "_amount",
+      type: "uint256",
+    },
+    {
+      name: "_recipient",
+      type: "address",
+    },
+  ],
+  name: "stake",
+  outputs: [],
+  stateMutability: StateMutability.NonPayable,
   type: InterfaceType.Function,
 };
