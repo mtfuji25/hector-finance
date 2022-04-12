@@ -1,7 +1,7 @@
 import Decimal from "decimal.js";
 import Head from "next/head";
 import { StaticImageData } from "next/image";
-import { FC, useEffect, useState, VFC } from "react";
+import { FC, useEffect, useMemo, useReducer, useState, VFC } from "react";
 import RebaseTimer from "src/components/RebaseTimer";
 import { StaticImg } from "src/components/StaticImg";
 import hectorImg from "public/icons/hector.svg";
@@ -13,35 +13,84 @@ import {
   getStakingIndex,
   HEC_DECIMAL,
   stake,
+  unStake,
 } from "src/contracts/stakingContract";
 import {
-  classes,
-  DecimalInput,
+  Erc20Token,
+  FANTOM_BLOCK_TIME,
   FANTOM_HECTOR,
   FANTOM_sHEC,
   formatCurrency,
+  sleep,
+  useAsyncEffect,
   useDecimalInput,
-  validateEther,
 } from "src/util";
-import { useWallet, WalletState } from "src/wallet";
+import { useWallet, Wallet, WalletState } from "src/wallet";
 import Radio from "src/components/Radio";
 import CoinInput from "src/components/CoinInput";
 import Submit from "src/components/Submit";
+import * as Erc20 from "src/contracts/erc20";
+
+function useBalance(
+  token: Erc20Token,
+  wallet: Wallet,
+): [Decimal, React.DispatchWithoutAction] {
+  const [balance, setBalance] = useState(new Decimal(0));
+
+  /**
+   * Whenever `refreshes` bumps, we need to restart the
+   * polling `useAsyncEffect` below.
+   */
+  const [refreshes, refreshBalance] = useReducer(
+    (prev: number): number => prev + 1,
+    0,
+  );
+
+  useAsyncEffect(
+    async (signal) => {
+      if (wallet.state !== WalletState.Connected) {
+        return;
+      }
+
+      while (!signal.abort) {
+        const freshBalance = await Erc20.balanceOf(
+          wallet.provider,
+          token,
+          wallet.address,
+        );
+
+        if (signal.abort) {
+          return;
+        }
+
+        if (freshBalance.isOk) {
+          setBalance((prev) =>
+            prev.eq(freshBalance.value) ? prev : freshBalance.value,
+          );
+        }
+
+        // If this timeout is too slow, you can probably make it faster.
+        await sleep(FANTOM_BLOCK_TIME * 10);
+      }
+    },
+    [token, wallet, refreshes],
+  );
+
+  return useMemo(() => [balance, refreshBalance], [balance, refreshBalance]);
+}
 
 export default function StakePage() {
+  const wallet = useWallet();
   const [hec, hecInput, setHecInput] = useDecimalInput();
   const [stakingAPY, setStakingAPY] = useState<Decimal>();
   const [stakingTVL, setStakingTVL] = useState<string>();
   const [currentIndex, setCurrentIndex] = useState<Decimal>();
-  const [hecBalance, setHecBalance] = useState<Decimal>();
-  const [sHecBalance, setsHecBalance] = useState<Decimal>();
+  const [hecBalance, refreshHecBalance] = useBalance(FANTOM_HECTOR, wallet);
+  const [sHecBalance, refreshsHecBalance] = useBalance(FANTOM_sHEC, wallet);
   const [nextRewardAmount, setNextRewardAmount] = useState<Decimal>();
   const [nextRewardYield, setNextRewardYield] = useState<Decimal>();
   const [ROI, setROI] = useState<Decimal>();
   const [view, setView] = useState<"stake" | "unstake">("stake");
-  const wallet = useWallet();
-
-  const unStake = () => {};
 
   useEffect(() => {
     const getStakingData = async () => {
@@ -49,14 +98,9 @@ export default function StakePage() {
         Promise.all([
           getEpochInfo(wallet.provider),
           getHecCircSupply(wallet.provider),
-          balanceOf(wallet.provider, FANTOM_HECTOR, wallet.address),
           balanceOf(wallet.provider, FANTOM_sHEC, wallet.address),
-        ]).then(([epoch, circ, hecBalance, sHecBalance]) => {
-          if (hecBalance.isOk) {
-            setHecBalance(hecBalance.value);
-          }
-          if (circ.isOk && epoch.isOk && sHecBalance.isOk) {
-            setsHecBalance(sHecBalance.value);
+        ]).then(([epoch, circ]) => {
+          if (circ.isOk && epoch.isOk) {
             const stakingRebase = epoch.value.distribute.div(
               new Decimal(circ.value),
             );
@@ -146,6 +190,8 @@ export default function StakePage() {
         <Radio
           checked={view === "stake"}
           onCheck={() => {
+            setHecInput("");
+            refreshHecBalance();
             setView("stake");
           }}
         >
@@ -154,6 +200,8 @@ export default function StakePage() {
         <Radio
           checked={view === "unstake"}
           onCheck={() => {
+            setHecInput("");
+            refreshsHecBalance();
             setView("unstake");
           }}
         >
@@ -180,13 +228,13 @@ export default function StakePage() {
           label={"Unstake"}
         />
       )}
-      {wallet.state === WalletState.Connected && hecBalance && (
+      {wallet.state === WalletState.Connected && hecBalance && sHecBalance && (
         <div className="mt-5">
           <Submit
             onClick={() =>
               view === "stake"
                 ? stake(wallet.provider, wallet.address, hecBalance)
-                : unStake()
+                : unStake(wallet.provider, wallet.address, sHecBalance)
             }
             label={view === "stake" ? "Stake" : "Unstake"}
           ></Submit>

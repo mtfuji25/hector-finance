@@ -128,7 +128,7 @@ export async function stake(
   const result = await sendTransaction(provider, {
     from: owner,
     to: FANTOM.STAKING_HELPER_ADDRESS,
-    data: "0x" + method + wei,
+    data: "0x" + method + wei + hex256(owner),
   });
   return result;
 }
@@ -145,6 +145,32 @@ const STAKE: Interface = {
     },
   ],
   name: "stake",
+  outputs: [],
+  stateMutability: StateMutability.NonPayable,
+  type: InterfaceType.Function,
+};
+
+export async function unStake(
+  provider: Provider,
+  owner: string,
+  sHec: Decimal,
+): Promise<Result<TransactionAddress, ProviderRpcError>> {
+  const wei = hex256(sHec.mul(FANTOM_HECTOR.wei).trunc().toHex());
+  const method = await methodId(UNSTAKE);
+  const result = await sendTransaction(provider, {
+    from: owner,
+    to: FANTOM.STAKING_ADDRESS,
+    data: "0x" + method + wei + hex256(owner),
+  });
+  return result;
+}
+
+const UNSTAKE: Interface = {
+  inputs: [
+    { name: "_amount", type: "uint256" },
+    { name: "_trigger", type: "bool" },
+  ],
+  name: "unstake",
   outputs: [],
   stateMutability: StateMutability.NonPayable,
   type: InterfaceType.Function,
