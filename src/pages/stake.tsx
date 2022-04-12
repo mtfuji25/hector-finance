@@ -98,7 +98,6 @@ export default function StakePage() {
         Promise.all([
           getEpochInfo(wallet.provider),
           getHecCircSupply(wallet.provider),
-          balanceOf(wallet.provider, FANTOM_sHEC, wallet.address),
         ]).then(([epoch, circ]) => {
           if (circ.isOk && epoch.isOk) {
             const stakingRebase = epoch.value.distribute.div(
@@ -130,7 +129,7 @@ export default function StakePage() {
       }
     };
     getStakingData();
-  }, [wallet]);
+  }, [wallet, sHecBalance]);
 
   useEffect(() => {
     fetch(THE_GRAPH_URL, {
