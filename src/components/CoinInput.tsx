@@ -1,4 +1,5 @@
 import Decimal from "decimal.js";
+import { StaticImageData } from "next/image";
 import { VFC } from "react";
 import { classes, DecimalInput, validateEther } from "src/util";
 import { StaticImg } from "./StaticImg";
@@ -9,14 +10,23 @@ const CoinInput: VFC<{
   tokenName: string;
   balance: Decimal;
   label: string;
+  decimalAmount: number;
   onChange: (input: string) => void;
-}> = ({ amount, tokenImage, tokenName, label, balance, onChange }) => (
+}> = ({
+  amount,
+  tokenImage,
+  tokenName,
+  label,
+  balance,
+  decimalAmount,
+  onChange,
+}) => (
   <div className="block space-y-2">
     <div className="flex">
       <div>{label}</div>
       <div className="flex-grow" />
       <button className="-m-2 p-2" onClick={() => onChange(balance.toString())}>
-        MAX {balance.toFixed(2)}
+        MAX {balance.toFixed(decimalAmount)}
       </button>
     </div>
     <div className="relative">

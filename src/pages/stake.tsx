@@ -82,6 +82,7 @@ function useBalance(
 export default function StakePage() {
   const wallet = useWallet();
   const [hec, hecInput, setHecInput] = useDecimalInput();
+  const [sHec, sHecInput, setsHecInput] = useDecimalInput();
   const [stakingAPY, setStakingAPY] = useState<Decimal>();
   const [stakingTVL, setStakingTVL] = useState<string>();
   const [currentIndex, setCurrentIndex] = useState<Decimal>();
@@ -199,7 +200,7 @@ export default function StakePage() {
         <Radio
           checked={view === "unstake"}
           onCheck={() => {
-            setHecInput("");
+            setsHecInput("");
             refreshsHecBalance();
             setView("unstake");
           }}
@@ -215,16 +216,18 @@ export default function StakePage() {
           onChange={setHecInput}
           balance={hecBalance}
           label={"Stake"}
+          decimalAmount={FANTOM_HECTOR.decimals}
         />
       )}
       {sHecBalance && view === "unstake" && (
         <CoinInput
-          amount={hecInput}
+          amount={sHecInput}
           tokenImage={hectorImg}
           tokenName="Hec"
-          onChange={setHecInput}
+          onChange={setsHecInput}
           balance={sHecBalance}
           label={"Unstake"}
+          decimalAmount={FANTOM_sHEC.decimals}
         />
       )}
       {wallet.state === WalletState.Connected && hecBalance && sHecBalance && (
@@ -232,8 +235,8 @@ export default function StakePage() {
           <Submit
             onClick={() =>
               view === "stake"
-                ? stake(wallet.provider, wallet.address, hecBalance)
-                : unStake(wallet.provider, wallet.address, sHecBalance)
+                ? stake(wallet.provider, wallet.address, hec)
+                : unStake(wallet.provider, wallet.address, sHec)
             }
             label={view === "stake" ? "Stake" : "Unstake"}
           ></Submit>

@@ -86,6 +86,7 @@ const MintPage: NextPage = () => {
             tokenName="Dai"
             balance={daiBalance}
             label={"Selling"}
+            decimalAmount={FANTOM_DAI.decimals}
           />
           <Buying amount={dai} tokenImage={TorLogo} tokenName="Tor" />
           {wallet.state !== WalletState.Connected && (
@@ -123,6 +124,7 @@ const MintPage: NextPage = () => {
             tokenName="Tor"
             balance={torBalance}
             label={"Selling"}
+            decimalAmount={FANTOM_TOR.decimals}
           />
           <Buying amount={tor} tokenImage={DaiLogo} tokenName="Dai" />
           {wallet.state !== WalletState.Connected && (
