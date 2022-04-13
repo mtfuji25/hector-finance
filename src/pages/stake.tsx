@@ -162,7 +162,7 @@ export default function StakePage() {
         <h1 className="text-2xl font-semibold">Stake v2 (3,3)</h1>
         <RebaseTimer />
       </div>
-      <div className="mb-10 flex justify-between text-center">
+      <div className="mb-5 flex justify-between text-center">
         <div>
           <div>APY</div>
           {stakingAPY && (
@@ -208,28 +208,43 @@ export default function StakePage() {
           Unstake
         </Radio>
       </div>
-      {hecBalance && view === "stake" && (
-        <CoinInput
-          amount={hecInput}
-          tokenImage={hectorImg}
-          tokenName="Hec"
-          onChange={setHecInput}
-          balance={hecBalance}
-          label={"Stake"}
-          decimalAmount={FANTOM_HECTOR.decimals}
-        />
-      )}
-      {sHecBalance && view === "unstake" && (
-        <CoinInput
-          amount={sHecInput}
-          tokenImage={hectorImg}
-          tokenName="Hec"
-          onChange={setsHecInput}
-          balance={sHecBalance}
-          label={"Unstake"}
-          decimalAmount={FANTOM_sHEC.decimals}
-        />
-      )}
+      <div className="mb-5">
+        {hecBalance && view === "stake" && (
+          <CoinInput
+            amount={hecInput}
+            tokenImage={hectorImg}
+            tokenName="Hec"
+            onChange={setHecInput}
+            balance={hecBalance}
+            label={"Stake"}
+            decimalAmount={FANTOM_HECTOR.decimals}
+          />
+        )}
+        {sHecBalance && view === "unstake" && (
+          <CoinInput
+            amount={sHecInput}
+            tokenImage={hectorImg}
+            tokenName="Hec"
+            onChange={setsHecInput}
+            balance={sHecBalance}
+            label={"Unstake"}
+            decimalAmount={FANTOM_sHEC.decimals}
+          />
+        )}
+      </div>
+
+      <div className="flex">
+        <div className="flex-1 text-base">Next Reward Amount</div>
+        <div>{nextRewardAmount?.toFixed(4)}</div>
+      </div>
+      <div className="flex">
+        <div className="flex-1 text-base">Next Reward Yield</div>
+        <div>{nextRewardYield?.toFixed(4)} %</div>
+      </div>
+      <div className="flex">
+        <div className="flex-1 text-base">ROI (5-Day Rate)</div>
+        <div>{ROI?.toFixed(4)} %</div>
+      </div>
       {wallet.state === WalletState.Connected && hecBalance && sHecBalance && (
         <div className="mt-5">
           <Submit
