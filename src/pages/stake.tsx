@@ -111,7 +111,11 @@ export default function StakePage() {
                 .map((balance) => Number(balance))
                 .reduce((a, b) => a + b, 0),
             );
-            setROI(Decimal.pow(stakingRebase.plus(1), 5 * 3).minus(1));
+            setROI(
+              Decimal.pow(stakingRebase.plus(1), 5 * 3)
+                .minus(1)
+                .times(100),
+            );
             setNextRewardYield(stakingRebasePercentage);
             setNextRewardAmount(
               stakingRebasePercentage.div(100).times(trimmedBalance),

@@ -9,7 +9,7 @@ const Submit: FC<{
   <input
     type="submit"
     className={classes(
-      "ml-auto block rounded px-10 py-3",
+      "ml-auto block rounded px-7 py-2",
       !disabled
         ? "cursor-pointer bg-orange-500 text-white"
         : "cursor-not-allowed bg-gray-200 text-gray-400",
