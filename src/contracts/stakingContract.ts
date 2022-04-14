@@ -37,6 +37,15 @@ export async function getEpochInfo(
   if (!result.isOk) {
     return result;
   }
+  if (result.value === "0x") {
+    const zeroDecimal = new Decimal(0);
+    return ok({
+      length: zeroDecimal,
+      number: zeroDecimal,
+      endBlock: zeroDecimal,
+      distribute: zeroDecimal,
+    });
+  }
   const length = new Decimal(getParameter(0, result.value));
   const number = new Decimal(getParameter(1, result.value));
   const endBlock = new Decimal(getParameter(2, result.value));
@@ -81,6 +90,10 @@ export async function getHecCircSupply(
   if (!result.isOk) {
     return result;
   }
+  if (result.value === "0x") {
+    result.value = "0x0";
+    return ok(result.value);
+  }
   const circ = new Decimal(getParameter(0, result.value));
 
   return ok(circ.toString());
@@ -104,6 +117,10 @@ export async function getStakingIndex(
   });
   if (!result.isOk) {
     return result;
+  }
+  if (result.value === "0x") {
+    result.value = "0x0";
+    return ok(result.value);
   }
   const index = new Decimal(getParameter(0, result.value));
 
