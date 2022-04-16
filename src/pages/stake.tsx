@@ -104,7 +104,6 @@ export default function StakePage() {
     () => unstakeAllowance?.gt(0),
     [unstakeAllowance],
   );
-  console.log(hasUnstakeAllowance);
   useEffect(() => {
     const getStakingData = async () => {
       if (wallet.state === WalletState.Connected) {
@@ -129,7 +128,6 @@ export default function StakePage() {
           }
           if (unstakingAllowance.isOk) {
             setUnstakingAllowance(unstakingAllowance.value);
-            console.log(unstakingAllowance.value.toString());
           }
           if (circ.isOk && epoch.isOk) {
             const stakingRebase = epoch.value.distribute.div(
