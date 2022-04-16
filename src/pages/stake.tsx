@@ -6,7 +6,7 @@ import RebaseTimer from "src/components/RebaseTimer";
 import { StaticImg } from "src/components/StaticImg";
 import hectorImg from "public/icons/hector.svg";
 import { FANTOM, THE_GRAPH_URL } from "src/constants";
-import { balanceOf } from "src/contracts/erc20";
+import { allowance, approve, balanceOf } from "src/contracts/erc20";
 import {
   getEpochInfo,
   getHecCircSupply,
@@ -84,6 +84,8 @@ export default function StakePage() {
   const [hec, hecInput, setHecInput] = useDecimalInput();
   const [sHec, sHecInput, setsHecInput] = useDecimalInput();
   const [stakingAPY, setStakingAPY] = useState<Decimal>();
+  const [stakeAllowance, setStakingAllowance] = useState<Decimal>();
+  const [unstakeAllowance, setUnstakingAllowance] = useState<Decimal>();
   const [stakingTVL, setStakingTVL] = useState<string>();
   const [currentIndex, setCurrentIndex] = useState<Decimal>();
   const [hecBalance, refreshHecBalance] = useBalance(FANTOM_HECTOR, wallet);
@@ -93,13 +95,42 @@ export default function StakePage() {
   const [ROI, setROI] = useState<Decimal>();
   const [view, setView] = useState<"stake" | "unstake">("stake");
 
+  const hasStakeAllowance = useMemo(
+    () => stakeAllowance?.gt(0) && stakeAllowance > hecBalance,
+    [stakeAllowance, hecBalance],
+  );
+
+  const hasUnstakeAllowance = useMemo(
+    () => unstakeAllowance?.gt(0),
+    [unstakeAllowance],
+  );
+  console.log(hasUnstakeAllowance);
   useEffect(() => {
     const getStakingData = async () => {
       if (wallet.state === WalletState.Connected) {
         Promise.all([
           getEpochInfo(wallet.provider),
           getHecCircSupply(wallet.provider),
-        ]).then(([epoch, circ]) => {
+          allowance(
+            wallet.provider,
+            FANTOM_HECTOR,
+            wallet.address,
+            FANTOM.STAKING_HELPER_ADDRESS,
+          ),
+          allowance(
+            wallet.provider,
+            FANTOM_sHEC,
+            wallet.address,
+            FANTOM.STAKING_ADDRESS,
+          ),
+        ]).then(([epoch, circ, stakingAllowance, unstakingAllowance]) => {
+          if (stakingAllowance.isOk) {
+            setStakingAllowance(stakingAllowance.value);
+          }
+          if (unstakingAllowance.isOk) {
+            setUnstakingAllowance(unstakingAllowance.value);
+            console.log(unstakingAllowance.value.toString());
+          }
           if (circ.isOk && epoch.isOk) {
             const stakingRebase = epoch.value.distribute.div(
               new Decimal(circ.value),
@@ -190,76 +221,122 @@ export default function StakePage() {
           )}
         </div>
       </div>
-      <div className="mb-5 space-y-1">
-        <Radio
-          checked={view === "stake"}
-          onCheck={() => {
-            setHecInput("");
-            refreshHecBalance();
-            setView("stake");
-          }}
-        >
-          Stake
-        </Radio>
-        <Radio
-          checked={view === "unstake"}
-          onCheck={() => {
-            setsHecInput("");
-            refreshsHecBalance();
-            setView("unstake");
-          }}
-        >
-          Unstake
-        </Radio>
-      </div>
-      <div className="mb-5">
-        {hecBalance && view === "stake" && (
-          <CoinInput
-            amount={hecInput}
-            tokenImage={hectorImg}
-            tokenName="Hec"
-            onChange={setHecInput}
-            balance={hecBalance}
-            label={"Stake"}
-            decimalAmount={FANTOM_HECTOR.decimals}
-          />
-        )}
-        {sHecBalance && view === "unstake" && (
-          <CoinInput
-            amount={sHecInput}
-            tokenImage={hectorImg}
-            tokenName="Hec"
-            onChange={setsHecInput}
-            balance={sHecBalance}
-            label={"Unstake"}
-            decimalAmount={FANTOM_sHEC.decimals}
-          />
-        )}
-      </div>
+      {WalletState.Disconnected !== wallet.state && (
+        <>
+          <div className="mb-5 space-y-1">
+            <Radio
+              checked={view === "stake"}
+              onCheck={() => {
+                setHecInput("");
+                refreshHecBalance();
+                setView("stake");
+              }}
+            >
+              Stake
+            </Radio>
+            <Radio
+              checked={view === "unstake"}
+              onCheck={() => {
+                setsHecInput("");
+                refreshsHecBalance();
+                setView("unstake");
+              }}
+            >
+              Unstake
+            </Radio>
+          </div>
+          <div className="mb-5">
+            {hecBalance && view === "stake" && (
+              <CoinInput
+                amount={hecInput}
+                tokenImage={hectorImg}
+                tokenName="Hec"
+                onChange={setHecInput}
+                balance={hecBalance}
+                label={"Stake"}
+                decimalAmount={FANTOM_HECTOR.decimals}
+              />
+            )}
+            {sHecBalance && view === "unstake" && (
+              <CoinInput
+                amount={sHecInput}
+                tokenImage={hectorImg}
+                tokenName="Hec"
+                onChange={setsHecInput}
+                balance={sHecBalance}
+                label={"Unstake"}
+                decimalAmount={FANTOM_sHEC.decimals}
+              />
+            )}
+          </div>
 
-      <div className="flex">
-        <div className="flex-1 text-base">Next Reward Amount</div>
-        <div>{nextRewardAmount?.toFixed(4)}</div>
-      </div>
-      <div className="flex">
-        <div className="flex-1 text-base">Next Reward Yield</div>
-        <div>{nextRewardYield?.toFixed(4)} %</div>
-      </div>
-      <div className="flex">
-        <div className="flex-1 text-base">ROI (5-Day Rate)</div>
-        <div>{ROI?.toFixed(4)} %</div>
-      </div>
-      {wallet.state === WalletState.Connected && hecBalance && sHecBalance && (
-        <div className="mt-5">
-          <Submit
-            onClick={() =>
-              view === "stake"
-                ? stake(wallet.provider, wallet.address, hec)
-                : unStake(wallet.provider, wallet.address, sHec)
-            }
-            label={view === "stake" ? "Stake" : "Unstake"}
-          ></Submit>
-        </div>
+          <div className="flex">
+            <div className="flex-1 text-base">Next Reward Amount</div>
+            <div>{nextRewardAmount?.toFixed(4)}</div>
+          </div>
+          <div className="flex">
+            <div className="flex-1 text-base">Next Reward Yield</div>
+            <div>{nextRewardYield?.toFixed(4)}%</div>
+          </div>
+          <div className="flex">
+            <div className="flex-1 text-base">ROI (5-Day Rate)</div>
+            <div>{ROI?.toFixed(4)}%</div>
+          </div>
+          {wallet.state === WalletState.Connected && (
+            <>
+              {view === "stake" && !hasStakeAllowance && (
+                <div className="mt-5">
+                  <Submit
+                    onClick={() =>
+                      approve(
+                        wallet.provider,
+                        FANTOM_HECTOR,
+                        wallet.address,
+                        FANTOM.STAKING_HELPER_ADDRESS,
+                        new Decimal(1_000_000_000),
+                      )
+                    }
+                    label={"Approve"}
+                  ></Submit>
+                </div>
+              )}
+              {view === "stake" && hasStakeAllowance && (
+                <div className="mt-5">
+                  <Submit
+                    onClick={() => stake(wallet.provider, wallet.address, hec)}
+                    label={"Stake"}
+                  ></Submit>
+                </div>
+              )}
+              {view === "unstake" && !hasUnstakeAllowance && (
+                <div className="mt-5">
+                  <Submit
+                    onClick={() =>
+                      approve(
+                        wallet.provider,
+                        FANTOM_sHEC,
+                        wallet.address,
+                        FANTOM.STAKING_ADDRESS,
+                        new Decimal(1_000_000_000),
+                      )
+                    }
+                    label={"Approve"}
+                  ></Submit>
+                </div>
+              )}
+              {view === "unstake" && hasUnstakeAllowance && (
+                <div className="mt-5">
+                  <Submit
+                    onClick={() =>
+                      unStake(wallet.provider, wallet.address, sHec)
+                    }
+                    label={"Unstake"}
+                  ></Submit>
+                </div>
+              )}
+            </>
+          )}
+        </>
       )}
     </main>
   );
