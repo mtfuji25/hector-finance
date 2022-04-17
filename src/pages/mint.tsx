@@ -9,12 +9,10 @@ import CoinInput from "src/components/CoinInput";
 import Radio from "src/components/Radio";
 import { StaticImg } from "src/components/StaticImg";
 import Submit from "src/components/Submit";
+import { FANTOM } from "src/constants";
 import * as Erc20 from "src/contracts/erc20";
-import {
-  mintWithDai,
-  redeemToDai,
-  TOR_MINTER_ADDRESS,
-} from "src/contracts/torMinter";
+import { mintWithDai, redeemToDai } from "src/contracts/torMinter";
+import { useAllowance } from "src/hooks/allowance";
 import {
   classes,
   DecimalInput,
@@ -35,8 +33,16 @@ const MintPage: NextPage = () => {
   const [tor, torInput, setTorInput] = useDecimalInput();
   const [view, setView] = useState<"mint" | "redeem">("mint");
 
-  const daiAllowance = useAllowance(FANTOM_DAI, wallet);
-  const torAllowance = useAllowance(FANTOM_TOR, wallet);
+  const daiAllowance = useAllowance(
+    FANTOM_DAI,
+    wallet,
+    FANTOM.TOR_MINTER_ADDRESS,
+  );
+  const torAllowance = useAllowance(
+    FANTOM_TOR,
+    wallet,
+    FANTOM.TOR_MINTER_ADDRESS,
+  );
   const [daiBalance, refreshDaiBalance] = useBalance(FANTOM_DAI, wallet);
   const [torBalance, refreshTorBalance] = useBalance(FANTOM_TOR, wallet);
 
@@ -234,104 +240,5 @@ function useBalance(
 
   return useMemo(() => [balance, refreshBalance], [balance, refreshBalance]);
 }
-
-/**
- * TODO: Documentation and abstraction.
- */
-function useAllowance(token: Erc20Token, wallet: Wallet): Allowance {
-  const [allowance, setAllowance] = useWalletState<
-    Perishable<Decimal> | undefined
-  >(undefined);
-
-  useAsyncEffect(
-    async (signal) => {
-      if (wallet.state !== WalletState.Connected || allowance?.isFresh) {
-        return;
-      }
-
-      while (!signal.abort) {
-        const freshAllowance = await Erc20.allowance(
-          wallet.provider,
-          token,
-          wallet.address,
-          TOR_MINTER_ADDRESS,
-        );
-
-        if (signal.abort) {
-          return;
-        }
-
-        if (freshAllowance.isOk) {
-          const isTrulyFresh =
-            allowance == undefined || !allowance.stale.eq(freshAllowance.value);
-
-          if (isTrulyFresh) {
-            setAllowance({ isFresh: true, current: freshAllowance.value });
-            return;
-          }
-        }
-
-        await sleep(FANTOM_BLOCK_TIME);
-      }
-    },
-    [token, wallet, allowance],
-  );
-
-  return useMemo(() => {
-    if (wallet.state != WalletState.Connected) {
-      return { type: "NoWallet" };
-    }
-    if (allowance == undefined || !allowance.isFresh) {
-      return { type: "Updating" };
-    }
-    if (allowance.current.gt(0)) {
-      return {
-        type: "HasAllowance",
-        disapprove: async () => {
-          const result = await Erc20.approve(
-            wallet.provider,
-            token,
-            wallet.address,
-            TOR_MINTER_ADDRESS,
-            new Decimal(0),
-          );
-          if (result.isOk) {
-            setAllowance({ isFresh: false, stale: allowance.current });
-          }
-        },
-      };
-    } else {
-      return {
-        type: "NoAllowance",
-        approve: async () => {
-          const result = await Erc20.approve(
-            wallet.provider,
-            token,
-            wallet.address,
-            TOR_MINTER_ADDRESS,
-            new Decimal(1_000_000),
-          );
-          if (result.isOk) {
-            setAllowance({ isFresh: false, stale: allowance.current });
-          }
-        },
-      };
-    }
-  }, [wallet, allowance, setAllowance, token]);
-}
-
-/** A value that could be either fresh or stale. Ideally, values
- * should be kept fresh. If a value is made stale, replace it with
- * a fresh value ASAP! (probably by polling the blockchain)
- */
-type Perishable<T> =
-  | { isFresh: false; stale: T }
-  | { isFresh: true; current: T };
-
-type Allowance =
-  | { type: "NoWallet" }
-  | { type: "Updating" }
-  | { type: "NoAllowance"; approve: () => void }
-  | { type: "HasAllowance"; disapprove: () => void };
 
 export default MintPage;
