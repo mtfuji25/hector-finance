@@ -201,115 +201,110 @@ export default function StakePage() {
           )}
         </div>
       </div>
-      {WalletState.Disconnected !== wallet.state && (
+
+      <div className="mb-5 space-y-1">
+        <Radio
+          checked={view === "stake"}
+          onCheck={() => {
+            setHecInput("");
+            refreshHecBalance();
+            setView("stake");
+          }}
+        >
+          Stake
+        </Radio>
+        <Radio
+          checked={view === "unstake"}
+          onCheck={() => {
+            setsHecInput("");
+            refreshsHecBalance();
+            setView("unstake");
+          }}
+        >
+          Unstake
+        </Radio>
+      </div>
+      <div className="mb-5">
+        {hecBalance && view === "stake" && (
+          <CoinInput
+            amount={hecInput}
+            tokenImage={hectorImg}
+            tokenName="Hec"
+            onChange={setHecInput}
+            balance={hecBalance}
+            label={"Stake"}
+            decimalAmount={FANTOM_HECTOR.decimals}
+          />
+        )}
+        {sHecBalance && view === "unstake" && (
+          <CoinInput
+            amount={sHecInput}
+            tokenImage={hectorImg}
+            tokenName="Hec"
+            onChange={setsHecInput}
+            balance={sHecBalance}
+            label={"Unstake"}
+            decimalAmount={FANTOM_sHEC.decimals}
+          />
+        )}
+      </div>
+
+      <div className="flex">
+        <div className="flex-1 text-base">Next Reward Amount</div>
+        <div>{nextRewardAmount?.toFixed(4)}</div>
+      </div>
+      <div className="flex">
+        <div className="flex-1 text-base">Next Reward Yield</div>
+        <div>{nextRewardYield?.toFixed(4)}%</div>
+      </div>
+      <div className="mb-5 flex">
+        <div className="flex-1 text-base">ROI (5-Day Rate)</div>
+        <div>{ROI?.toFixed(4)}%</div>
+      </div>
+      {wallet.state === WalletState.Connected && (
         <>
-          <div className="mb-5 space-y-1">
-            <Radio
-              checked={view === "stake"}
-              onCheck={() => {
-                setHecInput("");
-                refreshHecBalance();
-                setView("stake");
-              }}
-            >
-              Stake
-            </Radio>
-            <Radio
-              checked={view === "unstake"}
-              onCheck={() => {
-                setsHecInput("");
-                refreshsHecBalance();
-                setView("unstake");
-              }}
-            >
-              Unstake
-            </Radio>
-          </div>
-          <div className="mb-5">
-            {hecBalance && view === "stake" && (
-              <CoinInput
-                amount={hecInput}
-                tokenImage={hectorImg}
-                tokenName="Hec"
-                onChange={setHecInput}
-                balance={hecBalance}
-                label={"Stake"}
-                decimalAmount={FANTOM_HECTOR.decimals}
-              />
-            )}
-            {sHecBalance && view === "unstake" && (
-              <CoinInput
-                amount={sHecInput}
-                tokenImage={hectorImg}
-                tokenName="Hec"
-                onChange={setsHecInput}
-                balance={sHecBalance}
-                label={"Unstake"}
-                decimalAmount={FANTOM_sHEC.decimals}
-              />
-            )}
-          </div>
-
-          <div className="flex">
-            <div className="flex-1 text-base">Next Reward Amount</div>
-            <div>{nextRewardAmount?.toFixed(4)}</div>
-          </div>
-          <div className="flex">
-            <div className="flex-1 text-base">Next Reward Yield</div>
-            <div>{nextRewardYield?.toFixed(4)}%</div>
-          </div>
-          <div className="mb-5 flex">
-            <div className="flex-1 text-base">ROI (5-Day Rate)</div>
-            <div>{ROI?.toFixed(4)}%</div>
-          </div>
-          {wallet.state === WalletState.Connected && (
+          {view === "stake" && (
             <>
-              {view === "stake" && (
-                <>
-                  {stakeAllowance.type === "NoAllowance" && (
-                    <Submit
-                      onClick={stakeAllowance.approve}
-                      label={"Approve"}
-                    ></Submit>
-                  )}
-                  {stakeAllowance.type === "Updating" && (
-                    <Submit label={"Updating..."} disabled></Submit>
-                  )}
-                  {stakeAllowance.type === "HasAllowance" && (
-                    <Submit
-                      onClick={() =>
-                        stake(wallet.provider, wallet.address, hec)
-                      }
-                      label={"Stake"}
-                    ></Submit>
-                  )}
-                </>
+              {stakeAllowance.type === "NoAllowance" && (
+                <Submit
+                  onClick={stakeAllowance.approve}
+                  label={"Approve"}
+                ></Submit>
               )}
-
-              {view === "unstake" && (
-                <>
-                  {unStakeAllowance.type === "NoAllowance" && (
-                    <Submit
-                      onClick={unStakeAllowance.approve}
-                      label={"Approve"}
-                    ></Submit>
-                  )}
-                  {unStakeAllowance.type === "Updating" && (
-                    <Submit label={"Updating..."} disabled></Submit>
-                  )}
-                  {unStakeAllowance.type === "HasAllowance" && (
-                    <Submit
-                      onClick={() =>
-                        unStake(wallet.provider, wallet.address, sHec)
-                      }
-                      label={"Unstake"}
-                    ></Submit>
-                  )}
-                </>
+              {stakeAllowance.type === "Updating" && (
+                <Submit label={"Updating..."} disabled></Submit>
+              )}
+              {stakeAllowance.type === "HasAllowance" && (
+                <Submit
+                  onClick={() => stake(wallet.provider, wallet.address, hec)}
+                  label={"Stake"}
+                ></Submit>
+              )}
+            </>
+          )}
+          {view === "unstake" && (
+            <>
+              {unStakeAllowance.type === "NoAllowance" && (
+                <Submit
+                  onClick={unStakeAllowance.approve}
+                  label={"Approve"}
+                ></Submit>
+              )}
+              {unStakeAllowance.type === "Updating" && (
+                <Submit label={"Updating..."} disabled></Submit>
+              )}
+              {unStakeAllowance.type === "HasAllowance" && (
+                <Submit
+                  onClick={() => unStake(wallet.provider, wallet.address, sHec)}
+                  label={"Unstake"}
+                ></Submit>
               )}
             </>
           )}
         </>
+      )}
+      {wallet.state === WalletState.Disconnected && (
+        <Submit label="Connect wallet" disabled />
       )}
     </main>
   );
