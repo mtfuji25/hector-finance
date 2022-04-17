@@ -115,10 +115,7 @@ export const SideNav: VFC = () => (
         <Tor width={16} height={16} />
         Mint
       </InternalNav>
-      <InternalNav href="/investments">
-        <ChartMixedLight width={16} height={16} />
-        Investments
-      </InternalNav>
+
       <InternalNav href="/calculator">
         <AbacusLight width={16} height={16} />
         Calculator
