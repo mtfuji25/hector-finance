@@ -30,6 +30,7 @@ import Radio from "src/components/Radio";
 import CoinInput from "src/components/CoinInput";
 import Submit from "src/components/Submit";
 import * as Erc20 from "src/contracts/erc20";
+import { useAllowance } from "src/hooks/allowance";
 
 function useBalance(
   token: Erc20Token,
@@ -84,8 +85,16 @@ export default function StakePage() {
   const [hec, hecInput, setHecInput] = useDecimalInput();
   const [sHec, sHecInput, setsHecInput] = useDecimalInput();
   const [stakingAPY, setStakingAPY] = useState<Decimal>();
-  const [stakeAllowance, setStakingAllowance] = useState<Decimal>();
-  const [unstakeAllowance, setUnstakingAllowance] = useState<Decimal>();
+  const stakeAllowance = useAllowance(
+    FANTOM_HECTOR,
+    wallet,
+    FANTOM.STAKING_HELPER_ADDRESS,
+  );
+  const unStakeAllowance = useAllowance(
+    FANTOM_sHEC,
+    wallet,
+    FANTOM.STAKING_ADDRESS,
+  );
   const [stakingTVL, setStakingTVL] = useState<string>();
   const [currentIndex, setCurrentIndex] = useState<Decimal>();
   const [hecBalance, refreshHecBalance] = useBalance(FANTOM_HECTOR, wallet);
@@ -95,40 +104,13 @@ export default function StakePage() {
   const [ROI, setROI] = useState<Decimal>();
   const [view, setView] = useState<"stake" | "unstake">("stake");
 
-  const hasStakeAllowance = useMemo(
-    () => stakeAllowance?.gt(0) && stakeAllowance > hecBalance,
-    [stakeAllowance, hecBalance],
-  );
-
-  const hasUnstakeAllowance = useMemo(
-    () => unstakeAllowance?.gt(0),
-    [unstakeAllowance],
-  );
   useEffect(() => {
     const getStakingData = async () => {
       if (wallet.state === WalletState.Connected) {
         Promise.all([
           getEpochInfo(wallet.provider),
           getHecCircSupply(wallet.provider),
-          allowance(
-            wallet.provider,
-            FANTOM_HECTOR,
-            wallet.address,
-            FANTOM.STAKING_HELPER_ADDRESS,
-          ),
-          allowance(
-            wallet.provider,
-            FANTOM_sHEC,
-            wallet.address,
-            FANTOM.STAKING_ADDRESS,
-          ),
-        ]).then(([epoch, circ, stakingAllowance, unstakingAllowance]) => {
-          if (stakingAllowance.isOk) {
-            setStakingAllowance(stakingAllowance.value);
-          }
-          if (unstakingAllowance.isOk) {
-            setUnstakingAllowance(unstakingAllowance.value);
-          }
+        ]).then(([epoch, circ]) => {
           if (circ.isOk && epoch.isOk) {
             const stakingRebase = epoch.value.distribute.div(
               new Decimal(circ.value),
@@ -276,61 +258,54 @@ export default function StakePage() {
             <div className="flex-1 text-base">Next Reward Yield</div>
             <div>{nextRewardYield?.toFixed(4)}%</div>
           </div>
-          <div className="flex">
+          <div className="mb-5 flex">
             <div className="flex-1 text-base">ROI (5-Day Rate)</div>
             <div>{ROI?.toFixed(4)}%</div>
           </div>
           {wallet.state === WalletState.Connected && (
             <>
-              {view === "stake" && !hasStakeAllowance && (
-                <div className="mt-5">
-                  <Submit
-                    onClick={() =>
-                      approve(
-                        wallet.provider,
-                        FANTOM_HECTOR,
-                        wallet.address,
-                        FANTOM.STAKING_HELPER_ADDRESS,
-                        new Decimal(1_000_000_000),
-                      )
-                    }
-                    label={"Approve"}
-                  ></Submit>
-                </div>
+              {view === "stake" && (
+                <>
+                  {stakeAllowance.type === "NoAllowance" && (
+                    <Submit
+                      onClick={stakeAllowance.approve}
+                      label={"Approve"}
+                    ></Submit>
+                  )}
+                  {stakeAllowance.type === "Updating" && (
+                    <Submit label={"Updating..."} disabled></Submit>
+                  )}
+                  {stakeAllowance.type === "HasAllowance" && (
+                    <Submit
+                      onClick={() =>
+                        stake(wallet.provider, wallet.address, hec)
+                      }
+                      label={"Stake"}
+                    ></Submit>
+                  )}
+                </>
               )}
-              {view === "stake" && hasStakeAllowance && (
-                <div className="mt-5">
-                  <Submit
-                    onClick={() => stake(wallet.provider, wallet.address, hec)}
-                    label={"Stake"}
-                  ></Submit>
-                </div>
-              )}
-              {view === "unstake" && !hasUnstakeAllowance && (
-                <div className="mt-5">
-                  <Submit
-                    onClick={() =>
-                      approve(
-                        wallet.provider,
-                        FANTOM_sHEC,
-                        wallet.address,
-                        FANTOM.STAKING_ADDRESS,
-                        new Decimal(1_000_000_000),
-                      )
-                    }
-                    label={"Approve"}
-                  ></Submit>
-                </div>
-              )}
-              {view === "unstake" && hasUnstakeAllowance && (
-                <div className="mt-5">
-                  <Submit
-                    onClick={() =>
-                      unStake(wallet.provider, wallet.address, sHec)
-                    }
-                    label={"Unstake"}
-                  ></Submit>
-                </div>
+
+              {view === "unstake" && (
+                <>
+                  {unStakeAllowance.type === "NoAllowance" && (
+                    <Submit
+                      onClick={unStakeAllowance.approve}
+                      label={"Approve"}
+                    ></Submit>
+                  )}
+                  {unStakeAllowance.type === "Updating" && (
+                    <Submit label={"Updating..."} disabled></Submit>
+                  )}
+                  {unStakeAllowance.type === "HasAllowance" && (
+                    <Submit
+                      onClick={() =>
+                        unStake(wallet.provider, wallet.address, sHec)
+                      }
+                      label={"Unstake"}
+                    ></Submit>
+                  )}
+                </>
               )}
             </>
           )}
