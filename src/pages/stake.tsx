@@ -177,7 +177,7 @@ export default function StakePage() {
         <h1 className="text-2xl font-semibold">Stake v2 (3,3)</h1>
         <RebaseTimer />
       </div>
-      <div className="mb-5 flex justify-between text-center">
+      <div className="mb-5 flex flex-wrap justify-between text-center">
         <div>
           <div>APY</div>
           {stakingAPY && (
