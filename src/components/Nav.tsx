@@ -167,6 +167,8 @@ const InternalNav: FC<{ href: string }> = ({ children, href }) => (
 
 const ExternalNav: FC<{ href: string }> = ({ children, href }) => (
   <a
+    target={"_blank"}
+    rel={"noreferrer"}
     href={href}
     className="group flex items-center gap-2 rounded px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800"
   >

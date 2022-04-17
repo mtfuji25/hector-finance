@@ -125,11 +125,11 @@ export default function StakePage() {
       <Head>
         <title>Stake — Hector Finance</title>
       </Head>
-      <div className="mb-5">
+      <div>
         <h1 className="text-2xl font-semibold">Stake (3,3)</h1>
         <RebaseTimer />
       </div>
-      <div className="mb-5 flex flex-wrap justify-between text-center">
+      <div className="my-5 flex flex-wrap justify-between text-center">
         <div>
           <div>APY</div>
           {stakingAPY && (
@@ -159,6 +159,7 @@ export default function StakePage() {
           checked={view === "stake"}
           onCheck={() => {
             setHecInput("");
+            setsHecInput("");
             refreshHecBalance();
             setView("stake");
           }}
@@ -169,6 +170,7 @@ export default function StakePage() {
           checked={view === "unstake"}
           onCheck={() => {
             setsHecInput("");
+            setHecInput("");
             refreshsHecBalance();
             setView("unstake");
           }}

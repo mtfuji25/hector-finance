@@ -267,6 +267,14 @@ export const FANTOM_sHEC = {
   wei: new Decimal(10 ** 9),
 };
 
+export const FANTOM_wsHEC = {
+  symbol: "wsHEC",
+  address: FANTOM.WSHEC_ADDRESS,
+  chain: 0xfa,
+  decimals: 9,
+  wei: new Decimal(10 ** 18),
+};
+
 /**
  * Use this inside `useEffect`s that need to run some async functions.
  * If `abort` is ever true, you should immediately clean up and exit

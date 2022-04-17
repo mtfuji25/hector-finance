@@ -13,6 +13,8 @@ export interface Interface {
   inputs: Input[];
   outputs?: Output[];
   stateMutability: StateMutability;
+  constant?: boolean;
+  payable?: boolean;
 }
 
 /** Method input. Also known as a method _parameter_. */
