@@ -29,56 +29,8 @@ import { useWallet, Wallet, WalletState } from "src/wallet";
 import Radio from "src/components/Radio";
 import CoinInput from "src/components/CoinInput";
 import Submit from "src/components/Submit";
-import * as Erc20 from "src/contracts/erc20";
 import { useAllowance } from "src/hooks/allowance";
-
-function useBalance(
-  token: Erc20Token,
-  wallet: Wallet,
-): [Decimal, React.DispatchWithoutAction] {
-  const [balance, setBalance] = useState(new Decimal(0));
-
-  /**
-   * Whenever `refreshes` bumps, we need to restart the
-   * polling `useAsyncEffect` below.
-   */
-  const [refreshes, refreshBalance] = useReducer(
-    (prev: number): number => prev + 1,
-    0,
-  );
-
-  useAsyncEffect(
-    async (signal) => {
-      if (wallet.state !== WalletState.Connected) {
-        return;
-      }
-
-      while (!signal.abort) {
-        const freshBalance = await Erc20.balanceOf(
-          wallet.provider,
-          token,
-          wallet.address,
-        );
-
-        if (signal.abort) {
-          return;
-        }
-
-        if (freshBalance.isOk) {
-          setBalance((prev) =>
-            prev.eq(freshBalance.value) ? prev : freshBalance.value,
-          );
-        }
-
-        // If this timeout is too slow, you can probably make it faster.
-        await sleep(FANTOM_BLOCK_TIME * 10);
-      }
-    },
-    [token, wallet, refreshes],
-  );
-
-  return useMemo(() => [balance, refreshBalance], [balance, refreshBalance]);
-}
+import { useBalance } from "src/hooks/balance";
 
 export default function StakePage() {
   const wallet = useWallet();
@@ -174,7 +126,7 @@ export default function StakePage() {
         <title>Stake — Hector Finance</title>
       </Head>
       <div className="mb-5">
-        <h1 className="text-2xl font-semibold">Stake v2 (3,3)</h1>
+        <h1 className="text-2xl font-semibold">Stake (3,3)</h1>
         <RebaseTimer />
       </div>
       <div className="mb-5 flex flex-wrap justify-between text-center">
