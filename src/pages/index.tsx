@@ -3,10 +3,13 @@ import React from "react";
 
 export default function Home() {
   return (
-    <>
+    <main className="w-full">
       <Head>
-        <title>Dashboard</title>
+        <title>DashBoard — Hector Finance</title>
       </Head>
-    </>
+      <div className=" text-center">
+        <h2 className="text-xl">Dashboard</h2>
+      </div>
+    </main>
   );
 }
