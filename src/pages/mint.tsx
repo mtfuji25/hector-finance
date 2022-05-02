@@ -4,29 +4,18 @@ import Head from "next/head";
 import { StaticImageData } from "next/image";
 import DaiLogo from "public/icons/dai.svg";
 import TorLogo from "public/icons/tor.svg";
-import React, { FC, useMemo, useReducer, useState, VFC } from "react";
-import CoinInput from "src/components/CoinInput";
-import Radio from "src/components/Radio";
+import React, { useState, VFC } from "react";
+import { CoinInput } from "src/components/CoinInput";
+import { PageHeader, PageSubheader } from "src/components/Header";
 import { StaticImg } from "src/components/StaticImg";
-import Submit from "src/components/Submit";
+import { Submit } from "src/components/Submit";
+import { Tab, Tabs } from "src/components/Tab";
 import { FANTOM } from "src/constants";
-import * as Erc20 from "src/contracts/erc20";
 import { mintWithDai, redeemToDai } from "src/contracts/torMinter";
 import { useAllowance } from "src/hooks/allowance";
 import { useBalance } from "src/hooks/balance";
-import {
-  classes,
-  DecimalInput,
-  Erc20Token,
-  FANTOM_BLOCK_TIME,
-  FANTOM_DAI,
-  FANTOM_TOR,
-  sleep,
-  useAsyncEffect,
-  useDecimalInput,
-  validateEther,
-} from "src/util";
-import { useWallet, useWalletState, Wallet, WalletState } from "src/wallet";
+import { FANTOM_DAI, FANTOM_TOR, useDecimalInput } from "src/util";
+import { useWallet, WalletState } from "src/wallet";
 
 const MintPage: NextPage = () => {
   const wallet = useWallet();
@@ -53,46 +42,46 @@ const MintPage: NextPage = () => {
         <title>Mint — Hector Finance</title>
       </Head>
       <div>
-        <h1 className="text-2xl font-semibold">Mint</h1>
-        <h2>Buy and sell Tor — Hector&apos;s stablecoin</h2>
+        <PageHeader>Mint</PageHeader>
+        <PageSubheader>
+          Buy and sell Tor, Hector&apos;s stablecoin
+        </PageSubheader>
       </div>
 
       {/* Choose mint or redeem. */}
-      <div className="space-y-1">
-        <Radio
-          checked={view === "mint"}
-          onCheck={() => {
+      <Tabs>
+        <Tab
+          selected={view === "mint"}
+          label="Mint"
+          onSelect={() => {
             refreshDaiBalance();
             setDaiInput("");
             setTorInput("");
             setView("mint");
           }}
-        >
-          Mint
-        </Radio>
-        <Radio
-          checked={view === "redeem"}
-          onCheck={() => {
+        />
+        <Tab
+          selected={view === "redeem"}
+          label="Redeem"
+          onSelect={() => {
             refreshTorBalance();
             setDaiInput("");
             setTorInput("");
             setView("redeem");
           }}
-        >
-          Redeem
-        </Radio>
-      </div>
+        />
+      </Tabs>
 
       {/* Mint */}
       {view === "mint" && (
         <>
           <CoinInput
+            label={"Selling"}
+            tokenName="Dai"
+            tokenImage={DaiLogo}
             amount={daiInput}
             onChange={setDaiInput}
-            tokenImage={DaiLogo}
-            tokenName="Dai"
             balance={daiBalance}
-            label={"Selling"}
             decimalAmount={FANTOM_DAI.decimals}
           />
           <Buying amount={dai} tokenImage={TorLogo} tokenName="Tor" />

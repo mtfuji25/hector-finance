@@ -96,3 +96,9 @@ export const messages = {
   your_balance_update_soon: "Your balance will update soon",
   account_update: "Your account will update soon",
 };
+
+export const ETHEREUM_RPC = "https://cloudflare-eth.com";
+export const FANTOM_RPC = "https://rpc.ftm.tools/";
+export const AVALANCHE_RPC = "https://avalanche.public-rpc.com";
+export const BSC_RPC = "https://bscrpc.com";
+export const POLYGON_RPC = "https://polygon-rpc.com";

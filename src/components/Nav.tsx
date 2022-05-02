@@ -2,6 +2,7 @@ import Link from "next/link";
 import { FC, VFC } from "react";
 import { StaticImg } from "./StaticImg";
 import HectorLogo from "public/icons/hector.svg";
+import HectorLogoLarge from "public/hector-logo.svg";
 import WatermelonLight from "src/icons/watermelon-slice-light.svgr";
 import AbacusLight from "src/icons/abacus-light.svgr";
 import BookLight from "src/icons/book-light.svgr";
@@ -26,19 +27,13 @@ import { ellipsisBetween } from "src/util";
 
 export const TopNav: VFC = () => (
   <>
-    <div className="flex flex-row px-8 py-6">
+    <div className="flex flex-row items-center px-8 py-6">
       {/* Logo */}
-      <div className="flex flex-row items-center gap-1.5">
-        <StaticImg
-          src={HectorLogo}
-          className="h-7 w-7 shrink-0"
-          alt="Hector Finance "
-        />
-        <div className="text-center font-logo text-2xl">
-          <span className="font-bold text-orange-700">Hector</span>{" "}
-          <span className="hidden text-gray-500 sm:inline">Finance</span>
-        </div>
-      </div>
+      <StaticImg
+        src={HectorLogoLarge}
+        alt="Hector Finance"
+        className="h-6 w-auto object-contain"
+      />
 
       {/* Space */}
       <div className="flex-grow" />
@@ -60,7 +55,7 @@ const Wallet: VFC = () => {
           rel="noreferrer"
           href="https://metamask.io/download/"
           title="MetaMask download"
-          className="flex items-center gap-1 rounded bg-orange-50 px-4 py-2 text-orange-800"
+          className="flex items-center gap-1 rounded bg-orange-400 px-4 py-2 text-white"
         >
           Install MetaMask
           <ArrowUpRightFromSquareRegular className="h-3 w-3 opacity-50" />
@@ -68,7 +63,7 @@ const Wallet: VFC = () => {
       )}
       {wallet.state === WalletState.Disconnected && (
         <button
-          className="rounded bg-orange-50 px-4 py-2 text-orange-800"
+          className="rounded bg-orange-400 px-6 py-2 font-medium text-white"
           onClick={() => wallet.connect()}
         >
           Connect
@@ -85,7 +80,7 @@ const Wallet: VFC = () => {
 };
 
 export const SideNav: VFC = () => (
-  <nav className="hidden h-fit flex-shrink-0 flex-grow-0 space-y-4 rounded-md sm:block">
+  <nav className="hidden h-fit flex-shrink-0 flex-grow-0 space-y-4 sm:block">
     <div>
       <InternalNav href="/">
         <SquarePollVerticalLight width={16} height={16} />

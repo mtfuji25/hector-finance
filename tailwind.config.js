@@ -4,15 +4,21 @@ module.exports = {
   darkMode: "class",
   theme: {
     fontFamily: {
-      logo: ["Glacial Indifference", "sans-serif"],
-      body: ["Square", "sans-serif"],
+      body: ["Niveau Grotesk", "sans-serif"],
+    },
+    fontWeight: {
+      light: 300,
+      regular: 400,
+      medium: 500,
+      bold: 700,
+      black: 900,
     },
     colors: {
       transparent: "transparent",
       current: "currentColor",
       // Don't add black here. You don't want black, you want gray-900.
       white: colors.white,
-      gray: colors.zinc,
+      gray: colors.stone,
       red: {
         50: "#ffebe6",
         700: "#ea011a",
@@ -23,13 +29,12 @@ module.exports = {
         800: "#465C4A",
       },
       orange: {
-        50: "#fff1e4",
-        400: "#f4b575",
-        500: "#e0a365",
-        600: "#d09457",
-        700: "#b57c40",
-        800: "#9c6225",
-        900: "#754410",
+        400: "#cfad86",
+        500: "#B6A086",
+      },
+
+      blue: {
+        500: "#7774F2",
       },
     },
   },

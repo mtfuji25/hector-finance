@@ -1,11 +1,15 @@
-@import "styles/fonts/euclid-square.css";
-@import "styles/fonts/glacial-indifference.css";
+@import "styles/font/matrix/matrix.css";
+@import "styles/font/niveau/niveau.css";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  html {
+    font-size: 17px;
+  }
+
   img {
     -webkit-user-drag: none;
     user-select: none;
@@ -16,5 +20,9 @@
 
   input::placeholder {
     @apply text-gray-400;
+  }
+
+  button {
+    font: inherit;
   }
 }

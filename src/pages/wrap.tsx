@@ -1,8 +1,8 @@
 import Decimal from "decimal.js";
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import CoinInput from "src/components/CoinInput";
-import Radio from "src/components/Radio";
+import { CoinInput } from "src/components/CoinInput";
+import { Radio } from "src/components/Radio";
 import { FANTOM } from "src/constants";
 import { getStakingIndex } from "src/contracts/stakingContract";
 import { getMarketPrice } from "src/contracts/uniswapV2";
@@ -16,8 +16,9 @@ import {
 } from "src/util";
 import hectorImg from "public/icons/hector.svg";
 import { useWallet, WalletState } from "src/wallet";
-import Submit from "src/components/Submit";
+import { Submit } from "src/components/Submit";
 import { unwrap, wrap } from "src/contracts/wrapStakingContract";
+import { PageHeader, PageSubheader } from "src/components/Header";
 
 export default function WrapPage() {
   const wallet = useWallet();
@@ -60,24 +61,26 @@ export default function WrapPage() {
       <Head>
         <title>Wrap — Hector Finance</title>
       </Head>
+
       <div>
-        <h1 className="text-2xl font-semibold">Wrap</h1>
-        <h2>Utilize your staked HEC tokens and wrap</h2>
+        <PageHeader>Wrap</PageHeader>
+        <PageSubheader>Utilize your staked HEC tokens and wrap</PageSubheader>
       </div>
+
       <div className="my-5 flex flex-wrap justify-between text-center">
         <div>
           <div>sHEC Price</div>
           {marketPrice && (
-            <div className="text-xl font-semibold text-orange-500">
+            <div className="text-xl font-medium text-orange-400">
               ${marketPrice?.toFixed(2)}
             </div>
           )}
         </div>
         <div>
           <div>Current Index</div>
-          <div className="text-xl font-semibold text-orange-500">
+          <div className="text-xl font-medium text-orange-400">
             {currentIndex && (
-              <div className="text-xl font-semibold text-orange-500">
+              <div className="text-xl font-medium text-orange-400">
                 {currentIndex?.toFixed(2)}
               </div>
             )}
@@ -86,7 +89,7 @@ export default function WrapPage() {
         <div>
           <div>wsHEC Price</div>
           {currentIndex && marketPrice && (
-            <div className="text-xl font-semibold text-orange-500">
+            <div className="text-xl font-medium text-orange-400">
               ${marketPrice.times(currentIndex)?.toFixed(2)}
             </div>
           )}

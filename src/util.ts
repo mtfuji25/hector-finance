@@ -225,7 +225,6 @@ export const FANTOM_DAI: Erc20Token = {
   decimals: 18,
   wei: new Decimal(10 ** 18),
 };
-
 export const FANTOM_USDC: Erc20Token = {
   symbol: "USDC",
   address: FANTOM.USDC_ADDRESS,
@@ -233,7 +232,6 @@ export const FANTOM_USDC: Erc20Token = {
   decimals: 6,
   wei: new Decimal(10 ** 6),
 };
-
 export const FANTOM_TOR: Erc20Token = {
   symbol: "TOR",
   address: FANTOM.TOR_ADDRESS,
@@ -241,7 +239,6 @@ export const FANTOM_TOR: Erc20Token = {
   decimals: 18,
   wei: new Decimal(10 ** 18),
 };
-
 export const FANTOM_WFTM: Erc20Token = {
   symbol: "wFTM",
   address: FANTOM.WFTM_ADDRESS,
@@ -249,7 +246,6 @@ export const FANTOM_WFTM: Erc20Token = {
   decimals: 18,
   wei: new Decimal(10 ** 18),
 };
-
 export const FANTOM_CURVE: Erc20Token = {
   symbol: "crvLP",
   address: FANTOM.DAI_TOR_USDC_POOL,
@@ -257,7 +253,6 @@ export const FANTOM_CURVE: Erc20Token = {
   decimals: 18,
   wei: new Decimal(10 ** 18),
 };
-
 export const FANTOM_HECTOR: Erc20Token = {
   symbol: "HEC",
   address: FANTOM.HEC_ADDRESS,
@@ -272,7 +267,6 @@ export const FANTOM_sHEC: Erc20Token = {
   decimals: 9,
   wei: new Decimal(10 ** 9),
 };
-
 export const FANTOM_wsHEC: Erc20Token = {
   symbol: "wsHEC",
   address: FANTOM.WSHEC_ADDRESS,
