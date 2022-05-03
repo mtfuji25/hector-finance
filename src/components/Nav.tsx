@@ -1,15 +1,13 @@
 import Link from "next/link";
 import { FC, VFC } from "react";
 import { StaticImg } from "./StaticImg";
-import HectorLogo from "public/icons/hector.svg";
-import HectorLogoLarge from "public/hector-logo.svg";
+import HectorLogoLarge from "public/hector-wordmark.svg";
 import WatermelonLight from "src/icons/watermelon-slice-light.svgr";
 import AbacusLight from "src/icons/abacus-light.svgr";
 import BookLight from "src/icons/book-light.svgr";
 import BoxBallotLight from "src/icons/box-ballot-light.svgr";
 import BoxDollarLight from "src/icons/box-dollar-light.svgr";
 import BuildingColumnsLight from "src/icons/building-columns-light.svgr";
-import ChartMixedLight from "src/icons/chart-mixed-light.svgr";
 import ScaleBalancedLight from "src/icons/scale-balanced-light.svgr";
 import SealLight from "src/icons/seal-light.svgr";
 import SeedlingLight from "src/icons/seedling-light.svgr";

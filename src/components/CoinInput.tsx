@@ -26,7 +26,11 @@ export const CoinInput: VFC<{
     <div>
       <div className="relative">
         <div className="pointer-events-none absolute top-1/2 left-3 flex -translate-y-1/2 gap-2">
-          <StaticImg src={tokenImage} alt={tokenName} className="h-6 w-6" />
+          <StaticImg
+            src={tokenImage}
+            alt={tokenName}
+            className="h-6 w-6 object-contain"
+          />
           <div>{tokenName}</div>
         </div>
         <input
