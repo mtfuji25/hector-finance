@@ -2,7 +2,6 @@ import Decimal from "decimal.js";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { CoinInput } from "src/components/CoinInput";
-import { Radio } from "src/components/Radio";
 import { FANTOM } from "src/constants";
 import { getStakingIndex } from "src/contracts/stakingContract";
 import { getMarketPrice } from "src/contracts/uniswapV2";
@@ -19,6 +18,7 @@ import { useWallet, WalletState } from "src/wallet";
 import { Submit } from "src/components/Submit";
 import { unwrap, wrap } from "src/contracts/wrapStakingContract";
 import { PageHeader, PageSubheader } from "src/components/Header";
+import { Tab, Tabs } from "src/components/Tab";
 
 export default function WrapPage() {
   const wallet = useWallet();
@@ -57,7 +57,7 @@ export default function WrapPage() {
   }, [wallet]);
 
   return (
-    <main className="w-full">
+    <main className="w-full space-y-4">
       <Head>
         <title>Wrap — Hector Finance</title>
       </Head>
@@ -67,7 +67,7 @@ export default function WrapPage() {
         <PageSubheader>Utilize your staked HEC tokens and wrap</PageSubheader>
       </div>
 
-      <div className="my-5 flex flex-wrap justify-between text-center">
+      <div className="flex flex-wrap justify-between text-center">
         <div>
           <div>sHEC Price</div>
           {marketPrice && (
@@ -95,31 +95,29 @@ export default function WrapPage() {
           )}
         </div>
       </div>
-      <div className="mb-5 space-y-1">
-        <Radio
-          checked={view === "wrap"}
-          onCheck={() => {
+      <Tabs>
+        <Tab
+          label="Wrap"
+          selected={view === "wrap"}
+          onSelect={() => {
             setwsHecInput("");
             setsHecInput("");
             refreshsHecBalance();
             setView("wrap");
           }}
-        >
-          Wrap
-        </Radio>
-        <Radio
-          checked={view === "unwrap"}
-          onCheck={() => {
+        />
+        <Tab
+          label="Unwrap"
+          selected={view === "unwrap"}
+          onSelect={() => {
             setwsHecInput("");
             setsHecInput("");
             refreshwsHecBalance();
             setView("unwrap");
           }}
-        >
-          Unwrap
-        </Radio>
-      </div>
-      <div className="mb-5">
+        />
+      </Tabs>
+      <div>
         {sHecBalance && view === "wrap" && (
           <CoinInput
             amount={sHecInput}
@@ -127,7 +125,6 @@ export default function WrapPage() {
             tokenName="sHec"
             onChange={setsHecInput}
             balance={sHecBalance}
-            label={"Wrap"}
             decimalAmount={FANTOM_sHEC.decimals}
           />
         )}
@@ -138,7 +135,6 @@ export default function WrapPage() {
             tokenName="wsHec"
             onChange={setwsHecInput}
             balance={wsHecBalance}
-            label={"Unwrap"}
             decimalAmount={FANTOM_wsHEC.decimals}
           />
         )}
@@ -148,38 +144,32 @@ export default function WrapPage() {
           {view === "wrap" && (
             <>
               {wrapAllowance.type === "NoAllowance" && (
-                <Submit
-                  onClick={wrapAllowance.approve}
-                  label={"Approve"}
-                ></Submit>
+                <Submit onClick={wrapAllowance.approve} label={"Approve"} />
               )}
               {wrapAllowance.type === "Updating" && (
-                <Submit label={"Updating..."} disabled></Submit>
+                <Submit label={"Updating..."} disabled />
               )}
               {wrapAllowance.type === "HasAllowance" && (
                 <Submit
                   onClick={() => wrap(wallet.provider, wallet.address, sHec)}
                   label={"Wrap"}
-                ></Submit>
+                />
               )}
             </>
           )}
           {view === "unwrap" && (
             <>
               {unWrapAllowance.type === "NoAllowance" && (
-                <Submit
-                  onClick={unWrapAllowance.approve}
-                  label={"Approve"}
-                ></Submit>
+                <Submit onClick={unWrapAllowance.approve} label={"Approve"} />
               )}
               {unWrapAllowance.type === "Updating" && (
-                <Submit label={"Updating..."} disabled></Submit>
+                <Submit label={"Updating..."} disabled />
               )}
               {unWrapAllowance.type === "HasAllowance" && (
                 <Submit
                   onClick={() => unwrap(wallet.provider, wallet.address, wsHec)}
                   label={"Unwrap"}
-                ></Submit>
+                />
               )}
             </>
           )}
