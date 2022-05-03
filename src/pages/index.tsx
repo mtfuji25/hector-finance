@@ -109,14 +109,11 @@ export default function Home() {
       <Head>
         <title>DashBoard — Hector Finance</title>
       </Head>
-      <div className=" text-center">
-        <h2 className="text-xl">Dashboard</h2>
-      </div>
       <div className="my-5 flex flex-wrap justify-between text-center">
         <div>
           <div>Market Cap</div>
           {marketCap && (
-            <div className="text-xl font-semibold text-orange-500">
+            <div className="text-xl font-medium text-orange-400">
               {formatCurrency(marketCap.toNumber())}
             </div>
           )}
@@ -124,7 +121,7 @@ export default function Home() {
         <div>
           <div>Hec Price</div>
           {marketPrice && (
-            <div className="text-xl font-semibold text-orange-500">
+            <div className="text-xl font-medium text-orange-400">
               {formatCurrency(marketPrice.toNumber(), 2)}
             </div>
           )}
@@ -132,7 +129,7 @@ export default function Home() {
         <div>
           <div>Hec Burned</div>
           {hecBurned && (
-            <div className="text-xl font-semibold text-orange-500">
+            <div className="text-xl font-medium text-orange-400">
               {hecBurned?.toFixed(2)}
             </div>
           )}
@@ -142,7 +139,7 @@ export default function Home() {
         <div>
           <div>Circulating Supply</div>
           {circSupply && totalSupply && (
-            <div className="text-xl font-semibold text-orange-500">
+            <div className="text-xl font-medium text-orange-400">
               {circSupply.toFixed(0) + " / " + totalSupply.toFixed(0)}
             </div>
           )}
@@ -150,7 +147,7 @@ export default function Home() {
         <div>
           <div>RPH</div>
           {backingPerHec && (
-            <div className="text-xl font-semibold text-orange-500">
+            <div className="text-xl font-medium text-orange-400">
               {formatCurrency(backingPerHec.toNumber(), 2)}
             </div>
           )}
@@ -158,7 +155,7 @@ export default function Home() {
         <div>
           <div>Current Index</div>
           {currentIndex && (
-            <div className="text-xl font-semibold text-orange-500">
+            <div className="text-xl font-medium text-orange-400">
               {currentIndex?.toFixed(2)}
             </div>
           )}
