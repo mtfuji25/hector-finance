@@ -100,6 +100,7 @@ const MintPage: NextPage = () => {
             daiAllowance.type === "HasAllowance" && (
               <Submit
                 label="Mint"
+                disabled={dai.lte(0)}
                 onClick={() =>
                   mintWithDai(wallet.provider, wallet.address, dai).then(
                     console.info,
@@ -138,6 +139,7 @@ const MintPage: NextPage = () => {
             torAllowance.type === "HasAllowance" && (
               <Submit
                 label="Redeem"
+                disabled={tor.lte(0)}
                 onClick={() =>
                   redeemToDai(wallet.provider, wallet.address, tor).then(
                     console.info,
