@@ -6,6 +6,57 @@ export const ETH_GRAPH_URL =
   "https://api.thegraph.com/subgraphs/name/hectordao-hec/hector-eth";
 export const EPOCH_INTERVAL = 28800;
 
+export const GRAPH_DATA = `
+query {
+  protocolMetrics(first: 1000, orderBy: timestamp, orderDirection: desc) {
+    id
+    timestamp
+    hecCirculatingSupply
+    sHecCirculatingSupply
+    totalSupply
+    hecPrice
+    marketCap
+    totalValueLocked
+    treasuryRiskFreeValue
+    treasuryMarketValue
+    nextEpochRebase
+    nextDistributedHec
+    treasuryDaiMarketValue
+    treasuryDaiLPMarketValue
+    treasuryDaiRiskFreeValue
+    treasuryUsdcMarketValue
+    treasuryUsdcLPMarketValue
+    treasuryUsdcRiskFreeValue
+    treasuryMIMMarketValue
+    treasuryMIMRiskFreeValue
+    treasuryWFTMMarketValue
+    treasuryWFTMRiskFreeValue
+    treasuryFRAXRiskFreeValue
+    treasuryFRAXMarketValue
+    treasuryInvestments
+    treasuryBOOMarketValue
+    treasuryBOORiskFreeValue
+    treasuryCRVRiskFreeValue
+    treasuryCRVMarketValue
+    treasuryWETHRiskFreeValue
+    treasuryWETHMarketValue
+    currentAPY
+    runwayCurrent
+    treasuryHecDaiPOL
+    bankBorrowed
+    bankSupplied
+    treasuryFantomValidatorValue
+    treasuryFantomDelegatorValue
+    treasuryTORLPValue
+  }
+  tors(first: 1000, orderBy: timestamp, orderDirection: desc) {
+    id
+    timestamp
+    torTVL
+    supply
+  }
+}
+`;
 // export const MWEI_PER_ETHER = BigNumber.from("1000000000000");
 
 // NOTE could get this from an outside source since it changes slightly over time

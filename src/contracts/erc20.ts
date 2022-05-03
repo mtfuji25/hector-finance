@@ -140,3 +140,34 @@ const BALANCE_ABI: Interface = {
     },
   ],
 };
+
+export async function getTotalSupply(
+  provider: Provider,
+  token: Erc20Token,
+): Promise<Result<Decimal, ProviderRpcError>> {
+  const method = await methodId(TOTAL_SUPPLY);
+  const result = await call(provider, {
+    to: token.address,
+    data: "0x" + method,
+  });
+  if (!result.isOk) {
+    return result;
+  }
+  if (result.value === "0x") {
+    result.value = "0x0";
+  }
+  return ok(new Decimal(result.value).div(token.wei));
+}
+
+const TOTAL_SUPPLY: Interface = {
+  inputs: [],
+  name: "totalSupply",
+  outputs: [
+    {
+      name: "",
+      type: "uint256",
+    },
+  ],
+  stateMutability: StateMutability.View,
+  type: InterfaceType.Function,
+};
