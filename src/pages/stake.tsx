@@ -1,9 +1,7 @@
 import Decimal from "decimal.js";
 import Head from "next/head";
-import { StaticImageData } from "next/image";
-import { FC, useEffect, useMemo, useReducer, useState, VFC } from "react";
+import { useEffect, useState } from "react";
 import RebaseTimer from "src/components/RebaseTimer";
-import { StaticImg } from "src/components/StaticImg";
 import hectorImg from "public/icons/hector.svg";
 import { FANTOM, THE_GRAPH_URL } from "src/constants";
 import {
@@ -19,13 +17,13 @@ import {
   formatCurrency,
   useDecimalInput,
 } from "src/util";
-import { useWallet, Wallet, WalletState } from "src/wallet";
-import { Radio } from "src/components/Radio";
+import { useWallet, WalletState } from "src/wallet";
 import { CoinInput } from "src/components/CoinInput";
 import { Submit } from "src/components/Submit";
 import { useAllowance } from "src/hooks/allowance";
 import { useBalance } from "src/hooks/balance";
 import { PageHeader } from "src/components/Header";
+import { Tab, Tabs } from "src/components/Tab";
 
 export default function StakePage() {
   const wallet = useWallet();
@@ -116,7 +114,7 @@ export default function StakePage() {
   }, []);
 
   return (
-    <main className="w-full">
+    <main className="w-full space-y-4">
       <Head>
         <title>Stake — Hector Finance</title>
       </Head>
@@ -124,7 +122,7 @@ export default function StakePage() {
         <PageHeader>Stake (3,3)</PageHeader>
         <RebaseTimer />
       </div>
-      <div className="my-5 flex flex-wrap justify-between text-center">
+      <div className="flex flex-wrap justify-between text-center">
         <div>
           <div>APY</div>
           {stakingAPY && (
@@ -149,31 +147,29 @@ export default function StakePage() {
         </div>
       </div>
 
-      <div className="mb-5 space-y-1">
-        <Radio
-          checked={view === "stake"}
-          onCheck={() => {
+      <Tabs>
+        <Tab
+          label="Stake"
+          selected={view === "stake"}
+          onSelect={() => {
             setHecInput("");
             setsHecInput("");
             refreshHecBalance();
             setView("stake");
           }}
-        >
-          Stake
-        </Radio>
-        <Radio
-          checked={view === "unstake"}
-          onCheck={() => {
+        />
+        <Tab
+          label="Unstake"
+          selected={view === "unstake"}
+          onSelect={() => {
             setsHecInput("");
             setHecInput("");
             refreshsHecBalance();
             setView("unstake");
           }}
-        >
-          Unstake
-        </Radio>
-      </div>
-      <div className="mb-5">
+        />
+      </Tabs>
+      <div>
         {hecBalance && view === "stake" && (
           <CoinInput
             amount={hecInput}
@@ -181,7 +177,6 @@ export default function StakePage() {
             tokenName="Hec"
             onChange={setHecInput}
             balance={hecBalance}
-            label={"Stake"}
             decimalAmount={FANTOM_HECTOR.decimals}
           />
         )}
@@ -192,33 +187,32 @@ export default function StakePage() {
             tokenName="Hec"
             onChange={setsHecInput}
             balance={sHecBalance}
-            label={"Unstake"}
             decimalAmount={FANTOM_sHEC.decimals}
           />
         )}
       </div>
 
-      <div className="flex">
-        <div className="flex-1 text-base">Next Reward Amount</div>
-        <div>{nextRewardAmount?.toFixed(4)}</div>
+      <div className="space-y-2">
+        <div className="flex">
+          <div className="flex-1 text-base">Next Reward Amount</div>
+          <div>{nextRewardAmount?.toFixed(4)}</div>
+        </div>
+        <div className="flex">
+          <div className="flex-1 text-base">Next Reward Yield</div>
+          <div>{nextRewardYield?.toFixed(4)} %</div>
+        </div>
+        <div className="flex">
+          <div className="flex-1 text-base">ROI (5-Day Rate)</div>
+          <div>{ROI?.toFixed(4)} %</div>
+        </div>
       </div>
-      <div className="flex">
-        <div className="flex-1 text-base">Next Reward Yield</div>
-        <div>{nextRewardYield?.toFixed(4)}%</div>
-      </div>
-      <div className="mb-5 flex">
-        <div className="flex-1 text-base">ROI (5-Day Rate)</div>
-        <div>{ROI?.toFixed(4)}%</div>
-      </div>
+
       {wallet.state === WalletState.Connected && (
         <>
           {view === "stake" && (
             <>
               {stakeAllowance.type === "NoAllowance" && (
-                <Submit
-                  onClick={stakeAllowance.approve}
-                  label={"Approve"}
-                ></Submit>
+                <Submit onClick={stakeAllowance.approve} label={"Approve"} />
               )}
               {stakeAllowance.type === "Updating" && (
                 <Submit label={"Updating..."} disabled></Submit>
@@ -227,17 +221,14 @@ export default function StakePage() {
                 <Submit
                   onClick={() => stake(wallet.provider, wallet.address, hec)}
                   label={"Stake"}
-                ></Submit>
+                />
               )}
             </>
           )}
           {view === "unstake" && (
             <>
               {unStakeAllowance.type === "NoAllowance" && (
-                <Submit
-                  onClick={unStakeAllowance.approve}
-                  label={"Approve"}
-                ></Submit>
+                <Submit onClick={unStakeAllowance.approve} label={"Approve"} />
               )}
               {unStakeAllowance.type === "Updating" && (
                 <Submit label={"Updating..."} disabled></Submit>
