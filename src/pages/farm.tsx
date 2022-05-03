@@ -174,11 +174,14 @@ const PoolWithdraw: VFC<{ wallet: Wallet }> = ({ wallet }) => {
         >
           <div className="flex justify-between">
             <div>{FANTOM_TOR.symbol}</div>
-            <StaticImg
-              src={TorLogo}
-              alt={FANTOM_TOR.symbol}
-              className="h-6 w-auto"
-            />
+            <div className="flex gap-2">
+              {output === "tor" && curve.gt(0) && `≈ ${curve.toFixed(2)}`}
+              <StaticImg
+                src={TorLogo}
+                alt={FANTOM_TOR.symbol}
+                className="h-6 w-auto"
+              />
+            </div>
           </div>
         </Radio>
         <Radio
@@ -194,11 +197,14 @@ const PoolWithdraw: VFC<{ wallet: Wallet }> = ({ wallet }) => {
         >
           <div className="flex justify-between">
             <div>{FANTOM_DAI.symbol}</div>
-            <StaticImg
-              src={DaiLogo}
-              alt={FANTOM_DAI.symbol}
-              className="h-6 w-auto"
-            />
+            <div className="flex gap-2">
+              {output === "dai" && curve.gt(0) && `≈ ${curve.toFixed(2)}`}
+              <StaticImg
+                src={DaiLogo}
+                alt={FANTOM_DAI.symbol}
+                className="h-6 w-auto"
+              />
+            </div>
           </div>
         </Radio>
         <Radio
@@ -214,11 +220,14 @@ const PoolWithdraw: VFC<{ wallet: Wallet }> = ({ wallet }) => {
         >
           <div className="flex justify-between">
             <div>{FANTOM_USDC.symbol}</div>
-            <StaticImg
-              src={UsdcLogo}
-              alt={FANTOM_USDC.symbol}
-              className="h-6 w-auto"
-            />
+            <div className="flex gap-2">
+              {output === "usdc" && curve.gt(0) && `≈ ${curve.toFixed(2)}`}
+              <StaticImg
+                src={UsdcLogo}
+                alt={FANTOM_USDC.symbol}
+                className="h-6 w-auto"
+              />
+            </div>
           </div>
         </Radio>
       </RadioGroup>
