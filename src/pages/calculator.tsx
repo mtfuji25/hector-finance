@@ -2,6 +2,7 @@ import { Decimal } from "decimal.js";
 import { NextPage } from "next";
 import Head from "next/head";
 import React, { useState, VFC } from "react";
+import { PageHeader, PageSubheader } from "src/components/Header";
 import {
   classes,
   DecimalInput,
@@ -38,8 +39,8 @@ const CalculatorPage: NextPage = () => {
       </Head>
 
       <div>
-        <h1 className="text-2xl font-semibold">Calculator</h1>
-        <h2>Plan for the future</h2>
+        <PageHeader>Calculator</PageHeader>
+        <PageSubheader>Plan for the future</PageSubheader>
       </div>
 
       <Input

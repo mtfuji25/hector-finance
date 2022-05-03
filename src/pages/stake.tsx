@@ -6,31 +6,26 @@ import RebaseTimer from "src/components/RebaseTimer";
 import { StaticImg } from "src/components/StaticImg";
 import hectorImg from "public/icons/hector.svg";
 import { FANTOM, THE_GRAPH_URL } from "src/constants";
-import { allowance, approve, balanceOf } from "src/contracts/erc20";
 import {
   getEpochInfo,
   getHecCircSupply,
   getStakingIndex,
-  HEC_DECIMAL,
   stake,
   unStake,
 } from "src/contracts/stakingContract";
 import {
-  Erc20Token,
-  FANTOM_BLOCK_TIME,
   FANTOM_HECTOR,
   FANTOM_sHEC,
   formatCurrency,
-  sleep,
-  useAsyncEffect,
   useDecimalInput,
 } from "src/util";
 import { useWallet, Wallet, WalletState } from "src/wallet";
-import Radio from "src/components/Radio";
-import CoinInput from "src/components/CoinInput";
-import Submit from "src/components/Submit";
+import { Radio } from "src/components/Radio";
+import { CoinInput } from "src/components/CoinInput";
+import { Submit } from "src/components/Submit";
 import { useAllowance } from "src/hooks/allowance";
 import { useBalance } from "src/hooks/balance";
+import { PageHeader } from "src/components/Header";
 
 export default function StakePage() {
   const wallet = useWallet();
@@ -126,28 +121,28 @@ export default function StakePage() {
         <title>Stake — Hector Finance</title>
       </Head>
       <div>
-        <h1 className="text-2xl font-semibold">Stake (3,3)</h1>
+        <PageHeader>Stake (3,3)</PageHeader>
         <RebaseTimer />
       </div>
       <div className="my-5 flex flex-wrap justify-between text-center">
         <div>
           <div>APY</div>
           {stakingAPY && (
-            <div className="text-xl font-semibold text-orange-500">
+            <div className="text-xl font-medium text-orange-400">
               {stakingAPY?.toFixed(0)}%
             </div>
           )}
         </div>
         <div>
           <div>Total Deposited</div>
-          <div className="text-xl font-semibold text-orange-500">
+          <div className="text-xl font-medium text-orange-400">
             {stakingTVL}
           </div>
         </div>
         <div>
           <div>Current Index</div>
           {currentIndex && (
-            <div className="text-xl font-semibold text-orange-500">
+            <div className="text-xl font-medium text-orange-400">
               {currentIndex?.toFixed(2)}
             </div>
           )}

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ok, err, Result } from "src/util";
+import { RpcErrorCode } from "./rpc";
 
 /** Returns the balance of an address in wei */
 export async function getBalanceAtBlock(
@@ -364,44 +365,6 @@ enum ProviderErrorCode {
 
   /** The Provider is not connected to the _requested_ chain, but is connected to _other_ chain(s). */
   ChainDisconnected = 4901,
-}
-
-enum RpcErrorCode {
-  /** Invalid JSON (standard) */
-  InvalidJson = -32700,
-
-  /** JSON is not a valid request object (standard) */
-  InvalidRequest = -32600,
-
-  /** Method does not exist (standard) */
-  MethodNotFound = -32601,
-
-  /** Invalid method parameters (standard) */
-  InvalidParams = -32602,
-
-  /** Internal JSON-RPC error	(standard) */
-  InternalError = -32603,
-
-  /** Missing or invalid parameters (non-standard) */
-  InvalidInput = -32000,
-
-  /** Requested resource not found (non-standard) */
-  ResourceNotFound = -32001,
-
-  /** Requested resource not available (non-standard) */
-  ResourceUnavailable = -32002,
-
-  /** Transaction creation failed	(non-standard) */
-  TransactionRejected = -32003,
-
-  /** Method is not implemented (non-standard) */
-  MethodNotSupported = -32004,
-
-  /** Request exceeds defined limit (non-standard) */
-  LimitExceeded = -32005,
-
-  /** Version of JSON-RPC protocol is not supported (non-standard) */
-  RpcVersionUnsupported = -32006,
 }
 
 const ProviderRpcError = z.object({

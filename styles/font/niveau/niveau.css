@@ -1,0 +1,29 @@
+@font-face {
+  font-family: "Niveau Grotesk";
+  font-weight: 900;
+  src: url("NiveauGroteskBlack.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Niveau Grotesk";
+  font-weight: 700;
+  src: url("NiveauGroteskBold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Niveau Grotesk";
+  font-weight: 500;
+  src: url("NiveauGroteskMedium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Niveau Grotesk";
+  font-weight: 400;
+  src: url("NiveauGroteskRegular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Niveau Grotesk";
+  font-weight: 300;
+  src: url("NiveauGroteskLight.woff2") format("woff2");
+}
