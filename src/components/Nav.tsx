@@ -152,7 +152,7 @@ export const SideNav: VFC = () => (
 
 const InternalNav: FC<{ href: string }> = ({ children, href }) => (
   <Link href={href}>
-    <a className="flex items-center gap-2 rounded px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800">
+    <a className="-mx-3 flex items-center gap-2 rounded px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800">
       {children}
     </a>
   </Link>
@@ -163,7 +163,7 @@ const ExternalNav: FC<{ href: string }> = ({ children, href }) => (
     target={"_blank"}
     rel={"noreferrer"}
     href={href}
-    className="group flex items-center gap-2 rounded px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800"
+    className="group -mx-3 flex items-center gap-2 rounded px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800"
   >
     {children}
     <ArrowUpRightFromSquareRegular
@@ -188,4 +188,4 @@ const SocialNav: FC<{ href: string; title: string }> = ({
   </a>
 );
 
-const Divider: VFC = () => <hr className="mx-2.5 border-t border-gray-300" />;
+const Divider: VFC = () => <hr className="border-t border-gray-300" />;
