@@ -130,7 +130,7 @@ export const SideNav: VFC = () => (
       </ExternalNav>
     </div>
     <Divider />
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center -mx-3">
       <SocialNav href="https://discord.gg/hector" title="Discord">
         <Discord width={16} height={16} />
       </SocialNav>
