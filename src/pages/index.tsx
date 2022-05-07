@@ -134,10 +134,15 @@ export default function Home() {
                 : 0
               ).toString(),
               treasuryBaseRewardPool: "0",
+              staked: (
+                (parseFloat(entry.sHecCirculatingSupply) /
+                  parseFloat(entry.hecCirculatingSupply)) *
+                100
+              ).toString(),
             };
             if (i < ethData?.length) {
               const riskFreeValue =
-                entry.treasuryRiskFreeValue +
+                +entry.treasuryRiskFreeValue +
                 +ethData[i].treasuryBaseRewardPool;
               data = {
                 ...data,
@@ -274,6 +279,59 @@ export default function Home() {
                 stroke: "#e89e5a",
               },
             ]}
+            unitType={"currency"}
+          ></HecGraphs>
+          <HecGraphs
+            title="HEC Circulating Supply"
+            graphData={graphData}
+            areaLines={[
+              {
+                dataKey: "hecCirculatingSupply",
+                tooltipLabel: "HEC",
+                fill: "#77431E",
+                stroke: "#ED994C",
+              },
+            ]}
+            unitType={"none"}
+          ></HecGraphs>
+          <HecGraphs
+            title="HEC Staked"
+            graphData={graphData}
+            areaLines={[
+              {
+                dataKey: "staked",
+                tooltipLabel: "HEC Staked",
+                fill: "#55EBC7",
+                stroke: "#ED994C",
+              },
+            ]}
+            unitType={"percentage"}
+          ></HecGraphs>
+          <HecGraphs
+            title="Runway"
+            graphData={graphData}
+            areaLines={[
+              {
+                dataKey: "runwayCurrent",
+                tooltipLabel: "Days",
+                fill: "#333333",
+                stroke: "#767676",
+              },
+            ]}
+            unitType={"none"}
+          ></HecGraphs>
+          <HecGraphs
+            title="Protocol Owned Liquidity HEC-DAI"
+            graphData={graphData}
+            areaLines={[
+              {
+                dataKey: "treasuryHecDaiPOL",
+                tooltipLabel: "SLP Treasury",
+                fill: "#8AFF8A",
+                stroke: "#767676",
+              },
+            ]}
+            unitType={"percentage"}
           ></HecGraphs>
         </>
       )}
@@ -291,17 +349,27 @@ const HecGraphs: FC<{
   title: string;
   areaLines: AreaLine[];
   graphData: ProtocolMetrics[];
-}> = ({ title, areaLines, graphData }) => {
+  unitType: "currency" | "percentage" | "none";
+}> = ({ title, areaLines, graphData, unitType }) => {
+  const totalAmount = areaLines
+    .map((line) => +(graphData[0] as any)[line.dataKey])
+    .reduce((accumulator, curr) => accumulator + curr);
   return (
     <>
       <div className="flex">
         <div className="mr-2 text-xl font-medium">{title}</div>
         <div className="text-xl font-medium text-orange-400">
-          {formatCurrency(
-            +graphData[0].bankTotal +
-              +graphData[0].torTVL +
-              +graphData[0].totalValueLocked,
-          )}
+          {
+            {
+              currency: formatCurrency(totalAmount),
+              percentage: `${totalAmount.toLocaleString("en-US", {
+                maximumFractionDigits: 2,
+              })}%`,
+              none: totalAmount.toLocaleString("en-US", {
+                maximumFractionDigits: 2,
+              }),
+            }[unitType]
+          }
         </div>
       </div>
       <ResponsiveContainer
@@ -329,6 +397,7 @@ const HecGraphs: FC<{
             content={
               <CustomTooltip
                 itemNames={areaLines.map((line) => line.tooltipLabel)}
+                unitType={unitType}
               />
             }
           />
@@ -349,7 +418,13 @@ const HecGraphs: FC<{
   );
 };
 
-const CustomTooltip = ({ itemNames, active, payload, label }: any) => {
+const CustomTooltip = ({
+  itemNames,
+  unitType,
+  active,
+  payload,
+  label,
+}: any) => {
   if (active) {
     return (
       <div className="bg-white p-4">
@@ -362,10 +437,21 @@ const CustomTooltip = ({ itemNames, active, payload, label }: any) => {
                 }}
                 className=" mr-3 h-2 w-2 self-center rounded-full shadow-sm"
               ></div>
-              <div>{`${name} : ${formatCurrency(
-                payload?.[index].value,
-                2,
-              )}`}</div>
+              <div className="flex">
+                <div className="mr-2">{name}:</div>
+                <div>
+                  {" "}
+                  {
+                    {
+                      currency: formatCurrency(+payload?.[index].value, 2),
+                      percentage: `${(+payload?.[index].value).toFixed(2)}%`,
+                      none: payload?.[index].value.toLocaleString("en-US", {
+                        maximumFractionDigits: 2,
+                      }),
+                    }[unitType as string]
+                  }
+                </div>
+              </div>
             </div>
           </React.Fragment>
         ))}
