@@ -1,5 +1,5 @@
 export const THE_GRAPH_URL =
-  "https://api.thegraph.com/subgraphs/id/Qmb1e4n76LHzGQXqo3kGpZPfaLaihnwGar1Lmvfonw8aPy";
+  "https://api.thegraph.com/subgraphs/name/hectordao-hec/hector-dao";
 export const THE_ALT_GRAPH_URL =
   "https://api.thegraph.com/subgraphs/name/hectordao-hec/hector-dao-alt";
 export const ETH_GRAPH_URL =
@@ -57,6 +57,68 @@ query {
   }
 }
 `;
+
+export interface SubgraphData {
+  protocolMetrics: ProtocolMetrics[];
+  tors: Tors[];
+}
+
+interface Tors {
+  id: string;
+  timestamp: string;
+  torTVL: string;
+  supply: string;
+}
+
+export interface ProtocolMetrics {
+  id: string;
+  timestamp: string;
+  hecCirculatingSupply: string;
+  sHecCirculatingSupply: string;
+  totalSupply: string;
+  hecPrice: string;
+  marketCap: string;
+  totalValueLocked: string;
+  treasuryRiskFreeValue: string;
+  treasuryMarketValue: string;
+  nextEpochRebase: string;
+  nextDistributedHec: string;
+  treasuryDaiMarketValue: string;
+  treasuryDaiLPMarketValue: string;
+  treasuryDaiRiskFreeValue: string;
+  treasuryUsdcMarketValue: string;
+  treasuryUsdcLPMarketValue: string;
+  treasuryUsdcRiskFreeValue: string;
+  treasuryMIMMarketValue: string;
+  treasuryMIMRiskFreeValue: string;
+  treasuryWFTMMarketValue: string;
+  treasuryWFTMRiskFreeValue: string;
+  treasuryFRAXRiskFreeValue: string;
+  treasuryFRAXMarketValue: string;
+  treasuryInvestments: string;
+  treasuryBOOMarketValue: string;
+  treasuryBOORiskFreeValue: string;
+  treasuryCRVRiskFreeValue: string;
+  treasuryCRVMarketValue: string;
+  treasuryWETHRiskFreeValue: string;
+  treasuryWETHMarketValue: string;
+  currentAPY: string;
+  runwayCurrent: string;
+  treasuryHecDaiPOL: string;
+  bankBorrowed: string;
+  bankSupplied: string;
+  bankTotal: string;
+  treasuryFantomValidatorValue: string;
+  treasuryFantomDelegatorValue: string;
+  treasuryTORLPValue: string;
+  treasuryBaseRewardPool?: string;
+  treasuryIlluviumBalance?: string;
+  treasuryEthMarketValue?: string;
+  treasuryMaticBalance?: string;
+  treasuryRFMaticBalance?: string;
+  treasuryRFIlluviumBalance?: string;
+  torTVL: string;
+}
 // export const MWEI_PER_ETHER = BigNumber.from("1000000000000");
 
 // NOTE could get this from an outside source since it changes slightly over time
