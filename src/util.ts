@@ -1,7 +1,14 @@
 import { Decimal } from "decimal.js";
+import { StaticImageData } from "next/image";
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { FANTOM } from "./constants";
 import { TokenAddress } from "./provider";
+import DaiLogo from "public/icons/dai.svg";
+import HecLogo from "public/icons/hector.svg";
+import TorLogo from "public/icons/tor.svg";
+import CurveLogo from "public/icons/curve.webp";
+import UsdcLogo from "public/icons/usdc.svg";
+import WftmLogo from "public/icons/wftm.svg";
 
 /**
  * Build a class string from a list of valid classes.
@@ -188,6 +195,7 @@ export const FANTOM_BLOCK_TIME: number = 2_000;
 
 export interface Erc20Token {
   symbol: string;
+  logo: StaticImageData;
   address: TokenAddress;
   chain: number;
 
@@ -220,6 +228,7 @@ export interface LpToken extends Erc20Token {
 
 export const FANTOM_DAI: Erc20Token = {
   symbol: "DAI",
+  logo: DaiLogo,
   address: FANTOM.DAI_ADDRESS,
   chain: 0xfa,
   decimals: 18,
@@ -227,6 +236,7 @@ export const FANTOM_DAI: Erc20Token = {
 };
 export const FANTOM_USDC: Erc20Token = {
   symbol: "USDC",
+  logo: UsdcLogo,
   address: FANTOM.USDC_ADDRESS,
   chain: 0xfa,
   decimals: 6,
@@ -234,6 +244,7 @@ export const FANTOM_USDC: Erc20Token = {
 };
 export const FANTOM_TOR: Erc20Token = {
   symbol: "TOR",
+  logo: TorLogo,
   address: FANTOM.TOR_ADDRESS,
   chain: 0xfa,
   decimals: 18,
@@ -241,6 +252,7 @@ export const FANTOM_TOR: Erc20Token = {
 };
 export const FANTOM_WFTM: Erc20Token = {
   symbol: "wFTM",
+  logo: WftmLogo,
   address: FANTOM.WFTM_ADDRESS,
   chain: 0xfa,
   decimals: 18,
@@ -248,6 +260,7 @@ export const FANTOM_WFTM: Erc20Token = {
 };
 export const FANTOM_CURVE: Erc20Token = {
   symbol: "crvLP",
+  logo: CurveLogo,
   address: FANTOM.DAI_TOR_USDC_POOL,
   chain: 0xfa,
   decimals: 18,
@@ -255,6 +268,7 @@ export const FANTOM_CURVE: Erc20Token = {
 };
 export const FANTOM_HECTOR: Erc20Token = {
   symbol: "HEC",
+  logo: HecLogo,
   address: FANTOM.HEC_ADDRESS,
   chain: 0xfa,
   decimals: 9,
@@ -262,6 +276,7 @@ export const FANTOM_HECTOR: Erc20Token = {
 };
 export const FANTOM_sHEC: Erc20Token = {
   symbol: "sHEC",
+  logo: HecLogo,
   address: FANTOM.SHEC_ADDRESS,
   chain: 0xfa,
   decimals: 9,
@@ -269,6 +284,7 @@ export const FANTOM_sHEC: Erc20Token = {
 };
 export const FANTOM_wsHEC: Erc20Token = {
   symbol: "wsHEC",
+  logo: HecLogo,
   address: FANTOM.WSHEC_ADDRESS,
   chain: 0xfa,
   decimals: 18,
