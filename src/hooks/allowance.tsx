@@ -1,6 +1,5 @@
 import Decimal from "decimal.js";
 import { useMemo } from "react";
-import { TOR_MINTER_ADDRESS } from "src/contracts/torMinter";
 import { Erc20Token, FANTOM_BLOCK_TIME, sleep, useAsyncEffect } from "src/util";
 import { useWalletState, Wallet, WalletState } from "src/wallet";
 import * as Erc20 from "src/contracts/erc20";
@@ -14,10 +13,10 @@ export type Perishable<T> =
   | { isFresh: true; current: T };
 
 export type Allowance =
-  | { type: "NoWallet" }
-  | { type: "Updating" }
-  | { type: "NoAllowance"; approve: () => void }
-  | { type: "HasAllowance"; disapprove: () => void };
+  | { type: "NoWallet"; token: Erc20Token }
+  | { type: "Updating"; token: Erc20Token }
+  | { type: "NoAllowance"; token: Erc20Token; approve: () => void }
+  | { type: "HasAllowance"; token: Erc20Token; disapprove: () => void };
 
 export function useAllowance(
   token: Erc20Token,
@@ -56,7 +55,7 @@ export function useAllowance(
           }
         }
 
-        await sleep(FANTOM_BLOCK_TIME);
+        await sleep(FANTOM_BLOCK_TIME / 2);
       }
     },
     [token, wallet, allowance],
@@ -64,14 +63,15 @@ export function useAllowance(
 
   return useMemo(() => {
     if (wallet.state != WalletState.Connected) {
-      return { type: "NoWallet" };
+      return { type: "NoWallet", token };
     }
     if (allowance == undefined || !allowance.isFresh) {
-      return { type: "Updating" };
+      return { type: "Updating", token };
     }
     if (allowance.current.gt(0)) {
       return {
         type: "HasAllowance",
+        token,
         disapprove: async () => {
           const result = await Erc20.approve(
             wallet.provider,
@@ -88,6 +88,7 @@ export function useAllowance(
     } else {
       return {
         type: "NoAllowance",
+        token,
         approve: async () => {
           const result = await Erc20.approve(
             wallet.provider,
