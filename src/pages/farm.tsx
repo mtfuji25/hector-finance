@@ -4,13 +4,13 @@ import CheckIcon from "src/icons/circle-check-solid.svgr";
 import CloseIcon from "src/icons/xmark-solid.svgr";
 import * as Curve from "src/contracts/curve";
 import * as Staking from "src/contracts/staking";
-import React, { FC, useState, VFC } from "react";
+import React, { FC, useEffect, useState, VFC } from "react";
 import { CoinInput } from "src/components/CoinInput";
 import { Radio, RadioGroup } from "src/components/Radio";
 import { Submit } from "src/components/Submit";
 import { Allowance, useAllowance } from "src/hooks/allowance";
 import { useBalance } from "src/hooks/balance";
-import { classes, useDecimalInput } from "src/util";
+import { classes, sleep, useDecimalInput } from "src/util";
 import { useWallet, Wallet, WalletState } from "src/wallet";
 import { Tab, Tabs } from "src/components/Tab";
 import { PageHeader, PageSubheader } from "src/components/Header";
@@ -20,10 +20,11 @@ import {
   FANTOM_TOR,
   FANTOM_USDC,
   FANTOM_CURVE,
-  FANTOM_WFTM,
   FANTOM_STAKED_CURVE,
   LP_FARM,
+  FANTOM_BLOCK_TIME,
 } from "src/constants";
+import Decimal from "decimal.js";
 
 const FarmPage: NextPage = () => {
   return (
@@ -486,7 +487,37 @@ const Unstake: VFC<{ wallet: Wallet }> = ({ wallet }) => {
 
 const Claim: VFC = () => {
   const wallet = useWallet();
-  const [earned, refreshEarned] = useBalance(FANTOM_WFTM, wallet);
+  const [earned, setEarned] = useState<Decimal>(new Decimal(0));
+  useEffect(() => {
+    let abort = false;
+    (async () => {
+      while (!abort) {
+        if (wallet.state === WalletState.Connected) {
+          const current = await Staking.earned(
+            LP_FARM,
+            wallet.provider,
+            wallet.address,
+          );
+          if (abort) {
+            return;
+          }
+          if (current.isOk) {
+            setEarned((prev) =>
+              prev.equals(current.value) ? prev : current.value,
+            );
+          }
+        }
+        await sleep(FANTOM_BLOCK_TIME / 2);
+      }
+    })();
+    return () => {
+      abort = true;
+      setEarned(new Decimal(0));
+    };
+  }, [wallet]);
+
+  const canClaim = earned.gt(0.1) && wallet.state === WalletState.Connected;
+
   return (
     <div className="space-y-4">
       <SectionTitle>Step 3: Claim</SectionTitle>
@@ -494,11 +525,23 @@ const Claim: VFC = () => {
         <div>wFTM Rewards:</div>
         <div className="flex-grow" />
         <div className="flex items-center">
-          <StaticImg src={FANTOM_WFTM.logo} alt="WFTM" className="h-8 w-auto" />
-          {earned.toString()}
+          <StaticImg
+            src={LP_FARM.reward.logo}
+            alt={LP_FARM.reward.symbol}
+            className="h-8 w-auto"
+          />
+          {earned.toFixed()}
         </div>
       </div>
-      <Submit label="Claim" disabled={earned.lessThan(0.1)} />
+      {!canClaim && <Submit label="Claim" />}
+      {canClaim && (
+        <Submit
+          label="Claim"
+          onClick={async () => {
+            await Staking.getReward(LP_FARM, wallet.provider, wallet.address);
+          }}
+        />
+      )}
     </div>
   );
 };
