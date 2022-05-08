@@ -12,7 +12,7 @@ export const Submit: FC<{
       "ml-auto block w-full rounded-sm px-7 py-3",
       !disabled
         ? "cursor-pointer bg-orange-500 font-medium text-white"
-        : "cursor-not-allowed bg-gray-200 text-gray-400",
+        : "cursor-not-allowed bg-gray-200 text-gray-400/70",
     )}
     disabled={disabled}
     value={label}
