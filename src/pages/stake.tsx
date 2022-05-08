@@ -3,7 +3,12 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 import RebaseTimer from "src/components/RebaseTimer";
 import hectorImg from "public/icons/hector.svg";
-import { FANTOM, THE_GRAPH_URL } from "src/constants";
+import {
+  FANTOM,
+  FANTOM_HECTOR,
+  FANTOM_sHEC,
+  THE_GRAPH_URL,
+} from "src/constants";
 import {
   getEpochInfo,
   getHecCircSupply,
@@ -11,12 +16,7 @@ import {
   stake,
   unStake,
 } from "src/contracts/stakingContract";
-import {
-  FANTOM_HECTOR,
-  FANTOM_sHEC,
-  formatCurrency,
-  useDecimalInput,
-} from "src/util";
+import { formatCurrency, useDecimalInput } from "src/util";
 import { useWallet, WalletState } from "src/wallet";
 import { CoinInput } from "src/components/CoinInput";
 import { Submit } from "src/components/Submit";

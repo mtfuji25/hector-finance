@@ -1,19 +1,7 @@
-import {
-  hex256,
-  Interface,
-  InterfaceType,
-  methodId,
-  StateMutability,
-} from "src/abi";
-import { FANTOM_HECTOR, getParameter, ok } from "src/util";
-import { FANTOM } from "src/constants";
-import {
-  call,
-  Provider,
-  ProviderRpcError,
-  sendTransaction,
-  TransactionAddress,
-} from "src/provider";
+import { Interface, InterfaceType, methodId, StateMutability } from "src/abi";
+import { ok } from "src/util";
+import { FANTOM, FANTOM_HECTOR } from "src/constants";
+import { call, Provider, ProviderRpcError } from "src/provider";
 import { Result } from "src/util";
 import { Decimal } from "decimal.js";
 

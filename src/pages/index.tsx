@@ -17,6 +17,7 @@ import {
 } from "recharts/types/component/DefaultTooltipContent";
 import {
   ETH_GRAPH_URL,
+  FANTOM_HECTOR,
   GRAPH_DATA,
   ProtocolMetrics,
   SubgraphData,
@@ -26,7 +27,7 @@ import { getTotalSupply } from "src/contracts/erc20";
 import { getHecBurned } from "src/contracts/hecBurnContract";
 import { getStakingIndex } from "src/contracts/stakingContract";
 import { getMarketPrice } from "src/contracts/uniswapV2";
-import { FANTOM_HECTOR, formatCurrency } from "src/util";
+import { formatCurrency } from "src/util";
 import { useWallet, WalletState } from "src/wallet";
 
 const ETH_QUERY = `query {

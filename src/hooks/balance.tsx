@@ -1,8 +1,11 @@
 import Decimal from "decimal.js";
 import { useMemo, useReducer, useState } from "react";
-import { Erc20Token, FANTOM_BLOCK_TIME, sleep, useAsyncEffect } from "src/util";
+import { sleep, useAsyncEffect } from "src/util";
 import { Wallet, WalletState } from "src/wallet";
 import * as Erc20 from "src/contracts/erc20";
+import { Erc20Token } from "src/contracts/erc20";
+import { FANTOM_BLOCK_TIME } from "src/constants";
+
 /**
  * Returns a token balance that's periodically updated from the blockchain.
  *

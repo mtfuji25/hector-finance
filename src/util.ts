@@ -1,14 +1,5 @@
 import { Decimal } from "decimal.js";
-import { StaticImageData } from "next/image";
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
-import { FANTOM } from "./constants";
-import { TokenAddress } from "./provider";
-import DaiLogo from "public/icons/dai.svg";
-import HecLogo from "public/icons/hector.svg";
-import TorLogo from "public/icons/tor.svg";
-import CurveLogo from "public/icons/curve.webp";
-import UsdcLogo from "public/icons/usdc.svg";
-import WftmLogo from "public/icons/wftm.svg";
 
 /**
  * Build a class string from a list of valid classes.
@@ -182,114 +173,6 @@ export function ellipsisBetween(
   const right = str.slice(str.length - charsFromRight);
   return `${left}...${right}`;
 }
-
-/**
- * This is a rough estimate of the Fantom block time.
- * You should use this when polling the blockchain for changes!
- */
-// TODO: Block times can vary based on chain and congestion.
-// Polling could be made more efficient if the `BLOCK_TIME` was
-// dynamically updated. There's no reason to poll more often than
-// the blocks are actually produced.
-export const FANTOM_BLOCK_TIME: number = 2_000;
-
-export interface Erc20Token {
-  symbol: string;
-  logo: StaticImageData;
-  address: TokenAddress;
-  chain: number;
-
-  /**
-   * The number of decimal places this token can represent.
-   * Otherwise known as _precision_.
-   *
-   * Most tokens are 18 decimals, some are not.
-   *
-   * Don't use this property for converting to/from wei. Use {@link wei} for that.
-   */
-  decimals: number;
-
-  /**
-   * The amount of wei in a single token. You should use this
-   * when converting to/from values used by the blockchain!
-   * ```ts
-   * balance.mul(token.wei); // From tokens to wei
-   * balance.div(token.wei); // From wei to tokens
-   * ```
-   */
-  wei: Decimal;
-}
-
-export interface LpToken extends Erc20Token {
-  reserveAddress: TokenAddress;
-  lpURL: string;
-  isFour: boolean;
-}
-
-export const FANTOM_DAI: Erc20Token = {
-  symbol: "DAI",
-  logo: DaiLogo,
-  address: FANTOM.DAI_ADDRESS,
-  chain: 0xfa,
-  decimals: 18,
-  wei: new Decimal(10 ** 18),
-};
-export const FANTOM_USDC: Erc20Token = {
-  symbol: "USDC",
-  logo: UsdcLogo,
-  address: FANTOM.USDC_ADDRESS,
-  chain: 0xfa,
-  decimals: 6,
-  wei: new Decimal(10 ** 6),
-};
-export const FANTOM_TOR: Erc20Token = {
-  symbol: "TOR",
-  logo: TorLogo,
-  address: FANTOM.TOR_ADDRESS,
-  chain: 0xfa,
-  decimals: 18,
-  wei: new Decimal(10 ** 18),
-};
-export const FANTOM_WFTM: Erc20Token = {
-  symbol: "wFTM",
-  logo: WftmLogo,
-  address: FANTOM.WFTM_ADDRESS,
-  chain: 0xfa,
-  decimals: 18,
-  wei: new Decimal(10 ** 18),
-};
-export const FANTOM_CURVE: Erc20Token = {
-  symbol: "crvLP",
-  logo: CurveLogo,
-  address: FANTOM.DAI_TOR_USDC_POOL,
-  chain: 0xfa,
-  decimals: 18,
-  wei: new Decimal(10 ** 18),
-};
-export const FANTOM_HECTOR: Erc20Token = {
-  symbol: "HEC",
-  logo: HecLogo,
-  address: FANTOM.HEC_ADDRESS,
-  chain: 0xfa,
-  decimals: 9,
-  wei: new Decimal(10 ** 9),
-};
-export const FANTOM_sHEC: Erc20Token = {
-  symbol: "sHEC",
-  logo: HecLogo,
-  address: FANTOM.SHEC_ADDRESS,
-  chain: 0xfa,
-  decimals: 9,
-  wei: new Decimal(10 ** 9),
-};
-export const FANTOM_wsHEC: Erc20Token = {
-  symbol: "wsHEC",
-  logo: HecLogo,
-  address: FANTOM.WSHEC_ADDRESS,
-  chain: 0xfa,
-  decimals: 18,
-  wei: new Decimal(10 ** 18),
-};
 
 /**
  * Use this inside `useEffect`s that need to run some async functions.

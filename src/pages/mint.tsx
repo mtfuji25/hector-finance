@@ -10,11 +10,11 @@ import { PageHeader, PageSubheader } from "src/components/Header";
 import { StaticImg } from "src/components/StaticImg";
 import { Submit } from "src/components/Submit";
 import { Tab, Tabs } from "src/components/Tab";
-import { FANTOM } from "src/constants";
+import { FANTOM, FANTOM_DAI, FANTOM_TOR } from "src/constants";
 import { mintWithDai, redeemToDai } from "src/contracts/torMinter";
 import { useAllowance } from "src/hooks/allowance";
 import { useBalance } from "src/hooks/balance";
-import { FANTOM_DAI, FANTOM_TOR, useDecimalInput } from "src/util";
+import { useDecimalInput } from "src/util";
 import { useWallet, WalletState } from "src/wallet";
 
 const MintPage: NextPage = () => {

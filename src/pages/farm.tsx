@@ -1,10 +1,5 @@
 import { NextPage } from "next";
 import Head from "next/head";
-import DaiLogo from "public/icons/dai.svg";
-import TorLogo from "public/icons/tor.svg";
-import UsdcLogo from "public/icons/usdc.svg";
-import CurveLogo from "public/icons/curve.webp";
-import WftmLogo from "public/icons/wftm.svg";
 import CheckIcon from "src/icons/circle-check-solid.svgr";
 import CloseIcon from "src/icons/xmark-solid.svgr";
 import * as Curve from "src/contracts/curve";
@@ -14,19 +9,18 @@ import { Radio, RadioGroup } from "src/components/Radio";
 import { Submit } from "src/components/Submit";
 import { Allowance, useAllowance } from "src/hooks/allowance";
 import { useBalance } from "src/hooks/balance";
-import {
-  classes,
-  FANTOM_CURVE,
-  FANTOM_DAI,
-  FANTOM_TOR,
-  FANTOM_USDC,
-  FANTOM_WFTM,
-  useDecimalInput,
-} from "src/util";
+import { classes, useDecimalInput } from "src/util";
 import { useWallet, Wallet, WalletState } from "src/wallet";
 import { Tab, Tabs } from "src/components/Tab";
 import { PageHeader, PageSubheader } from "src/components/Header";
 import { StaticImg } from "src/components/StaticImg";
+import {
+  FANTOM_DAI,
+  FANTOM_TOR,
+  FANTOM_USDC,
+  FANTOM_CURVE,
+  FANTOM_WFTM,
+} from "src/constants";
 
 const FarmPage: NextPage = () => {
   return (
@@ -325,7 +319,7 @@ const PoolWithdraw: VFC<{ wallet: Wallet }> = ({ wallet }) => {
                 curve.gt(0) &&
                 `≈ ${curve.toFixed(2)}`}
               <StaticImg
-                src={TorLogo}
+                src={FANTOM_TOR.logo}
                 alt={FANTOM_TOR.symbol}
                 className="h-6 w-auto"
               />
@@ -343,7 +337,7 @@ const PoolWithdraw: VFC<{ wallet: Wallet }> = ({ wallet }) => {
                 curve.gt(0) &&
                 `≈ ${curve.toFixed(2)}`}
               <StaticImg
-                src={DaiLogo}
+                src={FANTOM_DAI.logo}
                 alt={FANTOM_DAI.symbol}
                 className="h-6 w-auto"
               />
@@ -361,7 +355,7 @@ const PoolWithdraw: VFC<{ wallet: Wallet }> = ({ wallet }) => {
                 curve.gt(0) &&
                 `≈ ${curve.toFixed(2)}`}
               <StaticImg
-                src={UsdcLogo}
+                src={FANTOM_USDC.logo}
                 alt={FANTOM_USDC.symbol}
                 className="h-6 w-auto"
               />
@@ -412,7 +406,7 @@ const Stake: VFC<{ wallet: Wallet }> = ({ wallet }) => {
       <CoinInput
         amount={curveInput}
         onChange={setCurveInput}
-        tokenImage={CurveLogo}
+        tokenImage={FANTOM_CURVE.logo}
         tokenName={FANTOM_CURVE.symbol}
         balance={curveBalance}
         decimalAmount={FANTOM_USDC.decimals}
@@ -430,7 +424,7 @@ const Unstake: VFC<{ wallet: Wallet }> = ({ wallet }) => {
       <CoinInput
         amount={curveInput}
         onChange={setCurveInput}
-        tokenImage={CurveLogo}
+        tokenImage={FANTOM_CURVE.logo}
         tokenName={FANTOM_CURVE.symbol}
         balance={curveBalance}
         decimalAmount={FANTOM_USDC.decimals}
@@ -454,7 +448,7 @@ const Claim: VFC = () => {
         <div>wFTM Rewards:</div>
         <div className="flex-grow" />
         <div className="flex items-center">
-          <StaticImg src={WftmLogo} alt="WFTM" className="h-8 w-auto" />
+          <StaticImg src={FANTOM_WFTM.logo} alt="WFTM" className="h-8 w-auto" />
           {earned.toString()}
         </div>
       </div>

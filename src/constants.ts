@@ -1,3 +1,23 @@
+import { Erc20Token } from "./contracts/erc20";
+import { Farm } from "./contracts/staking";
+import DaiLogo from "public/icons/dai.svg";
+import HecLogo from "public/icons/hector.svg";
+import TorLogo from "public/icons/tor.svg";
+import CurveLogo from "public/icons/curve.webp";
+import UsdcLogo from "public/icons/usdc.svg";
+import WftmLogo from "public/icons/wftm.svg";
+import Decimal from "decimal.js";
+
+/**
+ * This is a rough estimate of the Fantom block time.
+ * You should use this when polling the blockchain for changes!
+ */
+// TODO: Block times can vary based on chain and congestion.
+// Polling could be made more efficient if the `BLOCK_TIME` was
+// dynamically updated. There's no reason to poll more often than
+// the blocks are actually produced.
+export const FANTOM_BLOCK_TIME: number = 2_000;
+
 export const THE_GRAPH_URL =
   "https://api.thegraph.com/subgraphs/name/hectordao-hec/hector-dao";
 export const THE_ALT_GRAPH_URL =
@@ -216,3 +236,81 @@ export const FANTOM_RPC = "https://rpc.ftm.tools/";
 export const AVALANCHE_RPC = "https://avalanche.public-rpc.com";
 export const BSC_RPC = "https://bscrpc.com";
 export const POLYGON_RPC = "https://polygon-rpc.com";
+
+export const FANTOM_DAI: Erc20Token = {
+  symbol: "DAI",
+  logo: DaiLogo,
+  address: FANTOM.DAI_ADDRESS,
+  chain: 0xfa,
+  decimals: 18,
+  wei: new Decimal(10 ** 18),
+};
+
+export const FANTOM_USDC: Erc20Token = {
+  symbol: "USDC",
+  logo: UsdcLogo,
+  address: FANTOM.USDC_ADDRESS,
+  chain: 0xfa,
+  decimals: 6,
+  wei: new Decimal(10 ** 6),
+};
+
+export const FANTOM_TOR: Erc20Token = {
+  symbol: "TOR",
+  logo: TorLogo,
+  address: FANTOM.TOR_ADDRESS,
+  chain: 0xfa,
+  decimals: 18,
+  wei: new Decimal(10 ** 18),
+};
+
+export const FANTOM_WFTM: Erc20Token = {
+  symbol: "wFTM",
+  logo: WftmLogo,
+  address: FANTOM.WFTM_ADDRESS,
+  chain: 0xfa,
+  decimals: 18,
+  wei: new Decimal(10 ** 18),
+};
+
+export const FANTOM_CURVE: Erc20Token = {
+  symbol: "crvLP",
+  logo: CurveLogo,
+  address: FANTOM.DAI_TOR_USDC_POOL,
+  chain: 0xfa,
+  decimals: 18,
+  wei: new Decimal(10 ** 18),
+};
+
+export const FANTOM_HECTOR: Erc20Token = {
+  symbol: "HEC",
+  logo: HecLogo,
+  address: FANTOM.HEC_ADDRESS,
+  chain: 0xfa,
+  decimals: 9,
+  wei: new Decimal(10 ** 9),
+};
+
+export const FANTOM_sHEC: Erc20Token = {
+  symbol: "sHEC",
+  logo: HecLogo,
+  address: FANTOM.SHEC_ADDRESS,
+  chain: 0xfa,
+  decimals: 9,
+  wei: new Decimal(10 ** 9),
+};
+
+export const FANTOM_wsHEC: Erc20Token = {
+  symbol: "wsHEC",
+  logo: HecLogo,
+  address: FANTOM.WSHEC_ADDRESS,
+  chain: 0xfa,
+  decimals: 18,
+  wei: new Decimal(10 ** 18),
+};
+
+export const TOR_LP: Farm = {
+  address: "0xD54d478975990927c0Bb9803708A3eD5Dc1cFa20",
+  stake: FANTOM_CURVE,
+  reward: FANTOM_WFTM,
+};

@@ -2,17 +2,17 @@ import Decimal from "decimal.js";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { CoinInput } from "src/components/CoinInput";
-import { FANTOM } from "src/constants";
+import {
+  FANTOM,
+  FANTOM_HECTOR,
+  FANTOM_sHEC,
+  FANTOM_wsHEC,
+} from "src/constants";
 import { getStakingIndex } from "src/contracts/stakingContract";
 import { getMarketPrice } from "src/contracts/uniswapV2";
 import { useAllowance } from "src/hooks/allowance";
 import { useBalance } from "src/hooks/balance";
-import {
-  FANTOM_HECTOR,
-  FANTOM_sHEC,
-  FANTOM_wsHEC,
-  useDecimalInput,
-} from "src/util";
+import { useDecimalInput } from "src/util";
 import hectorImg from "public/icons/hector.svg";
 import { useWallet, WalletState } from "src/wallet";
 import { Submit } from "src/components/Submit";

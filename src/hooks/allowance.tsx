@@ -1,8 +1,10 @@
 import Decimal from "decimal.js";
 import { useMemo } from "react";
-import { Erc20Token, FANTOM_BLOCK_TIME, sleep, useAsyncEffect } from "src/util";
+import { sleep, useAsyncEffect } from "src/util";
 import { useWalletState, Wallet, WalletState } from "src/wallet";
 import * as Erc20 from "src/contracts/erc20";
+import { Erc20Token } from "src/contracts/erc20";
+import { FANTOM_BLOCK_TIME } from "src/constants";
 
 /** A value that could be either fresh or stale. Ideally, values
  * should be kept fresh. If a value is made stale, replace it with

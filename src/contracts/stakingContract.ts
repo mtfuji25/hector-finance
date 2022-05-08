@@ -4,9 +4,10 @@ import {
   InterfaceType,
   methodId,
   StateMutability,
+  token256,
 } from "src/abi";
-import { FANTOM_HECTOR, getParameter, ok } from "src/util";
-import { FANTOM } from "src/constants";
+import { getParameter, ok } from "src/util";
+import { FANTOM, FANTOM_HECTOR } from "src/constants";
 import {
   call,
   Provider,
@@ -16,8 +17,6 @@ import {
 } from "src/provider";
 import { Result } from "src/util";
 import { Decimal } from "decimal.js";
-
-export const HEC_DECIMAL = 9;
 
 export interface EpochInfo {
   length: Decimal;
@@ -140,12 +139,11 @@ export async function stake(
   owner: string,
   hec: Decimal,
 ): Promise<Result<TransactionAddress, ProviderRpcError>> {
-  const wei = hex256(hec.mul(FANTOM_HECTOR.wei).trunc().toHex());
   const method = await methodId(STAKE);
   const result = await sendTransaction(provider, {
     from: owner,
     to: FANTOM.STAKING_HELPER_ADDRESS,
-    data: "0x" + method + wei + hex256(owner),
+    data: "0x" + method + token256(FANTOM_HECTOR, hec) + hex256(owner),
   });
   return result;
 }
@@ -172,12 +170,11 @@ export async function unStake(
   owner: string,
   sHec: Decimal,
 ): Promise<Result<TransactionAddress, ProviderRpcError>> {
-  const wei = hex256(sHec.mul(FANTOM_HECTOR.wei).trunc().toHex());
   const method = await methodId(UNSTAKE);
   const result = await sendTransaction(provider, {
     from: owner,
     to: FANTOM.STAKING_ADDRESS,
-    data: "0x" + method + wei + hex256(owner),
+    data: "0x" + method + token256(FANTOM_HECTOR, sHec) + hex256(owner),
   });
   return result;
 }

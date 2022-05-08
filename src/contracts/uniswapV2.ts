@@ -1,13 +1,7 @@
 import Decimal from "decimal.js";
 import { Interface, InterfaceType, methodId, StateMutability } from "src/abi";
 import { FANTOM } from "src/constants";
-import {
-  call,
-  Provider,
-  ProviderRpcError,
-  sendTransaction,
-  TransactionAddress,
-} from "src/provider";
+import { call, Provider, ProviderRpcError } from "src/provider";
 import { Result, ok, getParameter } from "src/util";
 
 export async function getMarketPrice(

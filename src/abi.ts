@@ -1,4 +1,6 @@
+import Decimal from "decimal.js";
 import { keccak } from "hash-wasm";
+import { Erc20Token } from "./contracts/erc20";
 
 // Written according to: https://docs.soliditylang.org/en/v0.8.12/abi-spec.html
 
@@ -90,4 +92,8 @@ export function hex256(hex: string): string {
     throw new Error("hex must not be greater than 256 bits (64 chars)");
   }
   return hex.slice(2).padStart(HEX_CHARS_PER_256_BITS, "0");
+}
+
+export function token256(token: Erc20Token, decimal: Decimal): string {
+  return hex256(decimal.mul(token.wei).trunc().toHex());
 }

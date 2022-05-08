@@ -1,18 +1,54 @@
 import { Decimal } from "decimal.js";
+import { StaticImageData } from "next/image";
 import {
   hex256,
   Interface,
   InterfaceType,
   methodId,
   StateMutability,
+  token256,
 } from "src/abi";
 import {
   call,
   Provider,
   ProviderRpcError,
   sendTransaction,
+  TokenAddress,
 } from "src/provider";
-import { Erc20Token, ok, Result } from "src/util";
+import { ok, Result } from "src/util";
+
+export interface Erc20Token {
+  symbol: string;
+  logo: StaticImageData;
+  address: TokenAddress;
+  chain: number;
+
+  /**
+   * The number of decimal places this token can represent.
+   * Otherwise known as _precision_.
+   *
+   * Most tokens are 18 decimals, some are not.
+   *
+   * Don't use this property for converting to/from wei. Use {@link wei} for that.
+   */
+  decimals: number;
+
+  /**
+   * The amount of wei in a single token. You should use this
+   * when converting to/from values used by the blockchain!
+   * ```ts
+   * balance.mul(token.wei); // From tokens to wei
+   * balance.div(token.wei); // From wei to tokens
+   * ```
+   */
+  wei: Decimal;
+}
+
+export interface LpToken extends Erc20Token {
+  reserveAddress: TokenAddress;
+  lpURL: string;
+  isFour: boolean;
+}
 
 export async function allowance(
   provider: Provider,
@@ -20,12 +56,10 @@ export async function allowance(
   owner: string,
   spender: string,
 ): Promise<Result<Decimal, ProviderRpcError>> {
-  owner = hex256(owner);
-  spender = hex256(spender);
   const method = await methodId(ALLOWANCE_ABI);
   const result = await call(provider, {
     to: token.address,
-    data: "0x" + method + owner + spender,
+    data: "0x" + method + hex256(owner) + hex256(spender),
   });
   if (!result.isOk) {
     return result;
@@ -67,12 +101,11 @@ export async function approve(
   allowance: Decimal,
 ): Promise<Result<boolean, ProviderRpcError>> {
   spender = hex256(spender);
-  const allowance256 = hex256(allowance.mul(token.wei).trunc().toHex());
   const method = await methodId(APPROVE_ABI);
   const result = await sendTransaction(provider, {
     from: owner,
     to: token.address,
-    data: "0x" + method + spender + allowance256,
+    data: "0x" + method + spender + token256(token, allowance),
   });
   if (!result.isOk) {
     return result;
