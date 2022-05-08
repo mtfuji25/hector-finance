@@ -5,14 +5,17 @@ import TorLogo from "public/icons/tor.svg";
 import UsdcLogo from "public/icons/usdc.svg";
 import CurveLogo from "public/icons/curve.webp";
 import WftmLogo from "public/icons/wftm.svg";
+import CheckIcon from "src/icons/circle-check-solid.svgr";
+import CloseIcon from "src/icons/xmark-solid.svgr";
+import * as Curve from "src/contracts/curve";
 import React, { FC, useState, VFC } from "react";
 import { CoinInput } from "src/components/CoinInput";
 import { Radio, RadioGroup } from "src/components/Radio";
 import { Submit } from "src/components/Submit";
-import { FANTOM } from "src/constants";
-import { useAllowance } from "src/hooks/allowance";
+import { Allowance, useAllowance } from "src/hooks/allowance";
 import { useBalance } from "src/hooks/balance";
 import {
+  classes,
   FANTOM_CURVE,
   FANTOM_DAI,
   FANTOM_TOR,
@@ -20,25 +23,12 @@ import {
   FANTOM_WFTM,
   useDecimalInput,
 } from "src/util";
-import { useWallet, Wallet } from "src/wallet";
+import { useWallet, Wallet, WalletState } from "src/wallet";
 import { Tab, Tabs } from "src/components/Tab";
 import { PageHeader, PageSubheader } from "src/components/Header";
 import { StaticImg } from "src/components/StaticImg";
 
 const FarmPage: NextPage = () => {
-  const wallet = useWallet();
-
-  const daiAllowance = useAllowance(
-    FANTOM_DAI,
-    wallet,
-    FANTOM.TOR_MINTER_ADDRESS,
-  );
-  const torAllowance = useAllowance(
-    FANTOM_TOR,
-    wallet,
-    FANTOM.TOR_MINTER_ADDRESS,
-  );
-
   return (
     <main className="w-full space-y-20">
       <Head>
@@ -48,9 +38,9 @@ const FarmPage: NextPage = () => {
         <PageHeader>Farm</PageHeader>
         <PageSubheader>Earn passive income by lending to Hector</PageSubheader>
       </div>
-      <Pool wallet={wallet} />
-      <Farm wallet={wallet} />
-      <Claim wallet={wallet} />
+      <Pool />
+      <Farm />
+      <Claim />
     </main>
   );
 };
@@ -65,7 +55,12 @@ const SectionTitle: FC = ({ children }) => (
   </div>
 );
 
-const Pool: VFC<{ wallet: Wallet }> = ({ wallet }) => {
+// ----------------------------------------------------------------------------
+// --------------------------------  POOL  ------------------------------------
+// ----------------------------------------------------------------------------
+
+const Pool: VFC = () => {
+  const wallet = useWallet();
   const [view, setView] = useState<"deposit" | "withdraw">("deposit");
   return (
     <div className="space-y-4">
@@ -105,77 +100,230 @@ const Pool: VFC<{ wallet: Wallet }> = ({ wallet }) => {
   );
 };
 
+const DAI_TOR_USDC_FARM = "0x61B71689684800f73eBb67378fc2e1527fbDC3b3";
+const DAI_TOR_USDC_POOL = "0x24699312CB27C26Cfc669459D670559E5E44EE60";
+
 const PoolDeposit: VFC<{ wallet: Wallet }> = ({ wallet }) => {
   const [tor, torInput, setTorInput] = useDecimalInput();
   const [dai, daiInput, setDaiInput] = useDecimalInput();
   const [usdc, usdcInput, setUsdcInput] = useDecimalInput();
+
   const [daiBalance, refreshDaiBalance] = useBalance(FANTOM_DAI, wallet);
   const [torBalance, refreshTorBalance] = useBalance(FANTOM_TOR, wallet);
   const [usdcBalance, refreshUsdcBalance] = useBalance(FANTOM_USDC, wallet);
+
+  const daiAllowance = useAllowance(FANTOM_DAI, wallet, DAI_TOR_USDC_FARM);
+  const torAllowance = useAllowance(FANTOM_TOR, wallet, DAI_TOR_USDC_FARM);
+  const usdcAllowance = useAllowance(FANTOM_USDC, wallet, DAI_TOR_USDC_FARM);
+
+  const [allowanceModal, showAllowanceModal] = useState(false);
+
+  const deposit = async () => {
+    if (
+      daiAllowance.type === "NoAllowance" ||
+      torAllowance.type === "NoAllowance" ||
+      usdcAllowance.type === "NoAllowance"
+    ) {
+      showAllowanceModal(true);
+      return;
+    }
+
+    if (wallet.state === WalletState.Connected) {
+      const response = await Curve.addLiquidity(
+        wallet.provider,
+        wallet.address,
+        DAI_TOR_USDC_POOL,
+        tor,
+        dai,
+        usdc,
+      );
+      if (response.isOk) {
+        setTorInput("");
+        setUsdcInput("");
+        setDaiInput("");
+        // TODO: Add success toast
+      } else {
+        // TODO: Add error toast
+      }
+    }
+  };
+
   return (
     <>
       <CoinInput
         amount={torInput}
         onChange={setTorInput}
-        tokenImage={TorLogo}
-        tokenName="TOR"
         balance={torBalance}
         decimalAmount={FANTOM_TOR.decimals}
+        tokenImage={FANTOM_TOR.logo}
+        tokenName={FANTOM_TOR.symbol}
       />
       <CoinInput
         amount={daiInput}
         onChange={setDaiInput}
-        tokenImage={DaiLogo}
-        tokenName="DAI"
         balance={daiBalance}
         decimalAmount={FANTOM_DAI.decimals}
+        tokenImage={FANTOM_DAI.logo}
+        tokenName={FANTOM_DAI.symbol}
       />
       <CoinInput
         amount={usdcInput}
         onChange={setUsdcInput}
-        tokenImage={UsdcLogo}
-        tokenName="USDC"
         balance={usdcBalance}
         decimalAmount={FANTOM_USDC.decimals}
+        tokenImage={FANTOM_USDC.logo}
+        tokenName={FANTOM_USDC.symbol}
       />
       <Submit
         label="Deposit"
         disabled={tor.lte(0) && dai.lte(0) && usdc.lte(0)}
+        onClick={deposit}
       />
+      {allowanceModal && (
+        <div>
+          <AllowanceModal
+            allowances={[torAllowance, daiAllowance, usdcAllowance]}
+            onCancel={() => showAllowanceModal(false)}
+            onComplete={() => {
+              showAllowanceModal(false);
+              deposit();
+            }}
+          />
+        </div>
+      )}
     </>
   );
 };
 
+const AllowanceModal: VFC<{
+  allowances: Allowance[];
+  onCancel: () => void;
+  onComplete: () => void;
+}> = ({ allowances, onCancel, onComplete }) => {
+  const isComplete = allowances.every(
+    (allowance) => allowance.type === "HasAllowance",
+  );
+  return (
+    <Modal className="space-y-5 p-6">
+      <div className="flex items-center text-xl font-medium">
+        <div>Token allowance</div>
+        <div className="flex-grow" />
+        <button
+          title="Close token allowance"
+          className="-m-4 p-4"
+          onClick={onCancel}
+        >
+          <CloseIcon className="h-2.5 w-2.5" />
+        </button>
+      </div>
+      <div>
+        An allowance is required for Hector to create transactions. Granting
+        allowances will cost you a small fee and only needs to be done once per
+        token-contract pair.
+      </div>
+      <div className="space-y-3 rounded bg-gray-100 p-3 pl-4">
+        {allowances.map((allowance) => (
+          <GrantButton allowance={allowance} />
+        ))}
+      </div>
+      <div className="flex items-end">
+        <Submit label="Continue" disabled={!isComplete} onClick={onComplete} />
+      </div>
+    </Modal>
+  );
+};
+
+export const GrantButton: FC<{
+  allowance: Allowance;
+}> = ({ allowance }) => (
+  <div className="flex items-center rounded">
+    <div className="flex items-center gap-2">
+      <StaticImg
+        src={allowance.token.logo}
+        className="h-6 w-6"
+        alt={allowance.token.symbol}
+      />
+      {allowance.token.symbol}
+    </div>
+    <div className="flex-grow" />
+    <button
+      className={classes(
+        "flex items-center justify-center gap-2 rounded-sm py-2 font-medium",
+        allowance.type === "HasAllowance"
+          ? "cursor-not-allowed bg-gray-300 px-5 text-white"
+          : "cursor-pointer bg-orange-500 px-7 text-white",
+      )}
+      onClick={() => {
+        if (allowance.type === "NoAllowance") {
+          allowance.approve();
+        }
+      }}
+      disabled={allowance.type === "HasAllowance"}
+    >
+      {allowance.type === "HasAllowance" ? (
+        <>
+          <CheckIcon className="h-4 w-4 object-contain" />
+          Granted
+        </>
+      ) : (
+        <>Allow</>
+      )}
+    </button>
+  </div>
+);
+
+const Modal: FC<{ className?: string }> = ({ children, className }) => (
+  <div className="fixed top-0 left-0 right-0 bottom-0 z-10 m-0 bg-gray-900/50 p-4 backdrop-blur-sm">
+    <div className="relative left-1/2 top-1/2 max-w-md -translate-x-1/2 -translate-y-1/2 rounded bg-white">
+      <div className={className}>{children}</div>
+    </div>
+  </div>
+);
+
 const PoolWithdraw: VFC<{ wallet: Wallet }> = ({ wallet }) => {
-  const [output, setOutput] = useState<"dai" | "tor" | "usdc">("tor");
+  const [output, setOutput] = useState<Curve.WithdrawAs>(Curve.WithdrawAs.Tor);
   const [curve, curveInput, setCurveInput] = useDecimalInput();
-  const [curveBalance, refreshCurveBalance] = useBalance(FANTOM_TOR, wallet);
+  const [curveBalance, refreshCurveBalance] = useBalance(FANTOM_CURVE, wallet);
+
+  const withdraw = async () => {
+    if (wallet.state === WalletState.Connected) {
+      const response = await Curve.removeLiquidity(
+        wallet.provider,
+        wallet.address,
+        DAI_TOR_USDC_POOL,
+        curve,
+        output,
+      );
+      if (response.isOk) {
+        setCurveInput("");
+        // TODO: display success toast
+      } else {
+        // TODO: display error toast
+      }
+    }
+  };
+
   return (
     <>
       <CoinInput
         amount={curveInput}
         onChange={setCurveInput}
-        tokenImage={CurveLogo}
-        tokenName={FANTOM_CURVE.symbol}
         balance={curveBalance}
-        decimalAmount={FANTOM_USDC.decimals}
+        decimalAmount={FANTOM_CURVE.decimals}
+        tokenImage={FANTOM_CURVE.logo}
+        tokenName={FANTOM_CURVE.symbol}
       />
       <RadioGroup label="Withdraw as">
         <Radio
-          checked={output === "tor"}
-          onCheck={() => {
-            // refreshTorBalance();
-            // refreshDaiBalance();
-            // refreshUsdcBalance();
-            // setDaiInput("");
-            // setTorInput("");
-            setOutput("tor");
-          }}
+          checked={output === Curve.WithdrawAs.Tor}
+          onCheck={() => setOutput(Curve.WithdrawAs.Tor)}
         >
           <div className="flex justify-between">
             <div>{FANTOM_TOR.symbol}</div>
             <div className="flex gap-2">
-              {output === "tor" && curve.gt(0) && `≈ ${curve.toFixed(2)}`}
+              {output === Curve.WithdrawAs.Tor &&
+                curve.gt(0) &&
+                `≈ ${curve.toFixed(2)}`}
               <StaticImg
                 src={TorLogo}
                 alt={FANTOM_TOR.symbol}
@@ -185,20 +333,15 @@ const PoolWithdraw: VFC<{ wallet: Wallet }> = ({ wallet }) => {
           </div>
         </Radio>
         <Radio
-          checked={output === "dai"}
-          onCheck={() => {
-            // refreshTorBalance();
-            // refreshDaiBalance();
-            // refreshUsdcBalance();
-            // setDaiInput("");
-            // setTorInput("");
-            setOutput("dai");
-          }}
+          checked={output === Curve.WithdrawAs.Dai}
+          onCheck={() => setOutput(Curve.WithdrawAs.Dai)}
         >
           <div className="flex justify-between">
             <div>{FANTOM_DAI.symbol}</div>
             <div className="flex gap-2">
-              {output === "dai" && curve.gt(0) && `≈ ${curve.toFixed(2)}`}
+              {output === Curve.WithdrawAs.Dai &&
+                curve.gt(0) &&
+                `≈ ${curve.toFixed(2)}`}
               <StaticImg
                 src={DaiLogo}
                 alt={FANTOM_DAI.symbol}
@@ -208,20 +351,15 @@ const PoolWithdraw: VFC<{ wallet: Wallet }> = ({ wallet }) => {
           </div>
         </Radio>
         <Radio
-          checked={output === "usdc"}
-          onCheck={() => {
-            // refreshTorBalance();
-            // refreshDaiBalance();
-            // refreshUsdcBalance();
-            // setDaiInput("");
-            // setTorInput("");
-            setOutput("usdc");
-          }}
+          checked={output === Curve.WithdrawAs.Usdc}
+          onCheck={() => setOutput(Curve.WithdrawAs.Usdc)}
         >
           <div className="flex justify-between">
             <div>{FANTOM_USDC.symbol}</div>
             <div className="flex gap-2">
-              {output === "usdc" && curve.gt(0) && `≈ ${curve.toFixed(2)}`}
+              {output === Curve.WithdrawAs.Usdc &&
+                curve.gt(0) &&
+                `≈ ${curve.toFixed(2)}`}
               <StaticImg
                 src={UsdcLogo}
                 alt={FANTOM_USDC.symbol}
@@ -231,12 +369,17 @@ const PoolWithdraw: VFC<{ wallet: Wallet }> = ({ wallet }) => {
           </div>
         </Radio>
       </RadioGroup>
-      <Submit label="Withdraw" disabled={curve.lte(0)} />
+      <Submit label="Withdraw" disabled={curve.lte(0)} onClick={withdraw} />
     </>
   );
 };
 
-const Farm: VFC<{ wallet: Wallet }> = ({ wallet }) => {
+// ----------------------------------------------------------------------------
+// --------------------------------  FARM  ------------------------------------
+// ----------------------------------------------------------------------------
+
+const Farm: VFC = () => {
+  const wallet = useWallet();
   const [view, setView] = useState<"stake" | "unstake">("stake");
   return (
     <div className="space-y-4">
@@ -297,7 +440,12 @@ const Unstake: VFC<{ wallet: Wallet }> = ({ wallet }) => {
   );
 };
 
-const Claim: VFC<{ wallet: Wallet }> = ({ wallet }) => {
+// ----------------------------------------------------------------------------
+// -------------------------------  CLAIM  ------------------------------------
+// ----------------------------------------------------------------------------
+
+const Claim: VFC = () => {
+  const wallet = useWallet();
   const [earned, refreshEarned] = useBalance(FANTOM_WFTM, wallet);
   return (
     <div className="space-y-4">
