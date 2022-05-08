@@ -16,9 +16,9 @@ export type Farm = {
   reward: Erc20Token;
 };
 
-export async function allowance(
-  provider: Provider,
+export async function stake(
   farm: Farm,
+  provider: Provider,
   owner: string,
   amount: Decimal,
 ): Promise<Result<null, ProviderRpcError>> {
@@ -31,9 +31,6 @@ export async function allowance(
   if (!result.isOk) {
     return result;
   }
-  if (result.value === "0x") {
-    result.value = "0x0";
-  }
   return ok(null);
 }
 
@@ -43,6 +40,24 @@ const STAKE_ABI: Interface = {
   stateMutability: StateMutability.NonPayable,
   type: InterfaceType.Function,
 };
+
+export async function withdraw(
+  farm: Farm,
+  provider: Provider,
+  owner: string,
+  amount: Decimal,
+): Promise<Result<null, ProviderRpcError>> {
+  const method = await methodId(WITHDRAW_ABI);
+  const result = await sendTransaction(provider, {
+    from: owner,
+    to: farm.address,
+    data: "0x" + method + token256(farm.reward, amount),
+  });
+  if (!result.isOk) {
+    return result;
+  }
+  return ok(null);
+}
 
 const WITHDRAW_ABI: Interface = {
   name: "withdraw",

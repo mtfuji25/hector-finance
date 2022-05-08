@@ -282,6 +282,15 @@ export const FANTOM_CURVE: Erc20Token = {
   wei: new Decimal(10 ** 18),
 };
 
+export const FANTOM_STAKED_CURVE: Erc20Token = {
+  symbol: "crvLP",
+  logo: CurveLogo,
+  address: FANTOM.DAI_TOR_USDC_FARM,
+  chain: 0xfa,
+  decimals: 18,
+  wei: new Decimal(10 ** 18),
+};
+
 export const FANTOM_HECTOR: Erc20Token = {
   symbol: "HEC",
   logo: HecLogo,
@@ -309,8 +318,8 @@ export const FANTOM_wsHEC: Erc20Token = {
   wei: new Decimal(10 ** 18),
 };
 
-export const TOR_LP: Farm = {
-  address: "0xD54d478975990927c0Bb9803708A3eD5Dc1cFa20",
+export const LP_FARM: Farm = {
+  address: FANTOM.DAI_TOR_USDC_FARM,
   stake: FANTOM_CURVE,
   reward: FANTOM_WFTM,
 };

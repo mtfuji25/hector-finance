@@ -10,11 +10,11 @@ export const Submit: FC<{
     type="submit"
     className={classes(
       "ml-auto block w-full rounded-sm px-7 py-3",
-      !disabled
+      !disabled && onClick
         ? "cursor-pointer bg-orange-500 font-medium text-white"
         : "cursor-not-allowed bg-gray-200 text-gray-400/70",
     )}
-    disabled={disabled}
+    disabled={disabled || onClick == undefined}
     value={label}
     onClick={onClick}
   />

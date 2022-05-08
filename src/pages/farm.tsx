@@ -3,6 +3,7 @@ import Head from "next/head";
 import CheckIcon from "src/icons/circle-check-solid.svgr";
 import CloseIcon from "src/icons/xmark-solid.svgr";
 import * as Curve from "src/contracts/curve";
+import * as Staking from "src/contracts/staking";
 import React, { FC, useState, VFC } from "react";
 import { CoinInput } from "src/components/CoinInput";
 import { Radio, RadioGroup } from "src/components/Radio";
@@ -20,6 +21,8 @@ import {
   FANTOM_USDC,
   FANTOM_CURVE,
   FANTOM_WFTM,
+  FANTOM_STAKED_CURVE,
+  LP_FARM,
 } from "src/constants";
 
 const FarmPage: NextPage = () => {
@@ -401,6 +404,7 @@ const Farm: VFC = () => {
 const Stake: VFC<{ wallet: Wallet }> = ({ wallet }) => {
   const [curve, curveInput, setCurveInput] = useDecimalInput();
   const [curveBalance, refreshCurveBalance] = useBalance(FANTOM_CURVE, wallet);
+  const canStake = wallet.state === WalletState.Connected && curve.gt(0);
   return (
     <>
       <CoinInput
@@ -411,25 +415,67 @@ const Stake: VFC<{ wallet: Wallet }> = ({ wallet }) => {
         balance={curveBalance}
         decimalAmount={FANTOM_USDC.decimals}
       />
-      <Submit label="Stake" disabled={curve.lte(0)} />
+      {canStake && (
+        <Submit
+          label="Stake"
+          onClick={async () => {
+            const response = await Staking.stake(
+              LP_FARM,
+              wallet.provider,
+              wallet.address,
+              curve,
+            );
+            if (response.isOk) {
+              setCurveInput("");
+              // TODO: show success
+            } else {
+              // TODO: show error
+            }
+          }}
+        />
+      )}
+      {!canStake && <Submit label="Stake" />}
     </>
   );
 };
 
 const Unstake: VFC<{ wallet: Wallet }> = ({ wallet }) => {
   const [curve, curveInput, setCurveInput] = useDecimalInput();
-  const [curveBalance, refreshCurveBalance] = useBalance(FANTOM_CURVE, wallet);
+  const [curveBalance, refreshCurveBalance] = useBalance(
+    FANTOM_STAKED_CURVE,
+    wallet,
+  );
+  const canWithdraw = wallet.state === WalletState.Connected && curve.gt(0);
   return (
     <>
       <CoinInput
         amount={curveInput}
         onChange={setCurveInput}
-        tokenImage={FANTOM_CURVE.logo}
-        tokenName={FANTOM_CURVE.symbol}
         balance={curveBalance}
-        decimalAmount={FANTOM_USDC.decimals}
+        decimalAmount={FANTOM_STAKED_CURVE.decimals}
+        tokenImage={FANTOM_STAKED_CURVE.logo}
+        tokenName={FANTOM_STAKED_CURVE.symbol}
       />
-      <Submit label="Unstake" disabled={curve.lte(0)} />
+      {canWithdraw && (
+        <Submit
+          label="Unstake"
+          onClick={async () => {
+            const response = await Staking.withdraw(
+              LP_FARM,
+              wallet.provider,
+              wallet.address,
+              curve,
+            );
+            if (response.isOk) {
+              setCurveInput("");
+              // TODO: show success
+            } else {
+              // TODO: show error
+            }
+          }}
+        />
+      )}
+      {!canWithdraw && <Submit label="Unstake" />}
     </>
   );
 };
