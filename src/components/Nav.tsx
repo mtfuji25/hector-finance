@@ -92,11 +92,11 @@ export const SideNav: VFC = () => (
         <BoxDollarLight width={16} height={16} />
         Wrap
       </InternalNav>
-      <InternalNav href="/bond">
+      <InternalNav href="/bond" disabled>
         <SealLight width={16} height={16} />
         Bond
       </InternalNav>
-      <InternalNav href="/exchange">
+      <InternalNav href="/exchange" disabled>
         <ScaleBalancedLight width={16} height={16} />
         Exchange
       </InternalNav>
@@ -130,7 +130,7 @@ export const SideNav: VFC = () => (
       </ExternalNav>
     </div>
     <Divider />
-    <div className="flex items-center justify-center -mx-3">
+    <div className="-mx-3 flex items-center justify-center">
       <SocialNav href="https://discord.gg/hector" title="Discord">
         <Discord width={16} height={16} />
       </SocialNav>
@@ -150,12 +150,24 @@ export const SideNav: VFC = () => (
   </nav>
 );
 
-const InternalNav: FC<{ href: string }> = ({ children, href }) => (
-  <Link href={href}>
-    <a className="-mx-3 flex items-center gap-2 rounded px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800">
-      {children}
-    </a>
-  </Link>
+const InternalNav: FC<{ href: string; disabled?: boolean }> = ({
+  children,
+  href,
+  disabled = false,
+}) => (
+  <>
+    {disabled ? (
+      <div className="-mx-3 flex cursor-not-allowed items-center gap-2 rounded px-3 py-2 text-gray-600 opacity-40 hover:bg-gray-100 hover:text-gray-800">
+        {children}
+      </div>
+    ) : (
+      <Link href={href}>
+        <a className="-mx-3 flex items-center gap-2 rounded px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800">
+          {children}
+        </a>
+      </Link>
+    )}
+  </>
 );
 
 const ExternalNav: FC<{ href: string }> = ({ children, href }) => (
