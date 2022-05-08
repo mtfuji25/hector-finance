@@ -223,7 +223,7 @@ const AllowanceModal: VFC<{
       </div>
       <div className="space-y-3 rounded bg-gray-100 p-3 pl-4">
         {allowances.map((allowance) => (
-          <GrantButton allowance={allowance} />
+          <GrantButton key={allowance.token.address} allowance={allowance} />
         ))}
       </div>
       <div className="flex items-end">
