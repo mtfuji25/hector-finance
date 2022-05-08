@@ -1,5 +1,7 @@
 import { FC } from "react";
 import { classes } from "src/util";
+import CircleDot from "src/icons/circle-dot.svgr";
+import Circle from "src/icons/circle.svgr";
 
 export const RadioGroup: FC<{ label?: string }> = ({ label, children }) => (
   <div className="space-y-1">
@@ -24,16 +26,10 @@ export const Radio: FC<{ checked: boolean; onCheck: () => void }> = ({
         checked ? "bg-gray-200" : "bg-gray-100/80 text-gray-500",
       )}
     >
-      <div
-        className={classes(
-          "flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border-2",
-          checked ? "border-gray-900" : "border-gray-500",
-        )}
-      >
-        {checked && (
-          <div className="h-3 w-3 flex-shrink-0 rounded-full bg-gray-800" />
-        )}
-      </div>
+      {checked && (
+        <CircleDot className="h-5 w-5 flex-shrink-0 object-contain" />
+      )}
+      {!checked && <Circle className="h-5 w-5 flex-shrink-0 object-contain" />}
       <div className={classes("flex-grow")}>{children}</div>
     </div>
 
