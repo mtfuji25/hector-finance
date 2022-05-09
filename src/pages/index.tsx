@@ -15,6 +15,7 @@ import {
   NameType,
   ValueType,
 } from "recharts/types/component/DefaultTooltipContent";
+import { Tab, Tabs } from "src/components/Tab";
 import {
   ETH_GRAPH_URL,
   FANTOM_HECTOR,
@@ -29,6 +30,37 @@ import { getStakingIndex } from "src/contracts/stakingContract";
 import { getMarketPrice } from "src/contracts/uniswapV2";
 import { formatCurrency } from "src/util";
 import { useWallet, WalletState } from "src/wallet";
+
+export default function DashBoard() {
+  const [view, setView] = useState<string>("graph");
+
+  useEffect(() => {
+    setView(localStorage.getItem("dash") ?? "graph");
+  }, []);
+  useEffect(() => localStorage.setItem("dash", view), [view]);
+
+  return (
+    <main className="w-full space-y-4">
+      <Tabs>
+        <Tab
+          label="Graphs"
+          selected={view === "graph"}
+          onSelect={() => {
+            setView("graph");
+          }}
+        />
+        <Tab
+          label="Investments"
+          selected={view === "investments"}
+          onSelect={() => {
+            setView("investments");
+          }}
+        />
+      </Tabs>
+      {view === "graph" && <Graphs></Graphs>}
+    </main>
+  );
+}
 
 const ETH_QUERY = `query {
   ethMetrics(first: 1, orderBy: timestamp, orderDirection: desc) {
@@ -50,7 +82,7 @@ interface SubgraphEthData {
   treasuryMaticBalance: string;
 }
 
-export default function Home() {
+function Graphs() {
   const [marketCap, setMarketCap] = useState<Decimal>();
   const [marketPrice, setMarketPrice] = useState<Decimal>();
   const [circSupply, setCircSupply] = useState<Decimal>();
@@ -198,7 +230,7 @@ export default function Home() {
     return runwayCurrent;
   };
   return (
-    <main className="w-full space-y-4">
+    <div className="w-full space-y-4">
       <Head>
         <title>DashBoard — Hector Finance</title>
       </Head>
@@ -336,7 +368,7 @@ export default function Home() {
           ></HecGraphs>
         </>
       )}
-    </main>
+    </div>
   );
 }
 
