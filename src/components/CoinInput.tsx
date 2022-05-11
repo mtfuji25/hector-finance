@@ -1,45 +1,35 @@
 import Decimal from "decimal.js";
-import { StaticImageData } from "next/image";
 import { VFC } from "react";
 import { classes, DecimalInput, validateEther } from "src/util";
 import { StaticImg } from "./StaticImg";
 import WalletIcon from "src/icons/wallet-regular.svgr";
+import { Erc20Token } from "src/contracts/erc20";
 
 export const CoinInput: VFC<{
   amount: DecimalInput;
-  tokenImage: StaticImageData;
-  tokenName: string;
+  token: Erc20Token;
   balance: Decimal;
   label?: string;
-  decimalAmount: number;
   onChange: (input: string) => void;
-}> = ({
-  amount,
-  tokenImage,
-  tokenName,
-  label,
-  balance,
-  decimalAmount,
-  onChange,
-}) => (
+}> = ({ amount, token, label, balance, onChange }) => (
   <div className="space-y-2">
     {label && <div>{label}</div>}
     <div>
       <div className="relative">
         <div className="pointer-events-none absolute top-1/2 left-3 flex -translate-y-1/2 gap-2">
           <StaticImg
-            src={tokenImage}
-            alt={tokenName}
+            src={token.logo}
+            alt={token.symbol}
             className="h-6 w-6 object-contain"
           />
-          <div>{tokenName}</div>
+          <div>{token.symbol}</div>
         </div>
         <input
           className={classes(
             "w-full rounded-t px-3 py-3 pl-11 text-right",
             amount.isValid ? "bg-gray-100" : "bg-red-50 text-red-700",
           )}
-          title={tokenName}
+          title={token.symbol}
           pattern="[0-9]*"
           inputMode="decimal"
           value={amount.input}

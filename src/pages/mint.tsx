@@ -76,13 +76,11 @@ const MintPage: NextPage = () => {
       {view === "mint" && (
         <>
           <CoinInput
-            label={"Selling"}
-            tokenName="Dai"
-            tokenImage={DaiLogo}
+            label="Selling"
             amount={daiInput}
             onChange={setDaiInput}
             balance={daiBalance}
-            decimalAmount={FANTOM_DAI.decimals}
+            token={FANTOM_DAI}
           />
           <Buying amount={dai} tokenImage={TorLogo} tokenName="Tor" />
           {wallet.state !== WalletState.Connected && (
@@ -115,13 +113,11 @@ const MintPage: NextPage = () => {
       {view === "redeem" && (
         <>
           <CoinInput
+            label="Selling"
             amount={torInput}
             onChange={setTorInput}
-            tokenImage={TorLogo}
-            tokenName="Tor"
             balance={torBalance}
-            label={"Selling"}
-            decimalAmount={FANTOM_TOR.decimals}
+            token={FANTOM_TOR}
           />
           <Buying amount={tor} tokenImage={DaiLogo} tokenName="Dai" />
           {wallet.state !== WalletState.Connected && (

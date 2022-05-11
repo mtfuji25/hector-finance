@@ -152,25 +152,19 @@ const PoolDeposit: VFC<{ wallet: Wallet }> = ({ wallet }) => {
         amount={torInput}
         onChange={setTorInput}
         balance={torBalance}
-        decimalAmount={FANTOM_TOR.decimals}
-        tokenImage={FANTOM_TOR.logo}
-        tokenName={FANTOM_TOR.symbol}
+        token={FANTOM_TOR}
       />
       <CoinInput
         amount={daiInput}
         onChange={setDaiInput}
         balance={daiBalance}
-        decimalAmount={FANTOM_DAI.decimals}
-        tokenImage={FANTOM_DAI.logo}
-        tokenName={FANTOM_DAI.symbol}
+        token={FANTOM_DAI}
       />
       <CoinInput
         amount={usdcInput}
         onChange={setUsdcInput}
         balance={usdcBalance}
-        decimalAmount={FANTOM_USDC.decimals}
-        tokenImage={FANTOM_USDC.logo}
-        tokenName={FANTOM_USDC.symbol}
+        token={FANTOM_USDC}
       />
       <Submit
         label="Deposit"
@@ -307,9 +301,7 @@ const PoolWithdraw: VFC<{ wallet: Wallet }> = ({ wallet }) => {
         amount={curveInput}
         onChange={setCurveInput}
         balance={curveBalance}
-        decimalAmount={FANTOM_CURVE.decimals}
-        tokenImage={FANTOM_CURVE.logo}
-        tokenName={FANTOM_CURVE.symbol}
+        token={FANTOM_CURVE}
       />
       <RadioGroup label="Withdraw as">
         <Radio
@@ -411,10 +403,8 @@ const Stake: VFC<{ wallet: Wallet }> = ({ wallet }) => {
       <CoinInput
         amount={curveInput}
         onChange={setCurveInput}
-        tokenImage={FANTOM_CURVE.logo}
-        tokenName={FANTOM_CURVE.symbol}
         balance={curveBalance}
-        decimalAmount={FANTOM_USDC.decimals}
+        token={FANTOM_CURVE}
       />
       {canStake && (
         <Submit
@@ -453,9 +443,7 @@ const Unstake: VFC<{ wallet: Wallet }> = ({ wallet }) => {
         amount={curveInput}
         onChange={setCurveInput}
         balance={curveBalance}
-        decimalAmount={FANTOM_STAKED_CURVE.decimals}
-        tokenImage={FANTOM_STAKED_CURVE.logo}
-        tokenName={FANTOM_STAKED_CURVE.symbol}
+        token={FANTOM_STAKED_CURVE}
       />
       {canWithdraw && (
         <Submit

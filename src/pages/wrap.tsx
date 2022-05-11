@@ -121,21 +121,17 @@ export default function WrapPage() {
         {sHecBalance && view === "wrap" && (
           <CoinInput
             amount={sHecInput}
-            tokenImage={hectorImg}
-            tokenName="sHec"
+            token={FANTOM_sHEC}
             onChange={setsHecInput}
             balance={sHecBalance}
-            decimalAmount={FANTOM_sHEC.decimals}
           />
         )}
         {wsHecBalance && view === "unwrap" && (
           <CoinInput
             amount={wsHecInput}
-            tokenImage={hectorImg}
-            tokenName="wsHec"
+            token={FANTOM_wsHEC}
             onChange={setwsHecInput}
             balance={wsHecBalance}
-            decimalAmount={FANTOM_wsHEC.decimals}
           />
         )}
       </div>

@@ -173,21 +173,17 @@ export default function StakePage() {
         {hecBalance && view === "stake" && (
           <CoinInput
             amount={hecInput}
-            tokenImage={hectorImg}
-            tokenName="Hec"
+            token={FANTOM_HECTOR}
             onChange={setHecInput}
             balance={hecBalance}
-            decimalAmount={FANTOM_HECTOR.decimals}
           />
         )}
         {sHecBalance && view === "unstake" && (
           <CoinInput
             amount={sHecInput}
-            tokenImage={hectorImg}
-            tokenName="Hec"
+            token={FANTOM_sHEC}
             onChange={setsHecInput}
             balance={sHecBalance}
-            decimalAmount={FANTOM_sHEC.decimals}
           />
         )}
       </div>
