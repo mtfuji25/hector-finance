@@ -17,6 +17,7 @@ export async function getMarketPrice(
   }
   if (result.value === "0x") {
     result.value = "0x0";
+    return ok(new Decimal(result.value));
   }
   let marketPrice: Decimal = new Decimal("0");
   if (result.value !== "0x") {
