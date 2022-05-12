@@ -139,6 +139,7 @@ export interface ProtocolMetrics {
   treasuryRFIlluviumBalance?: string;
   torTVL: string;
   staked: string;
+  illuviumTokenAmount: string;
 }
 // export const MWEI_PER_ETHER = BigNumber.from("1000000000000");
 
