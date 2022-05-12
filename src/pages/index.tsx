@@ -1,7 +1,16 @@
 import Decimal from "decimal.js";
 import Head from "next/head";
 import React, { FC, useEffect, useState, VFC } from "react";
-import { Area, XAxis, Tooltip, ResponsiveContainer, AreaChart } from "recharts";
+import {
+  Area,
+  XAxis,
+  Tooltip,
+  ResponsiveContainer,
+  AreaChart,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 import { Tab, Tabs } from "src/components/Tab";
 import {
   ETH_GRAPH_URL,
@@ -29,6 +38,7 @@ const COINS = [
   {
     name: "Illuvium",
     ticker: "ILV",
+    stopColor: ["#3E2D71", "#3E2D71"],
     marketValue: "treasuryIlluviumBalance",
     riskFree: "treasuryRFIlluviumBalance",
     tokenAmount: "illuviumTokenAmount",
@@ -36,6 +46,7 @@ const COINS = [
   {
     name: "CRV",
     ticker: "CRV",
+    stopColor: ["#96ADC9", "#96ADC9"],
     marketValue: "treasuryCRVMarketValue",
     riskFree: "treasuryCRVRiskFreeValue",
     tokenAmount: "treasuryCRVTokenAmount",
@@ -43,6 +54,7 @@ const COINS = [
   {
     name: "Matic",
     ticker: "MATIC",
+    stopColor: ["#8247e5", "#8247E5"],
     marketValue: "treasuryMaticBalance",
     riskFree: "treasuryRFMaticBalance",
     tokenAmount: "maticTokenAmount",
@@ -50,22 +62,26 @@ const COINS = [
   {
     name: "Tor LP",
     ticker: "TOR",
+    stopColor: ["#BE7C40", "#BE7C40"],
     marketValue: "treasuryTORLPValue",
     tokenAmount: "treasuryTORLPValue",
   },
   {
     name: "FTM Validator",
     ticker: "FTM VAL",
+    stopColor: ["#10b981", "#059669"],
     marketValue: "treasuryFantomValidatorValue",
   },
   {
     name: "FTM Delegator",
     ticker: "FTM DEL",
+    stopColor: ["#10b981", "#059669"],
     marketValue: "treasuryFantomDelegatorValue",
   },
   {
     name: "wETH",
     ticker: "wETH",
+    stopColor: ["#EC1E7A", "#EC1E7A"],
     marketValue: "treasuryWETHMarketValue",
     riskFree: "treasuryWETHRiskFreeValue",
     tokenAmount: "treasuryWETHTokenAmount",
@@ -73,12 +89,14 @@ const COINS = [
   {
     name: "BOO",
     ticker: "BOO",
+    stopColor: ["#6665DD", "#6665DD"],
     marketValue: "treasuryBOOMarketValue",
     riskFree: "treasuryBOORiskFreeValue",
     tokenAmount: "treasuryBOOTokenAmount",
   },
   {
     name: "wFTM",
+    stopColor: ["#3b82f6", "#2563eb"],
     marketValue: "treasuryWFTMMarketValue",
     riskFree: "treasuryWFTMRiskFreeValue",
     tokenAmount: "treasuryWFTMTokenAmount",
@@ -86,6 +104,7 @@ const COINS = [
   {
     name: "FRAX",
     ticker: "FRAX",
+    stopColor: ["#78716c", "#57534e"],
     marketValue: "treasuryFRAXMarketValue",
     riskFree: "treasuryFRAXRiskFreeValue",
     tokenAmount: "treasuryFRAXTokenAmount",
@@ -93,21 +112,25 @@ const COINS = [
   {
     name: "DAI LP",
     ticker: "DAI LP",
+    stopColor: ["#fef9c3", "#fef08a"],
     marketValue: "treasuryDaiLPMarketValue",
     tokenAmount: "hecDaiTokenAmount",
   },
   {
     name: "USDC LP",
+    stopColor: ["#cffafe", "#a5f3fc"],
     marketValue: "treasuryUsdcLPMarketValue",
   },
   {
     name: "MIM",
+    stopColor: ["#7573FA", "#7573FA"],
     marketValue: "treasuryMIMMarketValue",
     riskFree: "treasuryMIMRiskFreeValue",
   },
   {
     name: "USDC",
     ticker: "USDC",
+    stopColor: ["#768299", "#98B3E9"],
     marketValue: "treasuryUsdcMarketValue",
     riskFree: "treasuryUsdcMarketValue",
     tokenAmount: "treasuryUsdcTokenAmount",
@@ -115,11 +138,13 @@ const COINS = [
   {
     name: "DAI",
     ticker: "DAI",
+    stopColor: ["#ffd89b", "#fbbe5d"],
     marketValue: "treasuryDaiMarketValue",
     riskFree: "treasuryDaiMarketValue",
     tokenAmount: "treasuryDaiTokenAmount",
   },
   {
+    stopColor: ["#FB9804", "#FB9804"],
     name: "Convex Gauge",
     ticker: "CONVEX",
     marketValue: "treasuryBaseRewardPool",
@@ -135,6 +160,7 @@ interface CoinInfo {
   amount: number;
   percent: number;
   tokenAmount: string;
+  stopColor: string[];
 }
 
 export interface Transaction {
@@ -514,11 +540,99 @@ export default function DashBoard() {
             treasuryValue={treasuryValue}
             metrics={investmentsData}
           ></Chains>
+          <Investments metrics={investmentsData}></Investments>
         </>
       )}
     </main>
   );
 }
+
+const Investments: VFC<{ metrics: CoinInfo[] }> = ({ metrics }) => {
+  console.log(metrics);
+  return (
+    <>
+      <div className="grid space-y-2">
+        <hr className="w-5/6 justify-self-center border-t-2 bg-gray-300"></hr>
+        <div className="flex items-center justify-center">
+          <div className="text-xl">Investments</div>
+        </div>
+        {metrics && (
+          <>
+            {" "}
+            <Chart metrics={metrics} />
+            <div className="grid h-[500px] space-y-2 overflow-auto ">
+              {metrics
+                .filter((token) => token.ticker)
+                .map((token, i) => (
+                  <React.Fragment key={token.name}>
+                    <div
+                      style={{ borderLeftColor: token.stopColor[0] }}
+                      className="flex items-center rounded border-l-2 bg-gray-100 p-2"
+                    >
+                      <div>
+                        <div className="name">{token.name}</div>
+                        <div className="balance">
+                          {token.tokenAmount
+                            ? (+token.tokenAmount).toFixed(2)
+                            : "N/A"}
+                        </div>
+                      </div>
+                      <div className="flex-1 text-right">
+                        {formatCurrency(token.amount, 2)}
+                      </div>
+                    </div>
+                  </React.Fragment>
+                ))}
+            </div>
+          </>
+        )}
+      </div>
+    </>
+  );
+};
+
+const Chart: VFC<{ metrics: CoinInfo[] }> = ({ metrics }) => {
+  const data = metrics.map((token) => ({
+    name: token.name,
+    value: token.amount,
+    color: token.stopColor[0],
+    tokenAmount: token.tokenAmount,
+  }));
+  return (
+    <div className="chart">
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            labelLine={false}
+            outerRadius="80%"
+            dataKey="value"
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color} />
+            ))}
+          </Pie>
+          <Tooltip content={<PieChartToolTip />} />
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
+
+const PieChartToolTip: VFC<any> = ({ payload }) => {
+  return (
+    <div className="MuiPaper-root hec-card chart-tooltip">
+      <div>
+        {payload?.[0]?.name} : {formatCurrency(payload?.[0]?.value, 2)}
+      </div>
+      <div>
+        Token amount: {payload?.[0]?.payload?.tokenAmount.toFixed(2) ?? "N/A"}
+      </div>
+    </div>
+  );
+};
 
 const formatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -606,7 +720,7 @@ const Chains: VFC<{ metrics: CoinInfo[]; treasuryValue: Decimal }> = ({
   }, [metrics, treasuryValue]);
   return (
     <div className="grid space-y-2">
-      <hr className="w-80 justify-self-center border-t-2 bg-gray-300"></hr>
+      <hr className="w-5/6 justify-self-center border-t-2 bg-gray-300"></hr>
       <div className="justify-self-center text-xl">Allocations</div>
       <div className="flex justify-evenly">
         <div className="grid justify-items-center">
@@ -637,6 +751,7 @@ const ETH_QUERY = `query {
     treasuryIlluviumBalance
     treasuryEthMarketValue
     treasuryMaticBalance
+    maticTokenAmount
     illuviumTokenAmount
   }
 }`;

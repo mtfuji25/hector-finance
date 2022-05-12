@@ -68,6 +68,14 @@ query {
     treasuryFantomValidatorValue
     treasuryFantomDelegatorValue
     treasuryTORLPValue
+    treasuryDaiTokenAmount,
+    treasuryUsdcTokenAmount,
+    treasuryWFTMTokenAmount,
+    treasuryFRAXTokenAmount,
+    treasuryBOOTokenAmount,
+    treasuryCRVTokenAmount,
+    treasuryWETHTokenAmount,
+    hecDaiTokenAmount,
   }
   tors(first: 1000, orderBy: timestamp, orderDirection: desc) {
     id
@@ -194,7 +202,7 @@ export const FANTOM = {
   TOR_WFTM_FARM: "0xD54d478975990927c0Bb9803708A3eD5Dc1cFa20",
 
   TOR_MINTER_ADDRESS: "0x9b0c6FfA7d0Ec29EAb516d3F2dC809eE43DD60ca",
-  TOR_REDEEM_ADDRESS: "0x4E998502b51F4742A7E7285679E55a0580207C64",
+  TOR_REDEEM_ADDRESS: "0x45aC684B6b9Ee1A8647F51170C90c8f943D002E3",
   TOR_LP_AMOUNTS_ADDRESS: "0xE4D581869BFc6238d544b0e4c9D678Ad51192654",
   CURVE_FI_ADDRESS: "0x78D51EB71a62c081550EfcC0a9F9Ea94B2Ef081c",
 
