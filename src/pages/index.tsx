@@ -158,6 +158,50 @@ const COINS = [
   },
 ];
 
+const tokenImage = (ticker: string) => {
+  switch (ticker) {
+    case "HEC":
+      <StaticImg className="h-5" alt={"HEC_Logo"} src={hectorLogo}></StaticImg>;
+      return;
+    case "CRV":
+      return (
+        <StaticImg
+          className="h-5"
+          alt={"Curve_Logo"}
+          src={curveLogo}
+        ></StaticImg>
+      );
+    case "DAI":
+      return (
+        <StaticImg className="h-5" alt={"DAI_Logo"} src={daiLogo}></StaticImg>
+      );
+    case "DAI LP":
+      return (
+        <StaticImg className="h-5" alt={"DAI_Logo"} src={daiLogo}></StaticImg>
+      );
+    case "wFTM":
+      return (
+        <StaticImg className="h-5" alt={"wFTM_Logo"} src={wftmLogo}></StaticImg>
+      );
+    case "FTM VAL":
+      return (
+        <StaticImg className="h-5" alt={"wFTM_Logo"} src={wftmLogo}></StaticImg>
+      );
+    case "FTM DEL":
+      return (
+        <StaticImg className="h-5" alt={"wFTM_Logo"} src={wftmLogo}></StaticImg>
+      );
+    case "USDC":
+      return (
+        <StaticImg className="h-5" alt={"USDC_Logo"} src={usdcLogo}></StaticImg>
+      );
+    case "USDC LP":
+      return (
+        <StaticImg className="h-5" alt={"USDC_Logo"} src={usdcLogo}></StaticImg>
+      );
+  }
+};
+
 interface CoinInfo {
   name: string;
   ticker: string;
@@ -556,79 +600,9 @@ export default function DashBoard() {
   );
 }
 
-type Open = {
-  [key: string]: boolean;
-};
-
-const tokenImage = (ticker: string) => {
-  switch (ticker) {
-    case "HEC":
-      <StaticImg className="h-5" alt={"HEC_Logo"} src={hectorLogo}></StaticImg>;
-      return;
-    case "CRV":
-      return (
-        <StaticImg
-          className="h-5"
-          alt={"Curve_Logo"}
-          src={curveLogo}
-        ></StaticImg>
-      );
-    case "DAI":
-      return (
-        <StaticImg className="h-5" alt={"DAI_Logo"} src={daiLogo}></StaticImg>
-      );
-    case "DAI LP":
-      return (
-        <StaticImg className="h-5" alt={"DAI_Logo"} src={daiLogo}></StaticImg>
-      );
-    case "wFTM":
-      return (
-        <StaticImg className="h-5" alt={"wFTM_Logo"} src={wftmLogo}></StaticImg>
-      );
-    case "FTM VAL":
-      return (
-        <StaticImg className="h-5" alt={"wFTM_Logo"} src={wftmLogo}></StaticImg>
-      );
-    case "FTM DEL":
-      return (
-        <StaticImg className="h-5" alt={"wFTM_Logo"} src={wftmLogo}></StaticImg>
-      );
-    case "USDC":
-      return (
-        <StaticImg className="h-5" alt={"USDC_Logo"} src={usdcLogo}></StaticImg>
-      );
-    case "USDC LP":
-      return (
-        <StaticImg className="h-5" alt={"USDC_Logo"} src={usdcLogo}></StaticImg>
-      );
-  }
-};
-
 const LatestTransactions: VFC<{ ftmScanTransactionData: Transaction[] }> = ({
   ftmScanTransactionData,
 }) => {
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [open, setOpen] = useState<Open>({});
-
-  const handleClick = (index: number) => (event: any) => {
-    setAnchorEl(event.currentTarget);
-
-    if (open[`${index}`]) {
-      setOpen((prev) => ({ ...prev, [index]: false }));
-      return;
-    }
-    Object.keys(open).forEach((key) => {
-      open[key] = false;
-    });
-    setOpen((open) => ({ ...open, [index]: true }));
-  };
-
-  useEffect(() => {
-    if (ftmScanTransactionData.length > 0) {
-      // formatFTMScanData();
-    }
-  }, [ftmScanTransactionData]);
-
   return (
     <div className="grid h-[500px] ">
       <hr className="w-5/6 justify-self-center border-t-2 bg-gray-300"></hr>

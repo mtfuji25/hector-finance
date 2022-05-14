@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FC, VFC } from "react";
+import { FC, useEffect, useRef, useState, VFC } from "react";
 import { StaticImg } from "./StaticImg";
 import HectorLogoLarge from "public/hector-wordmark.svg";
 import WatermelonLight from "src/icons/watermelon-slice-light.svgr";
@@ -20,28 +20,40 @@ import Twitter from "src/icons/twitter-brands.svgr";
 import Tor from "src/icons/tor.svgr";
 import ArrowUpRightFromSquareRegular from "src/icons/arrow-up-right-from-square-regular.svgr";
 import WalletRegular from "src/icons/wallet-regular.svgr";
+import Bars from "src/icons/bars.svgr";
 import { useWallet, WalletState } from "src/wallet";
-import { ellipsisBetween } from "src/util";
+import { classes, ellipsisBetween } from "src/util";
 
-export const TopNav: VFC = () => (
-  <>
-    <div className="flex flex-row items-center px-8 py-6">
-      {/* Logo */}
-      <StaticImg
-        src={HectorLogoLarge}
-        alt="Hector Finance"
-        className="h-6 w-auto object-contain"
-      />
+export default function TopNav() {
+  const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
 
-      {/* Space */}
-      <div className="flex-grow" />
+  return (
+    <>
+      <div className="flex flex-row items-center justify-between px-8 py-6">
+        {/* Logo */}
+        <StaticImg
+          src={HectorLogoLarge}
+          alt="Hector Finance"
+          className="hidden h-6 w-auto object-contain sm:block"
+        />
+        <Bars
+          onClick={() => setIsNavOpen((prev) => !prev)}
+          className="h-6 w-6 cursor-pointer sm:hidden"
+        />
+        {isNavOpen && (
+          <SideNav
+            closeMenu={() => setIsNavOpen(false)}
+            isNavOpen={isNavOpen}
+          />
+        )}
 
-      {/* Controls */}
-      <Wallet />
-    </div>
-    <hr />
-  </>
-);
+        {/* Controls */}
+        <Wallet />
+      </div>
+      <hr />
+    </>
+  );
+}
 
 const Wallet: VFC = () => {
   const wallet = useWallet();
@@ -77,78 +89,115 @@ const Wallet: VFC = () => {
   );
 };
 
-export const SideNav: VFC = () => (
-  <nav className="hidden h-fit flex-shrink-0 flex-grow-0 space-y-4 sm:block">
-    <div>
-      <InternalNav href="/">
-        <SquarePollVerticalLight width={16} height={16} />
-        Dashboard
-      </InternalNav>
-      <InternalNav href="/stake">
-        <WatermelonLight width={16} height={16} />
-        Stake
-      </InternalNav>
-      <InternalNav href="/wrap">
-        <BoxDollarLight width={16} height={16} />
-        Wrap
-      </InternalNav>
-      <InternalNav href="/bond" disabled>
-        <SealLight width={16} height={16} />
-        Bond
-      </InternalNav>
-      <InternalNav href="/exchange" disabled>
-        <ScaleBalancedLight width={16} height={16} />
-        Exchange
-      </InternalNav>
-      <InternalNav href="/farm">
-        <SeedlingLight width={16} height={16} />
-        Farm
-      </InternalNav>
-      <InternalNav href="/mint">
-        <Tor width={16} height={16} />
-        Mint
-      </InternalNav>
+export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
+  isNavOpen,
+  closeMenu,
+}) => {
+  const ref = useRef<HTMLElement>(null);
 
-      <InternalNav href="/calculator">
-        <AbacusLight width={16} height={16} />
-        Calculator
-      </InternalNav>
-    </div>
-    <Divider />
-    <div>
-      <ExternalNav href="https://hectorbank.com/">
-        <BuildingColumnsLight width={16} height={16} />
-        Hector Bank
-      </ExternalNav>
-      <ExternalNav href="https://snapshot.org/#/hectordao.eth">
-        <BoxBallotLight width={16} height={16} />
-        Governance
-      </ExternalNav>
-      <ExternalNav href="https://docs.hector.finance">
-        <BookLight width={16} height={16} />
-        Docs
-      </ExternalNav>
-    </div>
-    <Divider />
-    <div className="-mx-3 flex items-center justify-center">
-      <SocialNav href="https://discord.gg/hector" title="Discord">
-        <Discord width={16} height={16} />
-      </SocialNav>
-      <SocialNav href="https://t.me/hectorDAO" title="Telegram">
-        <Telegram width={16} height={16} />
-      </SocialNav>
-      <SocialNav href="https://medium.com/@HectorDAO" title="Medium">
-        <Medium width={16} height={16} />
-      </SocialNav>
-      <SocialNav href="https://twitter.com/HectorDAO_HEC" title="Twitter">
-        <Twitter width={16} height={16} />
-      </SocialNav>
-      <SocialNav href="https://github.com/Hector-DAO" title="GitHub">
-        <Github width={16} height={16} />
-      </SocialNav>
-    </div>
-  </nav>
-);
+  useEffect(() => {
+    const checkIfClickedOutside = (e: MouseEvent) => {
+      // If the menu is open and the clicked target is not within the menu,
+      // then close the menu
+      if (
+        closeMenu &&
+        isNavOpen &&
+        ref.current &&
+        !ref.current.contains(e.target as Node)
+      ) {
+        closeMenu();
+      }
+    };
+
+    document.addEventListener("mousedown", checkIfClickedOutside);
+
+    return () => {
+      // Cleanup the event listener
+      document.removeEventListener("mousedown", checkIfClickedOutside);
+    };
+  }, [isNavOpen, closeMenu]);
+
+  return (
+    <nav
+      ref={ref}
+      className={classes(
+        "h-fit flex-shrink-0 flex-grow-0 space-y-4 sm:block",
+        isNavOpen
+          ? "absolute top-0 left-0 z-10 h-full w-3/5 border-r-4 border-r-gray-400 bg-white px-2 py-8"
+          : "hidden",
+      )}
+    >
+      <div onClick={closeMenu}>
+        <InternalNav href="/">
+          <SquarePollVerticalLight width={16} height={16} />
+          Dashboard
+        </InternalNav>
+        <InternalNav href="/stake">
+          <WatermelonLight width={16} height={16} />
+          Stake
+        </InternalNav>
+        <InternalNav href="/wrap">
+          <BoxDollarLight width={16} height={16} />
+          Wrap
+        </InternalNav>
+        <InternalNav href="/bond" disabled>
+          <SealLight width={16} height={16} />
+          Bond
+        </InternalNav>
+        <InternalNav href="/exchange" disabled>
+          <ScaleBalancedLight width={16} height={16} />
+          Exchange
+        </InternalNav>
+        <InternalNav href="/farm">
+          <SeedlingLight width={16} height={16} />
+          Farm
+        </InternalNav>
+        <InternalNav href="/mint">
+          <Tor width={16} height={16} />
+          Mint
+        </InternalNav>
+
+        <InternalNav href="/calculator">
+          <AbacusLight width={16} height={16} />
+          Calculator
+        </InternalNav>
+      </div>
+      <Divider />
+      <div>
+        <ExternalNav href="https://hectorbank.com/">
+          <BuildingColumnsLight width={16} height={16} />
+          Hector Bank
+        </ExternalNav>
+        <ExternalNav href="https://snapshot.org/#/hectordao.eth">
+          <BoxBallotLight width={16} height={16} />
+          Governance
+        </ExternalNav>
+        <ExternalNav href="https://docs.hector.finance">
+          <BookLight width={16} height={16} />
+          Docs
+        </ExternalNav>
+      </div>
+      <Divider />
+      <div className="-mx-3 flex items-center justify-center">
+        <SocialNav href="https://discord.gg/hector" title="Discord">
+          <Discord width={16} height={16} />
+        </SocialNav>
+        <SocialNav href="https://t.me/hectorDAO" title="Telegram">
+          <Telegram width={16} height={16} />
+        </SocialNav>
+        <SocialNav href="https://medium.com/@HectorDAO" title="Medium">
+          <Medium width={16} height={16} />
+        </SocialNav>
+        <SocialNav href="https://twitter.com/HectorDAO_HEC" title="Twitter">
+          <Twitter width={16} height={16} />
+        </SocialNav>
+        <SocialNav href="https://github.com/Hector-DAO" title="GitHub">
+          <Github width={16} height={16} />
+        </SocialNav>
+      </div>
+    </nav>
+  );
+};
 
 const InternalNav: FC<{ href: string; disabled?: boolean }> = ({
   children,
