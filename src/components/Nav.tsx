@@ -2,6 +2,7 @@ import Link from "next/link";
 import { FC, useEffect, useRef, useState, VFC } from "react";
 import { StaticImg } from "./StaticImg";
 import HectorLogoLarge from "public/hector-wordmark.svg";
+import HectorLogo from "public/icons/hector.svg";
 import WatermelonLight from "src/icons/watermelon-slice-light.svgr";
 import AbacusLight from "src/icons/abacus-light.svgr";
 import BookLight from "src/icons/book-light.svgr";
@@ -38,7 +39,7 @@ export default function TopNav() {
         />
         <Bars
           onClick={() => setIsNavOpen((prev) => !prev)}
-          className="h-6 w-6 cursor-pointer sm:hidden"
+          className="mr-3 h-6 w-6 cursor-pointer sm:hidden"
         />
         {isNavOpen && (
           <SideNav
@@ -127,6 +128,13 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
           : "hidden",
       )}
     >
+      {isNavOpen && (
+        <StaticImg
+          src={HectorLogoLarge}
+          alt="Hector Finance"
+          className=" h-6 w-auto object-contain sm:block"
+        />
+      )}
       <div onClick={closeMenu}>
         <InternalNav href="/">
           <SquarePollVerticalLight width={16} height={16} />

@@ -3,6 +3,11 @@ module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   darkMode: "class",
   theme: {
+    extend: {
+      screens: {
+        xs: "400px",
+      },
+    },
     fontFamily: {
       body: ["Niveau Grotesk", "sans-serif"],
     },
