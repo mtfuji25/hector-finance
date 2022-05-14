@@ -30,8 +30,14 @@ import { formatCurrency } from "src/util";
 import { useWallet, WalletState } from "src/wallet";
 import treasury from "src/icons/treasury.svgr";
 import buyback from "src/icons/buyback.svgr";
+import Link from "src/icons/link.svgr";
 import ftmLogo from "public/icons/ftm.svg";
+import daiLogo from "public/icons/dai.svg";
+import hectorLogo from "public/icons/hector.svg";
+import usdcLogo from "public/icons/usdc.svg";
+import curveLogo from "public/icons/curve.webp";
 import ethLogo from "public/icons/eth.svg";
+import wftmLogo from "public/icons/wftm.svg";
 import { StaticImg } from "src/components/StaticImg";
 
 const COINS = [
@@ -360,9 +366,9 @@ export default function DashBoard() {
             const coin = {
               ...token,
               amount: +(joinedGraphData[0] as any)[token.marketValue],
-              percent: treasuryValue
+              percent: treasuryVal
                 ? new Decimal((joinedGraphData[0] as any)[token.marketValue])
-                    .div(treasuryValue)
+                    .div(treasuryVal)
                     .times(100)
                 : 0,
               tokenAmount: token.tokenAmount
@@ -541,11 +547,125 @@ export default function DashBoard() {
             metrics={investmentsData}
           ></Chains>
           <Investments metrics={investmentsData}></Investments>
+          {sortedTransactions && (
+            <LatestTransactions ftmScanTransactionData={sortedTransactions} />
+          )}
         </>
       )}
     </main>
   );
 }
+
+type Open = {
+  [key: string]: boolean;
+};
+
+const tokenImage = (ticker: string) => {
+  switch (ticker) {
+    case "HEC":
+      <StaticImg className="h-5" alt={"HEC_Logo"} src={hectorLogo}></StaticImg>;
+      return;
+    case "CRV":
+      return (
+        <StaticImg
+          className="h-5"
+          alt={"Curve_Logo"}
+          src={curveLogo}
+        ></StaticImg>
+      );
+    case "DAI":
+      return (
+        <StaticImg className="h-5" alt={"DAI_Logo"} src={daiLogo}></StaticImg>
+      );
+    case "DAI LP":
+      return (
+        <StaticImg className="h-5" alt={"DAI_Logo"} src={daiLogo}></StaticImg>
+      );
+    case "wFTM":
+      return (
+        <StaticImg className="h-5" alt={"wFTM_Logo"} src={wftmLogo}></StaticImg>
+      );
+    case "FTM VAL":
+      return (
+        <StaticImg className="h-5" alt={"wFTM_Logo"} src={wftmLogo}></StaticImg>
+      );
+    case "FTM DEL":
+      return (
+        <StaticImg className="h-5" alt={"wFTM_Logo"} src={wftmLogo}></StaticImg>
+      );
+    case "USDC":
+      return (
+        <StaticImg className="h-5" alt={"USDC_Logo"} src={usdcLogo}></StaticImg>
+      );
+    case "USDC LP":
+      return (
+        <StaticImg className="h-5" alt={"USDC_Logo"} src={usdcLogo}></StaticImg>
+      );
+  }
+};
+
+const LatestTransactions: VFC<{ ftmScanTransactionData: Transaction[] }> = ({
+  ftmScanTransactionData,
+}) => {
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [open, setOpen] = useState<Open>({});
+
+  const handleClick = (index: number) => (event: any) => {
+    setAnchorEl(event.currentTarget);
+
+    if (open[`${index}`]) {
+      setOpen((prev) => ({ ...prev, [index]: false }));
+      return;
+    }
+    Object.keys(open).forEach((key) => {
+      open[key] = false;
+    });
+    setOpen((open) => ({ ...open, [index]: true }));
+  };
+
+  useEffect(() => {
+    if (ftmScanTransactionData.length > 0) {
+      // formatFTMScanData();
+    }
+  }, [ftmScanTransactionData]);
+
+  return (
+    <div className="grid h-[500px] ">
+      <hr className="w-5/6 justify-self-center border-t-2 bg-gray-300"></hr>
+      <div className="mt-3 justify-self-center text-xl">
+        Latest Transactions
+      </div>
+
+      <div className="transactions overflow-auto ">
+        <>
+          {ftmScanTransactionData &&
+            ftmScanTransactionData.map((transaction, i) => (
+              <React.Fragment key={i}>
+                <div className="center flex items-center justify-between py-3">
+                  <div className="font-bold">
+                    {transaction.investments.transactionDate}
+                  </div>
+                  <div className="title">{transaction.title}</div>
+
+                  <div className="font-bold text-orange-400">
+                    {formatCurrency(+transaction.investments.investedAmount, 2)}
+                  </div>
+                  <a
+                    rel="noreferrer"
+                    target="_blank"
+                    href={transaction.investments.transactionLinks[0]}
+                  >
+                    <Link className="h-4 cursor-pointer" />
+                  </a>
+                </div>
+                <hr />
+              </React.Fragment>
+            ))}
+        </>
+      </div>
+    </div>
+  );
+};
 
 const Investments: VFC<{ metrics: CoinInfo[] }> = ({ metrics }) => {
   console.log(metrics);
