@@ -7,7 +7,7 @@ export default function Document() {
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="icon" type="image/png" href="/favicon.png" />
       </Head>
-      <body className="overflow-y-scroll font-body text-gray-800 dark:bg-gray-700">
+      <body className="overflow-y-scroll font-body text-gray-800 dark:bg-gray-900">
         <Main />
         <NextScript />
       </body>
