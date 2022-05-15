@@ -22,12 +22,14 @@ import Tor from "src/icons/tor.svgr";
 import ArrowUpRightFromSquareRegular from "src/icons/arrow-up-right-from-square-regular.svgr";
 import WalletRegular from "src/icons/wallet-regular.svgr";
 import Bars from "src/icons/bars.svgr";
+import Moon from "src/icons/moon.svgr";
 import { useWallet, WalletState } from "src/wallet";
 import { classes, ellipsisBetween } from "src/util";
+import { useDarkMode } from "src/hooks/theme";
 
 export default function TopNav() {
   const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
-
+  const [theme, themeToggler] = useDarkMode();
   return (
     <>
       <div className="flex flex-row items-center justify-between px-8 py-6">
@@ -49,7 +51,13 @@ export default function TopNav() {
         )}
 
         {/* Controls */}
-        <Wallet />
+        <div className="flex items-center">
+          <Moon
+            onClick={() => themeToggler()}
+            className="mr-5  h-5 cursor-pointer rounded text-gray-500 dark:text-white "
+          />
+          <Wallet />
+        </div>
       </div>
       <hr />
     </>

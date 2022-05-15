@@ -11,6 +11,7 @@ module.exports = {
     fontFamily: {
       body: ["Niveau Grotesk", "sans-serif"],
     },
+    typography: (theme) => ({}),
     fontWeight: {
       light: 300,
       regular: 400,
