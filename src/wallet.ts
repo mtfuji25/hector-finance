@@ -12,6 +12,7 @@ import {
   getChain,
   getAccountsPermission,
   Provider,
+  changeAccounts,
 } from "./provider";
 import { useAsyncEffect } from "./util";
 
@@ -75,7 +76,20 @@ export function useWallet(): Wallet {
       };
     }
 
-    return { state: WalletState.Connected, address, network, provider };
+    return {
+      state: WalletState.Connected,
+      changeAccounts: async () => {
+        const accounts = await changeAccounts(provider);
+        console.log(accounts);
+        if (!accounts.isOk) {
+          return;
+        }
+        setAddress(accounts.value[0]);
+      },
+      address,
+      network,
+      provider,
+    };
   }, [provider, address, network]);
 }
 
@@ -102,6 +116,7 @@ export type Wallet =
   | { state: WalletState.Disconnected; connect: () => Promise<void> }
   | {
       state: WalletState.Connected;
+      changeAccounts: () => Promise<void>;
       address: string;
       network: string;
       provider: Provider;

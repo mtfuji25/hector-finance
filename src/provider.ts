@@ -64,6 +64,26 @@ export async function getAccount(
   );
 }
 
+/** Returns a list of addresses owned by client.  */
+export async function changeAccounts(
+  provider: Provider,
+): Promise<Result<string[], ProviderRpcError>> {
+  return await provider
+    .request({
+      method: "wallet_requestPermissions",
+      params: [
+        {
+          eth_accounts: {},
+        },
+      ],
+    })
+    .then(() =>
+      provider.request({
+        method: "eth_requestAccounts",
+      }),
+    );
+}
+
 /** Requests that the user provides an Ethereum address to be identified by.
  * @returns Current address.
  */

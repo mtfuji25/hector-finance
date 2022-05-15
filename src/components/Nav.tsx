@@ -89,10 +89,13 @@ const Wallet: VFC = () => {
         </button>
       )}
       {wallet.state === WalletState.Connected && (
-        <div className="flex items-center gap-2 rounded bg-gray-100 px-4 py-2 text-gray-500">
+        <button
+          onClick={() => wallet.changeAccounts()}
+          className="flex items-center gap-2 rounded bg-gray-100 px-4 py-2 text-gray-500"
+        >
           <WalletRegular className="h-4 w-4" />
           {ellipsisBetween(4, 4, wallet.address.slice(2))}
-        </div>
+        </button>
       )}
     </>
   );
@@ -162,7 +165,7 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
         </InternalNav>
         <InternalNav href="/exchange" disabled>
           <ScaleBalancedLight width={16} height={16} />
-          Exchange
+          DEX
         </InternalNav>
         <InternalNav href="/farm">
           <SeedlingLight width={16} height={16} />
