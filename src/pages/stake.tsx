@@ -242,6 +242,15 @@ export default function StakePage() {
       {wallet.state === WalletState.Disconnected && (
         <Submit label="Connect wallet" disabled />
       )}
+      <div className="mt-5 text-center">
+        Planning to sell more than 15k $HEC? Making an OTC deal with the team
+        could save you a huge amount of losses! Please open a ticket on our
+        Discord Server if you want to talk about an OTC deal with the team:
+        <a className="text-blue-500" href="https://discord.gg/hector">
+          {" "}
+          https://discord.gg/hector
+        </a>{" "}
+      </div>
     </main>
   );
 }
