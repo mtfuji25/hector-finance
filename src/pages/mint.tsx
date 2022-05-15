@@ -4,14 +4,19 @@ import Head from "next/head";
 import { StaticImageData } from "next/image";
 import DaiLogo from "public/icons/dai.svg";
 import TorLogo from "public/icons/tor.svg";
-import React, { useState, VFC } from "react";
+import React, { useEffect, useState, VFC } from "react";
 import { CoinInput } from "src/components/CoinInput";
 import { PageHeader, PageSubheader } from "src/components/Header";
 import { StaticImg } from "src/components/StaticImg";
 import { Submit } from "src/components/Submit";
 import { Tab, Tabs } from "src/components/Tab";
 import { FANTOM, FANTOM_DAI, FANTOM_TOR } from "src/constants";
-import { mintWithDai, redeemToDai } from "src/contracts/torMinter";
+import {
+  getMintLimit,
+  getRedeemLimit,
+  mintWithDai,
+  redeemToDai,
+} from "src/contracts/torMinter";
 import { useAllowance } from "src/hooks/allowance";
 import { useBalance } from "src/hooks/balance";
 import { useDecimalInput } from "src/util";
@@ -22,6 +27,8 @@ const MintPage: NextPage = () => {
   const [dai, daiInput, setDaiInput] = useDecimalInput();
   const [tor, torInput, setTorInput] = useDecimalInput();
   const [view, setView] = useState<"mint" | "redeem">("mint");
+  const [mintLimit, setMintLimit] = useState<Decimal>();
+  const [redeemLimit, setRedeemLimit] = useState<Decimal>();
 
   const daiAllowance = useAllowance(
     FANTOM_DAI,
@@ -35,6 +42,24 @@ const MintPage: NextPage = () => {
   );
   const [daiBalance, refreshDaiBalance] = useBalance(FANTOM_DAI, wallet);
   const [torBalance, refreshTorBalance] = useBalance(FANTOM_TOR, wallet);
+
+  useEffect(() => {
+    const getLimits = async () => {
+      if (wallet.state === WalletState.Connected) {
+        const [mintLimit, redeemLimit] = await Promise.all([
+          getMintLimit(wallet.provider, wallet.address),
+          getRedeemLimit(wallet.provider, wallet.address),
+        ]);
+        if (mintLimit.isOk) {
+          setMintLimit(mintLimit.value);
+        }
+        if (redeemLimit.isOk) {
+          setRedeemLimit(redeemLimit.value);
+        }
+      }
+    };
+    getLimits();
+  }, [wallet]);
 
   return (
     <main className="w-full space-y-4">
@@ -82,7 +107,13 @@ const MintPage: NextPage = () => {
             balance={daiBalance}
             token={FANTOM_DAI}
           />
+
           <Buying amount={dai} tokenImage={TorLogo} tokenName="Tor" />
+          <div className="flex text-base">
+            <div className="flex-1">Mint Limit</div>
+            {mintLimit && <div>{mintLimit.toFixed(2)}</div>}
+          </div>
+
           {wallet.state !== WalletState.Connected && (
             <Submit label="Connect wallet" disabled />
           )}
@@ -95,7 +126,8 @@ const MintPage: NextPage = () => {
               <Submit label="Approve" onClick={daiAllowance.approve} />
             )}
           {wallet.state === WalletState.Connected &&
-            daiAllowance.type === "HasAllowance" && (
+            daiAllowance.type === "HasAllowance" &&
+            mintLimit?.greaterThan(0) && (
               <Submit
                 label="Mint"
                 disabled={dai.lte(0)}
@@ -108,7 +140,6 @@ const MintPage: NextPage = () => {
             )}
         </>
       )}
-
       {/* Redeem */}
       {view === "redeem" && (
         <>
@@ -119,7 +150,13 @@ const MintPage: NextPage = () => {
             balance={torBalance}
             token={FANTOM_TOR}
           />
+
           <Buying amount={tor} tokenImage={DaiLogo} tokenName="Dai" />
+          <div className="flex text-base">
+            <div className="flex-1">Redeem Limit</div>
+            {redeemLimit && <div>{redeemLimit.toFixed(2)}</div>}
+          </div>
+
           {wallet.state !== WalletState.Connected && (
             <Submit label="Connect wallet" disabled />
           )}
@@ -132,7 +169,8 @@ const MintPage: NextPage = () => {
               <Submit label="Approve" onClick={torAllowance.approve} />
             )}
           {wallet.state === WalletState.Connected &&
-            torAllowance.type === "HasAllowance" && (
+            torAllowance.type === "HasAllowance" &&
+            redeemLimit?.greaterThan(0) && (
               <Submit
                 label="Redeem"
                 disabled={tor.lte(0)}

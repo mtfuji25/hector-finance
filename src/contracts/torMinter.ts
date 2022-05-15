@@ -6,14 +6,15 @@ import {
   InterfaceType,
   token256,
 } from "src/abi";
-import { FANTOM_DAI, FANTOM_TOR } from "src/constants";
+import { FANTOM, FANTOM_DAI, FANTOM_TOR } from "src/constants";
 import {
+  call,
   Provider,
   ProviderRpcError,
   sendTransaction,
   TransactionAddress,
 } from "src/provider";
-import { Result } from "src/util";
+import { ok, Result } from "src/util";
 
 export const TOR_MINTER_ADDRESS = "0x9b0c6FfA7d0Ec29EAb516d3F2dC809eE43DD60ca";
 
@@ -77,5 +78,69 @@ const REDEEM_TO_DAI_ABI: Interface = {
     },
   ],
   stateMutability: StateMutability.NonPayable,
+  type: InterfaceType.Function,
+};
+
+export async function getMintLimit(
+  provider: Provider,
+  owner: string,
+): Promise<Result<Decimal, ProviderRpcError>> {
+  const method = await methodId(MINT_LIMIT_ABI);
+  const result = await call(provider, {
+    from: owner,
+    to: FANTOM.TOR_REDEEM_ADDRESS,
+    data: "0x" + method,
+  });
+  if (!result.isOk) {
+    return result;
+  }
+  if (result.value === "0x") {
+    result.value = "0x0";
+  }
+  return ok(new Decimal(result.value).div(FANTOM_TOR.wei));
+}
+
+const MINT_LIMIT_ABI: Interface = {
+  inputs: [],
+  name: "getCurrentMintBuffer",
+  outputs: [
+    {
+      name: "_mintBuffer",
+      type: "uint256",
+    },
+  ],
+  stateMutability: StateMutability.View,
+  type: InterfaceType.Function,
+};
+
+export async function getRedeemLimit(
+  provider: Provider,
+  owner: string,
+): Promise<Result<Decimal, ProviderRpcError>> {
+  const method = await methodId(REDEEM_LIMIT_ABI);
+  const result = await call(provider, {
+    from: owner,
+    to: FANTOM.TOR_REDEEM_ADDRESS,
+    data: "0x" + method,
+  });
+  if (!result.isOk) {
+    return result;
+  }
+  if (result.value === "0x") {
+    result.value = "0x0";
+  }
+  return ok(new Decimal(result.value).div(FANTOM_TOR.wei));
+}
+
+const REDEEM_LIMIT_ABI: Interface = {
+  inputs: [],
+  name: "getCurrentRedeemBuffer",
+  outputs: [
+    {
+      name: "_redeemBuffer",
+      type: "uint256",
+    },
+  ],
+  stateMutability: StateMutability.View,
   type: InterfaceType.Function,
 };
