@@ -13,7 +13,7 @@ export const CoinInput: VFC<{
   onChange: (input: string) => void;
 }> = ({ amount, token, label, balance, onChange }) => (
   <div className="space-y-2">
-    {label && <div>{label}</div>}
+    {label && <div className="dark:text-gray-200">{label}</div>}
     <div>
       <div className="relative">
         <div className="pointer-events-none absolute top-1/2 left-3 flex -translate-y-1/2 gap-2">
@@ -22,12 +22,14 @@ export const CoinInput: VFC<{
             alt={token.symbol}
             className="h-6 w-6 object-contain"
           />
-          <div>{token.symbol}</div>
+          <div className="dark:text-gray-200">{token.symbol}</div>
         </div>
         <input
           className={classes(
-            "w-full rounded-t px-3 py-3 pl-11 text-right",
-            amount.isValid ? "bg-gray-100" : "bg-red-50 text-red-700",
+            "w-full rounded-t px-3 py-3 pl-11 text-right  ",
+            amount.isValid
+              ? "bg-gray-100 dark:bg-gray-700 dark:text-gray-200"
+              : "bg-red-50 text-red-700 dark:bg-red-700 dark:text-gray-200",
           )}
           title={token.symbol}
           pattern="[0-9]*"
@@ -38,9 +40,9 @@ export const CoinInput: VFC<{
           placeholder="0.00"
         />
       </div>
-      <div className="h-px bg-gray-200" />
+      <div className="h-px bg-gray-200 dark:bg-gray-400" />
       <div className="h-px bg-transparent" />
-      <div className="flex rounded-b bg-gray-100 text-xs text-gray-400">
+      <div className="flex rounded-b bg-gray-100 text-xs text-gray-400 dark:bg-gray-700 dark:text-gray-200">
         <button
           className="flex items-center gap-1.5 px-3 py-2"
           tabIndex={-1}

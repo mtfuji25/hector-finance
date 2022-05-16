@@ -2,7 +2,7 @@ import Link from "next/link";
 import { FC, useEffect, useRef, useState, VFC } from "react";
 import { StaticImg } from "./StaticImg";
 import HectorLogoLarge from "public/hector-wordmark.svg";
-import HectorLogo from "public/icons/hector.svg";
+import DarkHectorLogoLarge from "public/dark-hector-wordmark.svg";
 import WatermelonLight from "src/icons/watermelon-slice-light.svgr";
 import AbacusLight from "src/icons/abacus-light.svgr";
 import BookLight from "src/icons/book-light.svgr";
@@ -41,7 +41,7 @@ export default function TopNav() {
         />
         <Bars
           onClick={() => setIsNavOpen((prev) => !prev)}
-          className="mr-3 h-6 w-6 cursor-pointer sm:hidden"
+          className="mr-3 h-6 w-6 cursor-pointer dark:text-gray-200 sm:hidden"
         />
         {isNavOpen && (
           <SideNav
@@ -54,7 +54,7 @@ export default function TopNav() {
         <div className="flex items-center">
           <Moon
             onClick={() => themeToggler()}
-            className="mr-5  h-5 cursor-pointer rounded text-gray-500 dark:text-white "
+            className="mr-5  h-5 cursor-pointer rounded text-gray-500 dark:text-gray-200 "
           />
           <Wallet />
         </div>
@@ -74,7 +74,7 @@ const Wallet: VFC = () => {
           rel="noreferrer"
           href="https://metamask.io/download/"
           title="MetaMask download"
-          className="flex items-center gap-1 rounded bg-orange-400 px-4 py-2 text-white"
+          className="flex items-center gap-1 rounded bg-orange-400 px-4 py-2 text-white dark:text-gray-200"
         >
           Install MetaMask
           <ArrowUpRightFromSquareRegular className="h-3 w-3 opacity-50" />
@@ -91,7 +91,7 @@ const Wallet: VFC = () => {
       {wallet.state === WalletState.Connected && (
         <button
           onClick={() => wallet.changeAccounts()}
-          className="flex items-center gap-2 rounded bg-gray-100 px-4 py-2 text-gray-500"
+          className="flex items-center gap-2 rounded bg-gray-100 px-4 py-2 text-gray-500 dark:bg-gray-700 dark:text-gray-200  dark:hover:text-gray-100"
         >
           <WalletRegular className="h-4 w-4" />
           {ellipsisBetween(4, 4, wallet.address.slice(2))}
@@ -135,7 +135,7 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
       className={classes(
         " h-fit flex-shrink-0 flex-grow-0 space-y-4 sm:block",
         isNavOpen
-          ? " absolute top-0 left-0 z-10 h-full w-3/5 border-r-4 border-r-gray-400 bg-white px-4 py-8 drop-shadow-xl"
+          ? " absolute top-0 left-0 z-10 h-full w-3/5 border-r-4 border-r-gray-400 bg-white px-4 py-8 drop-shadow-xl dark:border-r-gray-200 dark:bg-gray-900"
           : "hidden",
       )}
     >
@@ -225,12 +225,12 @@ const InternalNav: FC<{ href: string; disabled?: boolean }> = ({
 }) => (
   <>
     {disabled ? (
-      <div className="-mx-3 flex cursor-not-allowed items-center gap-2 rounded px-3 py-2 text-gray-600 opacity-40 hover:bg-gray-100 hover:text-gray-800">
+      <div className="-mx-3 flex cursor-not-allowed items-center gap-2 rounded px-3 py-2 text-gray-600 opacity-40 hover:bg-gray-100 hover:text-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-gray-100">
         {children}
       </div>
     ) : (
       <Link href={href}>
-        <a className="-mx-3 flex items-center gap-2 rounded px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800">
+        <a className="-mx-3 flex items-center gap-2 rounded px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-gray-100">
           {children}
         </a>
       </Link>
@@ -243,7 +243,7 @@ const ExternalNav: FC<{ href: string }> = ({ children, href }) => (
     target={"_blank"}
     rel={"noreferrer"}
     href={href}
-    className="group -mx-3 flex items-center gap-2 rounded px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800"
+    className="group -mx-3 flex items-center gap-2 rounded px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-gray-100"
   >
     {children}
     <ArrowUpRightFromSquareRegular
@@ -260,9 +260,11 @@ const SocialNav: FC<{ href: string; title: string }> = ({
   href,
 }) => (
   <a
+    target={"_blank"}
+    rel={"noreferrer"}
     href={href}
     title={title}
-    className="rounded p-3 text-gray-400 hover:bg-gray-100 hover:text-gray-800"
+    className="rounded p-3 text-gray-400 hover:bg-gray-100 hover:text-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-gray-100"
   >
     {children}
   </a>

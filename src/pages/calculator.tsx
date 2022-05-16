@@ -60,7 +60,7 @@ const CalculatorPage: NextPage = () => {
         onChange={setFinalPriceInput}
       />
 
-      <label className="block space-y-2">
+      <label className="block space-y-2 dark:text-gray-200">
         <div>Stake for {days} days</div>
         <input
           min={1}
@@ -72,19 +72,19 @@ const CalculatorPage: NextPage = () => {
         />
       </label>
 
-      <div className="space-y-2 rounded bg-green-50 p-6 text-green-800">
-        <div className="text-xs font-bold uppercase tracking-wide text-green-400">
+      <div className="space-y-2 rounded bg-green-50 p-6 text-green-800 dark:bg-gray-700 dark:text-gray-200">
+        <div className="text-xs font-bold uppercase tracking-wide text-green-400 dark:text-gray-200">
           Results
         </div>
-        <div className="flex justify-between">
+        <div className="flex justify-between dark:text-gray-200">
           <div>Initial balance:</div>
           <div>${initialUsd.toFixed(2)}</div>
         </div>
-        <div className="flex justify-between">
+        <div className="flex justify-between dark:text-gray-200">
           <div>Final balance after {days} days:</div>
           <div>${finalUsd.toFixed(2)}</div>
         </div>
-        <div className="flex justify-between">
+        <div className="flex justify-between dark:text-gray-200">
           <div>ROI after {days} days:</div>
           <div>{roi.toFixed(0)}%</div>
         </div>
@@ -98,12 +98,14 @@ const Input: VFC<{
   value: DecimalInput;
   onChange: (input: string) => void;
 }> = ({ label, value, onChange }) => (
-  <label className="block space-y-2">
-    <div>{label}</div>
+  <label className="block space-y-2 ">
+    <div className="dark:text-gray-200 ">{label}</div>
     <input
       className={classes(
         "w-full rounded px-3 py-2",
-        value.isValid ? "bg-gray-100" : "bg-red-50 text-red-700",
+        value.isValid
+          ? "bg-gray-100 dark:bg-gray-700 dark:text-gray-200 "
+          : "bg-red-50 text-red-700 dark:bg-red-700 dark:text-gray-200",
       )}
       pattern="[0-9]*"
       inputMode="decimal"

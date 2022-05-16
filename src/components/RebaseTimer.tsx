@@ -91,11 +91,11 @@ function RebaseTimer() {
       {" "}
       {currentBlock ? (
         secondsToRebase?.greaterThan(0) ? (
-          <>
-            <span className="font-medium">{rebaseString}</span> to next rebase
-          </>
+          <div className="dark:text-gray-200">
+            <span className="font-medium ">{rebaseString}</span> to next rebase
+          </div>
         ) : (
-          <strong>rebasing</strong>
+          <strong className="dark:text-gray-200">rebasing</strong>
         )
       ) : (
         <div></div>

@@ -552,7 +552,7 @@ export default function DashBoard() {
       <Head>
         <title>DashBoard — Hector Finance</title>
       </Head>
-      <Tabs>
+      {/* <Tabs>
         <Tab
           label="Graphs"
           selected={view === "graph"}
@@ -561,13 +561,14 @@ export default function DashBoard() {
           }}
         />
         <Tab
+          disabled={true}
           label="Investments"
           selected={view === "investments"}
           onSelect={() => {
             setView("investments");
           }}
         />
-      </Tabs>
+      </Tabs> */}
       {view === "graph" && (
         <Graphs
           marketCap={marketCap}
@@ -883,7 +884,7 @@ const Graphs: VFC<{
     <>
       <div className=" flex flex-wrap justify-between text-center">
         <div>
-          <div>Market Cap</div>
+          <div className="dark:text-gray-200">Market Cap</div>
           {marketCap && (
             <div className="text-xl font-medium text-orange-400">
               {formatCurrency(marketCap.toNumber())}
@@ -891,7 +892,7 @@ const Graphs: VFC<{
           )}
         </div>
         <div>
-          <div>Hec Price</div>
+          <div className="dark:text-gray-200">Hec Price</div>
           {marketPrice && (
             <div className="text-xl font-medium text-orange-400">
               {formatCurrency(marketPrice.toNumber(), 2)}
@@ -899,7 +900,7 @@ const Graphs: VFC<{
           )}
         </div>
         <div>
-          <div>Hec Burned</div>
+          <div className="dark:text-gray-200">Hec Burned</div>
           {hecBurned && (
             <div className="text-xl font-medium text-orange-400">
               {hecBurned?.toFixed(2)}
@@ -907,9 +908,9 @@ const Graphs: VFC<{
           )}
         </div>
       </div>
-      <div className=" flex flex-wrap justify-between text-center">
+      <div className=" flex flex-wrap justify-between text-center ">
         <div>
-          <div>Circulating Supply</div>
+          <div className="dark:text-gray-200">Circulating Supply</div>
           {circSupply && totalSupply && (
             <div className="text-xl font-medium text-orange-400">
               {circSupply.toFixed(0) + " / " + totalSupply.toFixed(0)}
@@ -917,7 +918,7 @@ const Graphs: VFC<{
           )}
         </div>
         <div>
-          <div>RPH</div>
+          <div className="dark:text-gray-200">RPH</div>
           {backingPerHec && (
             <div className="text-xl font-medium text-orange-400">
               {formatCurrency(backingPerHec.toNumber(), 2)}
@@ -925,7 +926,7 @@ const Graphs: VFC<{
           )}
         </div>
         <div>
-          <div>Current Index</div>
+          <div className="dark:text-gray-200">Current Index</div>
           {currentIndex && (
             <div className="text-xl font-medium text-orange-400">
               {currentIndex?.toFixed(2)}
@@ -1037,7 +1038,9 @@ const HecGraphs: FC<{
   return (
     <>
       <div className="flex">
-        <div className="mr-2 text-xl font-medium">{title}</div>
+        <div className="mr-2 text-xl font-medium dark:text-gray-200">
+          {title}
+        </div>
         <div className="text-xl font-medium text-orange-400">
           {
             {

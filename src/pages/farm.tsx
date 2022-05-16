@@ -510,13 +510,13 @@ const Claim: VFC = () => {
     <div className="space-y-4">
       <SectionTitle>Step 3: Claim</SectionTitle>
       <div className="flex items-center">
-        <div>wFTM Rewards:</div>
+        <div className="dark:text-gray-200">wFTM Rewards:</div>
         <div className="flex-grow" />
-        <div className="flex items-center">
+        <div className="flex items-center dark:text-gray-200">
           <StaticImg
             src={LP_FARM.reward.logo}
             alt={LP_FARM.reward.symbol}
-            className="h-8 w-auto"
+            className="mr-2 h-8 w-auto"
           />
           {earned.toFixed()}
         </div>

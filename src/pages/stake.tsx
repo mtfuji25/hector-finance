@@ -124,7 +124,7 @@ export default function StakePage() {
       </div>
       <div className="flex flex-wrap justify-between text-center">
         <div>
-          <div>APY</div>
+          <div className="dark:text-gray-200">APY</div>
           {stakingAPY && (
             <div className="text-xl font-medium text-orange-400">
               {stakingAPY?.toFixed(0)}%
@@ -132,13 +132,13 @@ export default function StakePage() {
           )}
         </div>
         <div>
-          <div>Total Deposited</div>
+          <div className="dark:text-gray-200">Total Deposited</div>
           <div className="text-xl font-medium text-orange-400">
             {stakingTVL}
           </div>
         </div>
         <div>
-          <div>Current Index</div>
+          <div className="dark:text-gray-200">Current Index</div>
           {currentIndex && (
             <div className="text-xl font-medium text-orange-400">
               {currentIndex?.toFixed(2)}
@@ -190,16 +190,26 @@ export default function StakePage() {
 
       <div className="space-y-2">
         <div className="flex">
-          <div className="flex-1 text-base">Next Reward Amount</div>
-          <div>{nextRewardAmount?.toFixed(4)}</div>
+          <div className="flex-1 text-base dark:text-gray-200">
+            Next Reward Amount
+          </div>
+          <div className="dark:text-gray-200">
+            {nextRewardAmount?.toFixed(4)}
+          </div>
         </div>
         <div className="flex">
-          <div className="flex-1 text-base">Next Reward Yield</div>
-          <div>{nextRewardYield?.toFixed(4)} %</div>
+          <div className="flex-1 text-base dark:text-gray-200">
+            Next Reward Yield
+          </div>
+          <div className="dark:text-gray-200">
+            {nextRewardYield?.toFixed(4)} %
+          </div>
         </div>
         <div className="flex">
-          <div className="flex-1 text-base">ROI (5-Day Rate)</div>
-          <div>{ROI?.toFixed(4)} %</div>
+          <div className="flex-1 text-base dark:text-gray-200">
+            ROI (5-Day Rate)
+          </div>
+          <div className="dark:text-gray-200">{ROI?.toFixed(4)} %</div>
         </div>
       </div>
 
@@ -242,7 +252,7 @@ export default function StakePage() {
       {wallet.state === WalletState.Disconnected && (
         <Submit label="Connect wallet" disabled />
       )}
-      <div className="mt-5 text-center">
+      <div className="mt-5 text-center dark:text-gray-200">
         Planning to sell more than 15k $HEC? Making an OTC deal with the team
         could save you a huge amount of losses! Please open a ticket on our
         Discord Server if you want to talk about an OTC deal with the team:

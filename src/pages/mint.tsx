@@ -109,7 +109,7 @@ const MintPage: NextPage = () => {
           />
 
           <Buying amount={dai} tokenImage={TorLogo} tokenName="Tor" />
-          <div className="flex text-base">
+          <div className="flex text-base dark:text-gray-200">
             <div className="flex-1">Mint Limit</div>
             {mintLimit && <div>{mintLimit.toFixed(2)}</div>}
           </div>
@@ -152,8 +152,8 @@ const MintPage: NextPage = () => {
           />
 
           <Buying amount={tor} tokenImage={DaiLogo} tokenName="Dai" />
-          <div className="flex text-base">
-            <div className="flex-1">Redeem Limit</div>
+          <div className="flex text-base dark:text-gray-200">
+            <div className="flex-1 ">Redeem Limit</div>
             {redeemLimit && <div>{redeemLimit.toFixed(2)}</div>}
           </div>
 
@@ -193,13 +193,13 @@ const Buying: VFC<{
   tokenName: string;
 }> = ({ amount, tokenImage, tokenName }) => (
   <div className="block space-y-2">
-    <div>Buying</div>
+    <div className="dark:text-gray-200">Buying</div>
     <div
-      className="flex h-12 items-center gap-2 rounded bg-gray-100 px-3"
+      className="flex h-12 items-center gap-2 rounded bg-gray-100 px-3 dark:bg-gray-700"
       title={`${tokenName} purchase amount`}
     >
       <StaticImg src={tokenImage} alt={tokenName} className="h-6 w-6" />
-      <div>{tokenName}</div>
+      <div className="dark:text-gray-200">{tokenName}</div>
       {amount.gt(0) ? (
         <div className="flex-grow text-right">≈ {amount.toString()}</div>
       ) : (
