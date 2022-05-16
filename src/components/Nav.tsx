@@ -35,7 +35,7 @@ export default function TopNav() {
       <div className="flex flex-row items-center justify-between px-8 py-6">
         {/* Logo */}
         <StaticImg
-          src={HectorLogoLarge}
+          src={theme === "dark" ? DarkHectorLogoLarge : HectorLogoLarge}
           alt="Hector Finance"
           className="hidden h-6 w-auto object-contain sm:block"
         />
