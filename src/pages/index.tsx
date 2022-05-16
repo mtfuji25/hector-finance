@@ -552,7 +552,7 @@ export default function DashBoard() {
       <Head>
         <title>DashBoard — Hector Finance</title>
       </Head>
-      {/* <Tabs>
+      <Tabs>
         <Tab
           label="Graphs"
           selected={view === "graph"}
@@ -561,14 +561,13 @@ export default function DashBoard() {
           }}
         />
         <Tab
-          disabled={true}
-          label="Investments"
+          label="BuyBack"
           selected={view === "investments"}
           onSelect={() => {
             setView("investments");
           }}
         />
-      </Tabs> */}
+      </Tabs>
       {view === "graph" && (
         <Graphs
           marketCap={marketCap}
@@ -583,7 +582,7 @@ export default function DashBoard() {
       )}
       {view === "investments" && treasuryValue && investmentsData && (
         <>
-          <GlobalInfo
+          {/* <GlobalInfo
             transactions={sortedTransactions}
             treasuryValue={treasuryValue}
           ></GlobalInfo>
@@ -591,7 +590,7 @@ export default function DashBoard() {
             treasuryValue={treasuryValue}
             metrics={investmentsData}
           ></Chains>
-          <Investments metrics={investmentsData}></Investments>
+          <Investments metrics={investmentsData}></Investments> */}
           {sortedTransactions && (
             <LatestTransactions ftmScanTransactionData={sortedTransactions} />
           )}
@@ -606,12 +605,12 @@ const LatestTransactions: VFC<{ ftmScanTransactionData: Transaction[] }> = ({
 }) => {
   return (
     <div className="grid h-[500px] ">
-      <hr className="w-5/6 justify-self-center border-t-2 bg-gray-300"></hr>
-      <div className="mt-3 justify-self-center text-xl">
+      {/* <hr className="w-5/6 justify-self-center border-t-2 bg-gray-300"></hr> */}
+      <div className="mt-3 justify-self-center text-xl dark:text-gray-200">
         Latest Transactions
       </div>
 
-      <div className="transactions overflow-auto ">
+      <div className="transactions overflow-auto dark:text-gray-200">
         <>
           {ftmScanTransactionData &&
             ftmScanTransactionData.map((transaction, i) => (
