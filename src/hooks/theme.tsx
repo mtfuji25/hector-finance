@@ -15,7 +15,6 @@ export const useDarkMode = (): [Theme, () => void] => {
     }
   };
   const themeToggler = () => {
-    console.log("hit");
     theme === "light" ? setMode("dark") : setMode("light");
   };
   useEffect(() => {
