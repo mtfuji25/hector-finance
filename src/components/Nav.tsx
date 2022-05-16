@@ -88,6 +88,14 @@ const Wallet: VFC = () => {
           Connect
         </button>
       )}
+      {wallet.state === WalletState.SwitchFantomChain && (
+        <button
+          className="rounded bg-orange-400 px-6 py-2 font-medium text-white"
+          onClick={() => wallet.switchToFantom()}
+        >
+          Switch to Fantom
+        </button>
+      )}
       {wallet.state === WalletState.Connected && (
         <button
           onClick={() => wallet.changeAccounts()}
@@ -106,6 +114,7 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
   closeMenu,
 }) => {
   const ref = useRef<HTMLElement>(null);
+  const [theme, themeToggler] = useDarkMode();
 
   useEffect(() => {
     const checkIfClickedOutside = (e: MouseEvent) => {
@@ -141,7 +150,7 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
     >
       {isNavOpen && (
         <StaticImg
-          src={HectorLogoLarge}
+          src={theme === "dark" ? DarkHectorLogoLarge : HectorLogoLarge}
           alt="Hector Finance"
           className=" h-6 w-auto object-contain sm:block"
         />

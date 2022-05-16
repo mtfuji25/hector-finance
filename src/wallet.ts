@@ -63,6 +63,18 @@ export function useWallet(): Wallet {
       return { state: WalletState.NoWallet };
     }
 
+    if (network !== "0xfa") {
+      return {
+        state: WalletState.SwitchFantomChain,
+        switchToFantom: async () => {
+          const fantomChain = 0xfa;
+          return provider.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: "0x" + fantomChain.toString(16) }],
+          });
+        },
+      };
+    }
     if (!network || !address) {
       return {
         state: WalletState.Disconnected,
@@ -113,6 +125,10 @@ export function useWalletState<S>(
 
 export type Wallet =
   | { state: WalletState.NoWallet }
+  | {
+      state: WalletState.SwitchFantomChain;
+      switchToFantom: () => Promise<void>;
+    }
   | { state: WalletState.Disconnected; connect: () => Promise<void> }
   | {
       state: WalletState.Connected;
@@ -126,4 +142,5 @@ export enum WalletState {
   NoWallet,
   Disconnected,
   Connected,
+  SwitchFantomChain,
 }
