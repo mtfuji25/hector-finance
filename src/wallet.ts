@@ -19,7 +19,7 @@ import { useAsyncEffect } from "./util";
 export function useWallet(): Wallet {
   const [provider, setProvider] = useState<Provider>();
   const [address, setAddress] = useState<string>();
-  const [network, setNetwork] = useState<string>();
+  const [network, setNetwork] = useState<number>();
 
   useAsyncEffect(() => getProvider().then(setProvider), []);
 
@@ -39,11 +39,11 @@ export function useWallet(): Wallet {
       if (!result.isOk) {
         return;
       }
-      setNetwork(result.value);
+      setNetwork(parseInt(result.value, 16));
     });
 
     const onChainChanged = (chainId: string) => {
-      setNetwork(chainId);
+      setNetwork(parseInt(chainId, 16));
     };
 
     const onAccountsChanged = (accounts: string[]) => {
@@ -63,7 +63,7 @@ export function useWallet(): Wallet {
       return { state: WalletState.NoWallet };
     }
 
-    if (network !== "0xfa") {
+    if (network !== 0xfa) {
       return {
         state: WalletState.SwitchFantomChain,
         switchToFantom: async () => {
@@ -124,19 +124,26 @@ export function useWalletState<S>(
 }
 
 export type Wallet =
-  | { state: WalletState.NoWallet }
-  | {
-      state: WalletState.SwitchFantomChain;
-      switchToFantom: () => Promise<void>;
-    }
-  | { state: WalletState.Disconnected; connect: () => Promise<void> }
-  | {
-      state: WalletState.Connected;
-      changeAccounts: () => Promise<void>;
-      address: string;
-      network: string;
-      provider: Provider;
-    };
+  | MissingWallet
+  | DisconnectedWallet
+  | ConnectedWallet
+  | SwitchFantomChainWallet;
+export type MissingWallet = { state: WalletState.NoWallet };
+export type DisconnectedWallet = {
+  state: WalletState.Disconnected;
+  connect: () => Promise<void>;
+};
+export type ConnectedWallet = {
+  state: WalletState.Connected;
+  address: string;
+  network: number;
+  provider: Provider;
+  changeAccounts: () => Promise<void>;
+};
+export type SwitchFantomChainWallet = {
+  state: WalletState.SwitchFantomChain;
+  switchToFantom: () => Promise<void>;
+};
 
 export enum WalletState {
   NoWallet,

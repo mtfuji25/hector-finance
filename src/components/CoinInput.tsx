@@ -19,7 +19,7 @@ export const CoinInput: VFC<{
         <div className="pointer-events-none absolute top-1/2 left-3 flex -translate-y-1/2 gap-2">
           <StaticImg
             src={token.logo}
-            alt={token.symbol}
+            alt=""
             className="h-6 w-6 object-contain"
           />
           <div className="dark:text-gray-200">{token.symbol}</div>
@@ -44,30 +44,32 @@ export const CoinInput: VFC<{
       <div className="h-px bg-transparent" />
       <div className="flex rounded-b bg-gray-100 text-xs text-gray-400 dark:bg-gray-700 dark:text-gray-200">
         <button
-          className="flex items-center gap-1.5 px-3 py-2"
+          className="flex items-center gap-1.5 overflow-hidden px-3 py-2 hover:text-gray-600"
           tabIndex={-1}
           onClick={() => onChange(balance.toString())}
         >
           <WalletIcon className="h-3 w-3 flex-shrink-0 object-contain" />
-          {balance.toFixed()}
+          <div className="overflow-hidden overflow-ellipsis">
+            {balance.toFixed()}
+          </div>
         </button>
         <div className="flex-grow" />
         <button
-          className="p-2 px-3"
+          className="p-2 px-3 hover:text-gray-600"
           tabIndex={-1}
           onClick={() => onChange(balance.div(4).toString())}
         >
           1/4
         </button>
         <button
-          className="p-2 px-3"
+          className="p-2 px-3 hover:text-gray-600"
           tabIndex={-1}
           onClick={() => onChange(balance.div(2).toString())}
         >
           1/2
         </button>
         <button
-          className="px-3 py-2"
+          className="px-3 py-2 hover:text-gray-600"
           tabIndex={-1}
           onClick={() => onChange(balance.toString())}
         >

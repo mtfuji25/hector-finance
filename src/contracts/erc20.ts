@@ -18,6 +18,7 @@ import {
 import { ok, Result } from "src/util";
 
 export interface Erc20Token {
+  name: string;
   symbol: string;
   logo: StaticImageData;
   address: TokenAddress;

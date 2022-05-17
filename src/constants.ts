@@ -247,6 +247,7 @@ export const BSC_RPC = "https://bscrpc.com";
 export const POLYGON_RPC = "https://polygon-rpc.com";
 
 export const FANTOM_DAI: Erc20Token = {
+  name: "DAI",
   symbol: "DAI",
   logo: DaiLogo,
   address: FANTOM.DAI_ADDRESS,
@@ -256,6 +257,7 @@ export const FANTOM_DAI: Erc20Token = {
 };
 
 export const FANTOM_USDC: Erc20Token = {
+  name: "USDC",
   symbol: "USDC",
   logo: UsdcLogo,
   address: FANTOM.USDC_ADDRESS,
@@ -265,6 +267,7 @@ export const FANTOM_USDC: Erc20Token = {
 };
 
 export const FANTOM_TOR: Erc20Token = {
+  name: "Tor",
   symbol: "TOR",
   logo: TorLogo,
   address: FANTOM.TOR_ADDRESS,
@@ -274,6 +277,7 @@ export const FANTOM_TOR: Erc20Token = {
 };
 
 export const FANTOM_WFTM: Erc20Token = {
+  name: "Wrapped Fantom",
   symbol: "wFTM",
   logo: WftmLogo,
   address: FANTOM.WFTM_ADDRESS,
@@ -283,6 +287,7 @@ export const FANTOM_WFTM: Erc20Token = {
 };
 
 export const FANTOM_CURVE: Erc20Token = {
+  name: "Curve",
   symbol: "crvLP",
   logo: CurveLogo,
   address: FANTOM.DAI_TOR_USDC_POOL,
@@ -292,6 +297,7 @@ export const FANTOM_CURVE: Erc20Token = {
 };
 
 export const FANTOM_STAKED_CURVE: Erc20Token = {
+  name: "Staked Curve",
   symbol: "crvLP",
   logo: CurveLogo,
   address: FANTOM.DAI_TOR_USDC_FARM,
@@ -301,6 +307,7 @@ export const FANTOM_STAKED_CURVE: Erc20Token = {
 };
 
 export const FANTOM_HECTOR: Erc20Token = {
+  name: "Hector Finance",
   symbol: "HEC",
   logo: HecLogo,
   address: FANTOM.HEC_ADDRESS,
@@ -310,6 +317,7 @@ export const FANTOM_HECTOR: Erc20Token = {
 };
 
 export const FANTOM_sHEC: Erc20Token = {
+  name: "Staked Hector",
   symbol: "sHEC",
   logo: HecLogo,
   address: FANTOM.SHEC_ADDRESS,
@@ -319,6 +327,7 @@ export const FANTOM_sHEC: Erc20Token = {
 };
 
 export const FANTOM_wsHEC: Erc20Token = {
+  name: "Wrapped Staked Hector",
   symbol: "wsHEC",
   logo: HecLogo,
   address: FANTOM.WSHEC_ADDRESS,

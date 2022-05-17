@@ -172,7 +172,7 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
           <SealLight width={16} height={16} />
           Bond
         </InternalNav>
-        <InternalNav href="/exchange" disabled>
+        <InternalNav href="/exchange">
           <ScaleBalancedLight width={16} height={16} />
           DEX
         </InternalNav>

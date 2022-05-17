@@ -172,16 +172,14 @@ const PoolDeposit: VFC<{ wallet: Wallet }> = ({ wallet }) => {
         onClick={deposit}
       />
       {allowanceModal && (
-        <div>
-          <AllowanceModal
-            allowances={[torAllowance, daiAllowance, usdcAllowance]}
-            onCancel={() => showAllowanceModal(false)}
-            onComplete={() => {
-              showAllowanceModal(false);
-              deposit();
-            }}
-          />
-        </div>
+        <AllowanceModal
+          allowances={[torAllowance, daiAllowance, usdcAllowance]}
+          onCancel={() => showAllowanceModal(false)}
+          onComplete={() => {
+            showAllowanceModal(false);
+            deposit();
+          }}
+        />
       )}
     </>
   );
@@ -265,9 +263,11 @@ export const GrantButton: FC<{
 );
 
 const Modal: FC<{ className?: string }> = ({ children, className }) => (
-  <div className="fixed top-0 left-0 right-0 bottom-0 z-10 m-0 bg-gray-900/50 p-4 backdrop-blur-sm">
-    <div className="relative left-1/2 top-1/2 max-w-md -translate-x-1/2 -translate-y-1/2 rounded bg-white">
-      <div className={className}>{children}</div>
+  <div>
+    <div className="fixed top-0 left-0 right-0 bottom-0 z-10 m-0 bg-gray-900/50 p-4 backdrop-blur-sm">
+      <div className="relative left-1/2 top-1/2 max-w-md -translate-x-1/2 -translate-y-1/2 rounded bg-white">
+        <div className={className}>{children}</div>
+      </div>
     </div>
   </div>
 );
