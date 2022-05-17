@@ -185,10 +185,10 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
           Mint
         </InternalNav>
 
-        <InternalNav href="/calculator">
+        {/* <InternalNav href="/calculator">
           <AbacusLight width={16} height={16} />
           Calculator
-        </InternalNav>
+        </InternalNav> */}
       </div>
       <Divider />
       <div>
