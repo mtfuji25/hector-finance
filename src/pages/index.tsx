@@ -569,16 +569,59 @@ export default function DashBoard() {
         />
       </Tabs>
       {view === "graph" && (
-        <Graphs
-          marketCap={marketCap}
-          marketPrice={marketPrice}
-          hecBurned={hecBurned}
-          circSupply={circSupply}
-          backingPerHec={backingPerHec}
-          totalSupply={totalSupply}
-          graphData={graphData}
-          currentIndex={currentIndex}
-        ></Graphs>
+        <>
+          <div className="flex flex-wrap justify-between text-center">
+            <div className="mb-2 basis-1/3">
+              <div className="dark:text-gray-200">Market Cap</div>
+              {marketCap && (
+                <div className="text-xl font-medium text-orange-400">
+                  {formatCurrency(marketCap.toNumber())}
+                </div>
+              )}
+            </div>
+            <div className="mb-2 basis-1/3">
+              <div className="dark:text-gray-200">Hec Price</div>
+              {marketPrice && (
+                <div className="text-xl font-medium text-orange-400">
+                  {formatCurrency(marketPrice.toNumber(), 2)}
+                </div>
+              )}
+            </div>
+            <div className="mb-2 basis-1/3">
+              <div className="dark:text-gray-200">Hec Burned</div>
+              {hecBurned && (
+                <div className="text-xl font-medium text-orange-400">
+                  {hecBurned?.toFixed(2)}
+                </div>
+              )}
+            </div>
+            <div className="basis-1/3">
+              <div className="dark:text-gray-200">Circulating Supply</div>
+              {circSupply && totalSupply && (
+                <div className="text-xl font-medium text-orange-400">
+                  {circSupply.toFixed(0) + " / " + totalSupply.toFixed(0)}
+                </div>
+              )}
+            </div>
+            <div className="basis-1/3">
+              <div className="dark:text-gray-200">RPH</div>
+              {backingPerHec && (
+                <div className="text-xl font-medium text-orange-400">
+                  {formatCurrency(backingPerHec.toNumber(), 2)}
+                </div>
+              )}
+            </div>
+            <div className="basis-1/3">
+              <div className="dark:text-gray-200">Current Index</div>
+              {currentIndex && (
+                <div className="text-xl font-medium text-orange-400">
+                  {currentIndex?.toFixed(2)}
+                </div>
+              )}
+            </div>
+          </div>
+          <Graphs graphData={graphData}></Graphs>
+        </>
       )}
       {view === "investments" && treasuryValue && investmentsData && (
         <>
@@ -861,78 +904,10 @@ interface SubgraphEthData {
 }
 
 const Graphs: VFC<{
-  marketCap: Decimal | undefined;
-  marketPrice: Decimal | undefined;
-  hecBurned: Decimal | undefined;
-  circSupply: Decimal | undefined;
-  backingPerHec: Decimal | undefined;
-  totalSupply: Decimal | undefined;
   graphData: ProtocolMetrics[] | undefined;
-  currentIndex: Decimal | undefined;
-}> = ({
-  marketCap,
-  marketPrice,
-  hecBurned,
-  circSupply,
-  backingPerHec,
-  totalSupply,
-  graphData,
-  currentIndex,
-}) => {
+}> = ({ graphData }) => {
   return (
     <>
-      <div className=" flex flex-wrap justify-between text-center">
-        <div>
-          <div className="dark:text-gray-200">Market Cap</div>
-          {marketCap && (
-            <div className="text-xl font-medium text-orange-400">
-              {formatCurrency(marketCap.toNumber())}
-            </div>
-          )}
-        </div>
-        <div>
-          <div className="dark:text-gray-200">Hec Price</div>
-          {marketPrice && (
-            <div className="text-xl font-medium text-orange-400">
-              {formatCurrency(marketPrice.toNumber(), 2)}
-            </div>
-          )}
-        </div>
-        <div>
-          <div className="dark:text-gray-200">Hec Burned</div>
-          {hecBurned && (
-            <div className="text-xl font-medium text-orange-400">
-              {hecBurned?.toFixed(2)}
-            </div>
-          )}
-        </div>
-      </div>
-      <div className=" flex flex-wrap justify-between text-center ">
-        <div>
-          <div className="dark:text-gray-200">Circulating Supply</div>
-          {circSupply && totalSupply && (
-            <div className="text-xl font-medium text-orange-400">
-              {circSupply.toFixed(0) + " / " + totalSupply.toFixed(0)}
-            </div>
-          )}
-        </div>
-        <div>
-          <div className="dark:text-gray-200">RPH</div>
-          {backingPerHec && (
-            <div className="text-xl font-medium text-orange-400">
-              {formatCurrency(backingPerHec.toNumber(), 2)}
-            </div>
-          )}
-        </div>
-        <div>
-          <div className="dark:text-gray-200">Current Index</div>
-          {currentIndex && (
-            <div className="text-xl font-medium text-orange-400">
-              {currentIndex?.toFixed(2)}
-            </div>
-          )}
-        </div>
-      </div>
       <hr className="h-px flex-grow bg-gray-300 "></hr>
       {graphData && (
         <>
