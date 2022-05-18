@@ -71,21 +71,21 @@ export const MultiCoinInput: VFC<{
       </button>
       <div className="flex-grow" />
       <button
-        className="p-2 px-3 hover:text-gray-600 dark:hover:text-gray-400"
+        className="p-2 px-3 hover:text-gray-600 dark:hover:text-gray-100"
         tabIndex={-1}
         onClick={() => onInput(balance.div(4).toString())}
       >
         1/4
       </button>
       <button
-        className="p-2 px-3 hover:text-gray-600 dark:hover:text-gray-400"
+        className="p-2 px-3 hover:text-gray-600 dark:hover:text-gray-100"
         tabIndex={-1}
         onClick={() => onInput(balance.div(2).toString())}
       >
         1/2
       </button>
       <button
-        className="px-3 py-2 hover:text-gray-600 dark:hover:text-gray-400"
+        className="px-3 py-2 hover:text-gray-600 dark:hover:text-gray-100"
         tabIndex={-1}
         onClick={() => onInput(balance.toString())}
       >
