@@ -307,14 +307,14 @@ const ConfirmationModal: FC<{
   return (
     <Modal className="relative max-w-md bg-white p-5">
       <button
-        className="absolute top-0 right-0 block p-4 text-gray-300 hover:text-gray-600"
+        className="absolute top-0 right-0 block p-4 text-gray-300 hover:text-gray-600 "
         title="Cancel"
         onClick={onClose}
       >
         <Close className="h-5 w-5 " />
       </button>
       <div className="space-y-5">
-        <div className="text-xl font-medium">
+        <div className="text-xl font-medium ">
           {sendChain.id === receiveChain.id && "Swap"}
           {sendChain.id !== receiveChain.id && "Bridge"}
         </div>
@@ -349,10 +349,12 @@ const ConfirmationAmount: FC<{
   chain: Chain;
   amount: string;
 }> = ({ label, token, chain, amount }) => (
-  <div className="space-y-1 rounded bg-gray-100 px-4 py-3">
-    <div className="text-xs font-bold uppercase text-gray-400">{label}</div>
+  <div className="space-y-1 rounded bg-gray-100 px-4 py-3 dark:bg-gray-600 dark:text-gray-200">
+    <div className="text-xs font-bold uppercase text-gray-400 dark:text-gray-200">
+      {label}
+    </div>
     <div className="-space-y-0.5">
-      <div className="items-center gap-1 overflow-hidden text-ellipsis text-3xl font-bold text-gray-600">
+      <div className="items-center gap-1 overflow-hidden text-ellipsis text-3xl font-bold text-gray-600 dark:text-gray-200">
         {amount}
       </div>
       <div className="flex items-center gap-1.5 text-sm">
@@ -479,7 +481,7 @@ const SelectToken: VFC<{
         <input
           value={search}
           onChange={(e) => onSearch(e.currentTarget.value)}
-          className="w-full rounded bg-gray-200 px-3 py-3 pl-11"
+          className="w-full rounded bg-gray-200 px-3 py-3 pl-11 dark:bg-gray-600 dark:text-gray-200"
           placeholder={`Search tokens on ${chain.shortName}`}
         />
         <div
@@ -498,7 +500,7 @@ const SelectToken: VFC<{
       {results.map((token) => (
         <button
           key={token.address}
-          className="group flex w-full items-center gap-2 p-3 py-2.5 hover:bg-gray-100"
+          className="group flex w-full items-center gap-2 p-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-600"
           title={token.address}
           onClick={() => {
             onSelect({
@@ -517,10 +519,10 @@ const SelectToken: VFC<{
             alt=""
             className="h-6 w-6 shrink-0 object-contain"
           />
-          <div className="overflow-hidden overflow-ellipsis whitespace-nowrap">
+          <div className="overflow-hidden overflow-ellipsis whitespace-nowrap ">
             {token.name}
           </div>
-          <div className="overflow-hidden whitespace-nowrap text-gray-300 group-hover:text-gray-400">
+          <div className="overflow-hidden whitespace-nowrap text-gray-300 group-hover:text-gray-400 ">
             {token.symbol}
           </div>
         </button>
@@ -535,7 +537,7 @@ const ChainButton: VFC<{
   onClick: () => void;
 }> = ({ chain, decoration, onClick }) => (
   <button
-    className="relative flex w-full shrink-0 items-center gap-2 overflow-hidden rounded px-4 py-2 pr-5 text-lg text-white"
+    className="relative flex w-full shrink-0 items-center gap-2 overflow-hidden rounded px-4 py-2 pr-5 text-lg text-white "
     title={chain.longName}
     onClick={onClick}
     style={{
@@ -565,7 +567,7 @@ const Modal: FC<{ className?: string }> = ({ children, className }) => (
   <div className="fixed top-0 left-0 right-0 bottom-0 z-10 m-0 bg-gray-900/50 p-4 backdrop-blur-sm">
     <div
       className={classes(
-        "relative left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded",
+        "relative left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded dark:bg-gray-700 dark:text-gray-200 ",
         className,
       )}
     >

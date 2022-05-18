@@ -18,8 +18,10 @@ export const MultiCoinInput: VFC<{
   <div>
     <div
       className={classes(
-        "flex rounded-t",
-        amount.isValid ? "bg-gray-100" : "bg-red-50 text-red-700",
+        "flex rounded-t ",
+        amount.isValid
+          ? "bg-gray-100 dark:bg-gray-700 dark:text-gray-200"
+          : "bg-red-50 text-red-700 dark:bg-red-700 dark:text-gray-200",
       )}
     >
       <button
@@ -44,7 +46,7 @@ export const MultiCoinInput: VFC<{
         <Chevron className="h-2.5 w-2.5 shrink-0 object-contain" />
       </button>
       <input
-        className="min-w-0 flex-grow overflow-ellipsis bg-transparent p-3 text-right"
+        className="min-w-0 flex-grow overflow-ellipsis bg-transparent p-3 text-right "
         title={token.symbol}
         pattern="[0-9]*"
         inputMode="decimal"
@@ -54,11 +56,11 @@ export const MultiCoinInput: VFC<{
         placeholder="0.00"
       />
     </div>
-    <div className="h-px bg-gray-200" />
+    <div className="h-px bg-gray-200 dark:bg-gray-400" />
     <div className="h-px bg-transparent" />
-    <div className="flex rounded-b bg-gray-100 text-xs text-gray-400">
+    <div className="flex rounded-b bg-gray-100 text-xs text-gray-400 dark:bg-gray-700 dark:text-gray-200">
       <button
-        className="flex items-center gap-1.5 overflow-hidden px-3 py-2 hover:text-gray-600"
+        className="flex items-center gap-1.5 overflow-hidden px-3 py-2 hover:text-gray-600 dark:hover:text-gray-400"
         tabIndex={-1}
         onClick={() => onInput(balance.toString())}
       >
@@ -69,21 +71,21 @@ export const MultiCoinInput: VFC<{
       </button>
       <div className="flex-grow" />
       <button
-        className="p-2 px-3 hover:text-gray-600"
+        className="p-2 px-3 hover:text-gray-600 dark:hover:text-gray-400"
         tabIndex={-1}
         onClick={() => onInput(balance.div(4).toString())}
       >
         1/4
       </button>
       <button
-        className="p-2 px-3 hover:text-gray-600"
+        className="p-2 px-3 hover:text-gray-600 dark:hover:text-gray-400"
         tabIndex={-1}
         onClick={() => onInput(balance.div(2).toString())}
       >
         1/2
       </button>
       <button
-        className="px-3 py-2 hover:text-gray-600"
+        className="px-3 py-2 hover:text-gray-600 dark:hover:text-gray-400"
         tabIndex={-1}
         onClick={() => onInput(balance.toString())}
       >
@@ -99,7 +101,7 @@ export const MultiCoinOutput: VFC<{
   token: Erc20Token;
   onChangeCoin: () => void;
 }> = ({ amount, token, chain, onChangeCoin }) => (
-  <div className="flex rounded bg-gray-100">
+  <div className="flex rounded bg-gray-100 dark:bg-gray-700 dark:text-gray-200">
     <button
       className="flex shrink-0 items-center gap-2 p-3"
       title={`${token.name} on ${chain.longName}`}
