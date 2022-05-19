@@ -44,7 +44,7 @@ export const CoinInput: VFC<{
       <div className="h-px bg-transparent" />
       <div className="flex rounded-b bg-gray-100 text-xs text-gray-400 dark:bg-gray-700 dark:text-gray-200">
         <button
-          className="flex items-center gap-1.5 overflow-hidden px-3 py-2 hover:text-gray-600 dark:hover:text-gray-100"
+          className="flex items-center gap-1.5 overflow-hidden px-3 py-2 hover:text-gray-600 dark:hover:bg-gray-500 dark:hover:text-gray-100"
           tabIndex={-1}
           onClick={() => onChange(balance.toString())}
         >
@@ -55,21 +55,21 @@ export const CoinInput: VFC<{
         </button>
         <div className="flex-grow" />
         <button
-          className="p-2 px-3 hover:text-gray-600 dark:hover:text-gray-100 "
+          className="p-2 px-3 hover:text-gray-600 dark:hover:bg-gray-500 dark:hover:text-gray-100 "
           tabIndex={-1}
           onClick={() => onChange(balance.div(4).toString())}
         >
           1/4
         </button>
         <button
-          className="p-2 px-3 hover:text-gray-600 dark:hover:text-gray-100"
+          className="p-2 px-3 hover:text-gray-600 dark:hover:bg-gray-500 dark:hover:text-gray-100"
           tabIndex={-1}
           onClick={() => onChange(balance.div(2).toString())}
         >
           1/2
         </button>
         <button
-          className="px-3 py-2 hover:text-gray-600 dark:hover:text-gray-100"
+          className="px-3 py-2 hover:text-gray-600 dark:hover:bg-gray-500 dark:hover:text-gray-100"
           tabIndex={-1}
           onClick={() => onChange(balance.toString())}
         >

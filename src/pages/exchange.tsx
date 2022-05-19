@@ -500,7 +500,7 @@ const SelectToken: VFC<{
       {results.map((token) => (
         <button
           key={token.address}
-          className="group flex w-full items-center gap-2 p-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-600"
+          className="group flex w-full items-center gap-2 p-3 py-2.5 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
           title={token.address}
           onClick={() => {
             onSelect({
@@ -522,7 +522,7 @@ const SelectToken: VFC<{
           <div className="overflow-hidden overflow-ellipsis whitespace-nowrap ">
             {token.name}
           </div>
-          <div className="overflow-hidden whitespace-nowrap text-gray-300 group-hover:text-gray-400 ">
+          <div className="overflow-hidden whitespace-nowrap text-gray-300 group-hover:text-gray-400 dark:text-gray-200 dark:group-hover:text-gray-200 ">
             {token.symbol}
           </div>
         </button>
