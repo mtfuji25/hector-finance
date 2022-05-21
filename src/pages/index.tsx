@@ -27,7 +27,6 @@ import { getHecBurned } from "src/contracts/hecBurnContract";
 import { getStakingIndex } from "src/contracts/stakingContract";
 import { getMarketPrice } from "src/contracts/uniswapV2";
 import { formatCurrency } from "src/util";
-import { useWallet, WalletState } from "src/wallet";
 import treasury from "src/icons/treasury.svgr";
 import buyback from "src/icons/buyback.svgr";
 import Link from "src/icons/link.svgr";
@@ -39,6 +38,7 @@ import curveLogo from "public/icons/curve.webp";
 import ethLogo from "public/icons/eth.svg";
 import wftmLogo from "public/icons/wftm.svg";
 import { StaticImg } from "src/components/StaticImg";
+import { FANTOM } from "src/chain";
 
 const COINS = [
   {
@@ -257,8 +257,6 @@ export interface FTMScanTransaction {
 }
 
 export default function DashBoard() {
-  const wallet = useWallet();
-
   const [view, setView] = useState<string>("graph");
   const [marketCap, setMarketCap] = useState<Decimal>();
   const [marketPrice, setMarketPrice] = useState<Decimal>();
@@ -316,117 +314,114 @@ export default function DashBoard() {
       .then((grph) => grph.data.ethMetrics);
 
     const loadDashboardInfo = async () => {
-      if (wallet.state === WalletState.Connected) {
-        const [
-          graphData,
-          marketPrice,
-          hecBurnedAmount,
-          totalSupply,
-          ethData,
-          index,
-        ] = await Promise.all([
-          getGraphData,
-          getMarketPrice(wallet.provider),
-          getHecBurned(wallet.provider),
-          getTotalSupply(wallet.provider, FANTOM_HECTOR),
-          getEthData,
-          getStakingIndex(wallet.provider),
-        ]);
-        if (index.isOk) {
-          setCurrentIndex(new Decimal(index.value).div(FANTOM_HECTOR.wei));
-        }
+      const [
+        graphData,
+        marketPrice,
+        hecBurnedAmount,
+        totalSupply,
+        ethData,
+        index,
+      ] = await Promise.all([
+        getGraphData,
+        getMarketPrice(FANTOM),
+        getHecBurned(FANTOM),
+        getTotalSupply(FANTOM, FANTOM_HECTOR),
+        getEthData,
+        getStakingIndex(FANTOM),
+      ]);
+      if (index.isOk) {
+        setCurrentIndex(new Decimal(index.value).div(FANTOM_HECTOR.wei));
+      }
 
-        if (totalSupply.isOk) {
-          setTotalSupply(totalSupply.value);
-        }
-        if (hecBurnedAmount.isOk) {
-          setHecBurned(hecBurnedAmount.value);
-        }
-        if (marketPrice.isOk && graphData && ethData) {
-          // we might not need graph for this and can use contract
-          const circSupply = new Decimal(
-            graphData.protocolMetrics[0].hecCirculatingSupply,
-          );
-          const treasuryVal = new Decimal(
-            graphData.protocolMetrics[0].treasuryMarketValue,
-          ).plus(new Decimal(ethData[0].treasuryEthMarketValue));
+      if (totalSupply.isOk) {
+        setTotalSupply(totalSupply.value);
+      }
+      if (hecBurnedAmount.isOk) {
+        setHecBurned(hecBurnedAmount.value);
+      }
+      if (marketPrice.isOk && graphData && ethData) {
+        // we might not need graph for this and can use contract
+        const circSupply = new Decimal(
+          graphData.protocolMetrics[0]!.hecCirculatingSupply,
+        );
+        const treasuryVal = new Decimal(
+          graphData.protocolMetrics[0]!.treasuryMarketValue,
+        ).plus(new Decimal(ethData[0]!.treasuryEthMarketValue));
 
-          const joinedGraphData = graphData.protocolMetrics.map((entry, i) => {
-            const bankTotal = (
-              +entry.bankBorrowed + +entry.bankSupplied
-            ).toString();
-            const torTimeStamp = 1642857253;
-            let data: ProtocolMetrics = {
-              ...entry,
-              bankTotal,
-              torTVL: (+entry.timestamp > torTimeStamp
-                ? graphData.tors[i]?.torTVL
-                : 0
+        const joinedGraphData = graphData.protocolMetrics.map((entry, i) => {
+          const bankTotal = (
+            +entry.bankBorrowed + +entry.bankSupplied
+          ).toString();
+          const torTimeStamp = 1642857253;
+          let data: ProtocolMetrics = {
+            ...entry,
+            bankTotal,
+            torTVL: (+entry.timestamp > torTimeStamp
+              ? graphData.tors[i]!?.torTVL
+              : 0
+            ).toString(),
+            treasuryBaseRewardPool: "0",
+            staked: (
+              (parseFloat(entry.sHecCirculatingSupply) /
+                parseFloat(entry.hecCirculatingSupply)) *
+              100
+            ).toString(),
+          };
+          if (i < ethData?.length) {
+            const riskFreeValue =
+              +entry.treasuryRiskFreeValue +
+              +ethData[i]!.treasuryBaseRewardPool;
+            data = {
+              ...data,
+              treasuryBaseRewardPool: (
+                +ethData[i]!.treasuryBaseRewardPool + +entry.treasuryInvestments
               ).toString(),
-              treasuryBaseRewardPool: "0",
-              staked: (
-                (parseFloat(entry.sHecCirculatingSupply) /
-                  parseFloat(entry.hecCirculatingSupply)) *
-                100
+              runwayCurrent: getRunway(
+                +entry.sHecCirculatingSupply,
+                +riskFreeValue,
+                +entry.nextEpochRebase,
+              ),
+              treasuryMaticBalance: ethData[i]!.treasuryMaticBalance,
+              treasuryIlluviumBalance: ethData[i]!.treasuryIlluviumBalance,
+              treasuryRFMaticBalance: (
+                +ethData[i]!.treasuryMaticBalance * 0.5
               ).toString(),
+              treasuryRFIlluviumBalance: (
+                +ethData[i]!.treasuryIlluviumBalance * 0.5
+              ).toString(),
+              illuviumTokenAmount: ethData[i]!.illuviumTokenAmount,
             };
-            if (i < ethData?.length) {
-              const riskFreeValue =
-                +entry.treasuryRiskFreeValue +
-                +ethData[i].treasuryBaseRewardPool;
-              data = {
-                ...data,
-                treasuryBaseRewardPool: (
-                  +ethData[i].treasuryBaseRewardPool +
-                  +entry.treasuryInvestments
-                ).toString(),
-                runwayCurrent: getRunway(
-                  +entry.sHecCirculatingSupply,
-                  +riskFreeValue,
-                  +entry.nextEpochRebase,
-                ),
-                treasuryMaticBalance: ethData[i].treasuryMaticBalance,
-                treasuryIlluviumBalance: ethData[i].treasuryIlluviumBalance,
-                treasuryRFMaticBalance: (
-                  +ethData[i].treasuryMaticBalance * 0.5
-                ).toString(),
-                treasuryRFIlluviumBalance: (
-                  +ethData[i].treasuryIlluviumBalance * 0.5
-                ).toString(),
-                illuviumTokenAmount: ethData[i].illuviumTokenAmount,
-              };
-            }
-            return data as ProtocolMetrics;
-          });
-          setGraphData(joinedGraphData);
-          setTreasuryValue(treasuryVal);
-          setBackingPerHec(treasuryVal.div(circSupply));
-          setCircSupply(circSupply);
-          setMarketCap(
-            marketPrice.value.times(circSupply).div(FANTOM_HECTOR.wei),
-          );
-          setMarketPrice(marketPrice.value.div(FANTOM_HECTOR.wei));
-          const data = COINS.map((token) => {
-            const coin = {
-              ...token,
-              amount: +(joinedGraphData[0] as any)[token.marketValue],
-              percent: treasuryVal
-                ? new Decimal((joinedGraphData[0] as any)[token.marketValue])
-                    .div(treasuryVal)
-                    .times(100)
-                : 0,
-              tokenAmount: token.tokenAmount
-                ? (joinedGraphData[0] as any)[token.tokenAmount]
-                : "N/A",
-            };
-            return coin;
-          }) as CoinInfo[];
-          setInvestmentsData(data.sort((a, b) => b.amount - a.amount));
-        }
+          }
+          return data as ProtocolMetrics;
+        });
+        setGraphData(joinedGraphData);
+        setTreasuryValue(treasuryVal);
+        setBackingPerHec(treasuryVal.div(circSupply));
+        setCircSupply(circSupply);
+        setMarketCap(
+          marketPrice.value.times(circSupply).div(FANTOM_HECTOR.wei),
+        );
+        setMarketPrice(marketPrice.value.div(FANTOM_HECTOR.wei));
+        const data = COINS.map((token) => {
+          const coin = {
+            ...token,
+            amount: +(joinedGraphData[0] as any)[token.marketValue],
+            percent: treasuryVal
+              ? new Decimal((joinedGraphData[0] as any)[token.marketValue])
+                  .div(treasuryVal)
+                  .times(100)
+              : 0,
+            tokenAmount: token.tokenAmount
+              ? (joinedGraphData[0] as any)[token.tokenAmount]
+              : "N/A",
+          };
+          return coin;
+        }) as CoinInfo[];
+        setInvestmentsData(data.sort((a, b) => b.amount - a.amount));
       }
     };
     loadDashboardInfo();
-  }, [wallet]);
+  }, []);
 
   useEffect(() => {
     const getHecBurnTransactions = fetch(
@@ -522,10 +517,10 @@ export default function DashBoard() {
           title: "Buyback and Burn",
           type: "Buyback-Burn",
           investments: {
-            tokenDetails: getTokens(groupedData[i]),
-            transactionLinks: [`https://ftmscan.com/tx/${trans[0].hash}`],
+            tokenDetails: getTokens(groupedData[i]!),
+            transactionLinks: [`https://ftmscan.com/tx/${trans[0]!.hash}`],
             transactionDate: new Date(
-              +trans[0]?.timeStamp * 1000,
+              +trans[0]!?.timeStamp * 1000,
             ).toLocaleString("en-US"),
             investedAmount: getInvestedAmount(trans),
           },

@@ -7,16 +7,17 @@ import {
   token256,
 } from "src/abi";
 import { getParameter, ok } from "src/util";
-import { FANTOM, FANTOM_HECTOR } from "src/constants";
+import { FANTOM_ADDRESS, FANTOM_HECTOR } from "src/constants";
 import {
   call,
-  Provider,
   ProviderRpcError,
   sendTransaction,
   TransactionAddress,
+  WalletProvider,
 } from "src/provider";
 import { Result } from "src/util";
 import { Decimal } from "decimal.js";
+import { Chain } from "src/chain";
 
 export interface EpochInfo {
   length: Decimal;
@@ -26,11 +27,11 @@ export interface EpochInfo {
 }
 
 export async function getEpochInfo(
-  provider: Provider,
+  chain: Chain,
 ): Promise<Result<EpochInfo, ProviderRpcError>> {
   const method = await methodId(STAKE_EPOCH_ABI);
-  const result = await call(provider, {
-    to: FANTOM.STAKING_ADDRESS,
+  const result = await call(chain, {
+    to: FANTOM_ADDRESS.STAKING,
     data: "0x" + method,
   });
   if (!result.isOk) {
@@ -79,11 +80,11 @@ const STAKE_EPOCH_ABI: Interface = {
 };
 
 export async function getHecCircSupply(
-  provider: Provider,
+  chain: Chain,
 ): Promise<Result<string, ProviderRpcError>> {
   const method = await methodId(HECTOR_CIRC_SUPPLY);
-  const result = await call(provider, {
-    to: FANTOM.SHEC_ADDRESS,
+  const result = await call(chain, {
+    to: FANTOM_ADDRESS.SHEC,
     data: "0x" + method,
   });
   if (!result.isOk) {
@@ -107,11 +108,11 @@ const HECTOR_CIRC_SUPPLY: Interface = {
 };
 
 export async function getStakingIndex(
-  provider: Provider,
+  chain: Chain,
 ): Promise<Result<string, ProviderRpcError>> {
   const method = await methodId(STAKING_INDEX);
-  const result = await call(provider, {
-    to: FANTOM.STAKING_ADDRESS,
+  const result = await call(chain, {
+    to: FANTOM_ADDRESS.STAKING,
     data: "0x" + method,
   });
   if (!result.isOk) {
@@ -135,14 +136,14 @@ const STAKING_INDEX: Interface = {
 };
 
 export async function stake(
-  provider: Provider,
+  provider: WalletProvider,
   owner: string,
   hec: Decimal,
 ): Promise<Result<TransactionAddress, ProviderRpcError>> {
   const method = await methodId(STAKE);
   const result = await sendTransaction(provider, {
     from: owner,
-    to: FANTOM.STAKING_HELPER_ADDRESS,
+    to: FANTOM_ADDRESS.STAKING_HELPER,
     data: "0x" + method + token256(FANTOM_HECTOR, hec) + hex256(owner),
   });
   return result;
@@ -165,15 +166,15 @@ const STAKE: Interface = {
   type: InterfaceType.Function,
 };
 
-export async function unStake(
-  provider: Provider,
+export async function unstake(
+  provider: WalletProvider,
   owner: string,
   sHec: Decimal,
 ): Promise<Result<TransactionAddress, ProviderRpcError>> {
   const method = await methodId(UNSTAKE);
   const result = await sendTransaction(provider, {
     from: owner,
-    to: FANTOM.STAKING_ADDRESS,
+    to: FANTOM_ADDRESS.STAKING,
     data: "0x" + method + token256(FANTOM_HECTOR, sHec) + hex256(owner),
   });
   return result;

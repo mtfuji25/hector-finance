@@ -12,14 +12,13 @@ import { Erc20Token } from "src/contracts/erc20";
 import { Erc20TokenResult } from "src/pages/api/tokens";
 import { useDebounce } from "src/hooks/debounce";
 import BigSpinner from "src/icons/spinner-big.svgr";
-import SmallSpinner from "src/icons/spinner-small.svgr";
 import SearchIcon from "src/icons/search.svgr";
 import Circle from "src/icons/circle.svgr";
+import SmallSpinner from "src/icons/spinner-small.svgr";
+import CircleCheck from "src/icons/circle-check-solid.svgr";
 import CircleExclamation from "src/icons/circle-exclamation.svgr";
 import CircleArrowDown from "src/icons/circle-arrow-down.svgr";
-import CircleCheck from "src/icons/circle-check-solid.svgr";
 import Chevron from "src/icons/chevron.svgr";
-import Close from "src/icons/xmark-regular.svgr";
 import {
   AVALANCHE,
   BINANCE,
@@ -33,10 +32,9 @@ import {
 import { StaticImg } from "src/components/StaticImg";
 import Decimal from "decimal.js";
 import { Submit } from "src/components/Submit";
-import { switchEthereumChain } from "src/provider";
+import { Modal, ModalCloseButton } from "src/components/Modal";
 
 const ExchangePage: NextPage = () => {
-  const wallet = useWallet();
   const [sendToken, setSendToken] = useState(FANTOM_HECTOR);
   const [receiveToken, setReceiveToken] = useState(FANTOM_USDC);
 
@@ -46,9 +44,10 @@ const ExchangePage: NextPage = () => {
   const [selectingSendToken, setSelectingSendToken] = useState(false);
   const [selectingReceiveToken, setSelectingReceiveToken] = useState(false);
 
-  const [balance] = useBalance(sendToken, wallet);
-
   const [send, sendInput, setSendInput] = useDecimalInput();
+
+  const wallet = useWallet(sendChain);
+  const [balance] = useBalance(sendChain, sendToken, wallet);
 
   const rubic = useRubic(wallet);
   const trade = useRubicTrade(
@@ -122,15 +121,11 @@ const ExchangePage: NextPage = () => {
           />
         </div>
 
-        {wallet.state !== WalletState.Connected && (
-          <Submit label="Connect wallet" />
-        )}
-        {wallet.state === WalletState.Connected && (
-          <Submit
-            label={sendChain.id === receiveChain.id ? "Swap" : "Bridge"}
-            onClick={submit}
-          />
-        )}
+        <Submit
+          disabled={!wallet.connected}
+          label={sendChain.id === receiveChain.id ? "Swap" : "Bridge"}
+          onClick={submit}
+        />
         {trade?.type === "Error" && (
           <div className="rounded bg-red-50 px-4 py-3 text-red-700">
             <CircleExclamation className="mb-1 inline h-4 w-4" />{" "}
@@ -156,7 +151,7 @@ const ExchangePage: NextPage = () => {
           setSelectingReceiveToken(false);
         }}
       />
-      {wallet.state === WalletState.Connected && (
+      {wallet.connected && confirmation && (
         <ConfirmationModal
           wallet={wallet}
           sendChain={sendChain}
@@ -193,8 +188,7 @@ const ConfirmationModal: FC<{
   const [allowance, setAllowance] = useState<Approval>("NeedApproval");
   const [transaction, setTransaction] = useState<boolean>(false);
   useEffect(() => {
-    const wantChain = sendChain.id;
-    const isChainCorrect = wantChain === wallet.network;
+    const isChainCorrect = wallet.state === WalletState.CanWrite;
     setChain(isChainCorrect);
     setAllowance("NeedApproval");
     setTransaction(false);
@@ -204,10 +198,7 @@ const ConfirmationModal: FC<{
     let abort = false;
     (async () => {
       if (!isChainCorrect) {
-        const { isOk } = await switchEthereumChain(
-          wallet.provider,
-          wantChain.toString(),
-        );
+        const isOk = await wallet.switchChain();
         if (abort) {
           return;
         }
@@ -248,13 +239,13 @@ const ConfirmationModal: FC<{
           setAllowance("Approved");
           break;
         }
-        await sleep(Math.floor(sendChain.millisPerBlock / 2));
+        await sleep(sendChain.millisPerBlock / 2);
       }
     })();
     return () => {
       abort = true;
     };
-  }, [confirmation]);
+  }, [wallet, confirmation, sendChain]);
 
   useEffect(() => {
     setTransaction(false);
@@ -306,13 +297,7 @@ const ConfirmationModal: FC<{
   }
   return (
     <Modal className="relative max-w-md bg-white p-5">
-      <button
-        className="absolute top-0 right-0 block p-4 text-gray-300 hover:text-gray-600 "
-        title="Cancel"
-        onClick={onClose}
-      >
-        <Close className="h-5 w-5 " />
-      </button>
+      <ModalCloseButton onClick={onClose} />
       <div className="space-y-5">
         <div className="text-xl font-medium ">
           {sendChain.id === receiveChain.id && "Swap"}
@@ -563,19 +548,6 @@ const ChainButton: VFC<{
   </button>
 );
 
-const Modal: FC<{ className?: string }> = ({ children, className }) => (
-  <div className="fixed top-0 left-0 right-0 bottom-0 z-10 m-0 bg-gray-900/50 p-4 backdrop-blur-sm">
-    <div
-      className={classes(
-        "relative left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded dark:bg-gray-700 dark:text-gray-200 ",
-        className,
-      )}
-    >
-      {children}
-    </div>
-  </div>
-);
-
 function useTokenSearch(
   chain: number,
   query: string,
@@ -636,7 +608,7 @@ function useRubic(wallet: Wallet): Rubic.SDK | undefined {
     if (!rubic) {
       return;
     }
-    if (wallet.state !== WalletState.Connected) {
+    if (wallet.state !== WalletState.CanWrite) {
       rubic.updateConfiguration(configWithoutWallet);
       return;
     }
@@ -711,7 +683,7 @@ function useRubicTrade(
     setTrade({ type: "Loading" });
     let abort = false;
     (async () => {
-      await sleep(250);
+      await sleep(250); // Debounce
       if (abort) {
         return;
       }
@@ -747,7 +719,11 @@ function useRubicTrade(
             }
           });
           const bestInstantTrade = instantTrades[0];
-          setTrade({ type: "Swap", trade: bestInstantTrade });
+          if (bestInstantTrade) {
+            setTrade({ type: "Swap", trade: bestInstantTrade });
+          } else {
+            setTrade({ type: "Error", message: "No trade available." });
+          }
         } else {
           const crossTrade = await rubic.crossChain.calculateTrade(
             {

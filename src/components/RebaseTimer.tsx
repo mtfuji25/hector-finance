@@ -1,13 +1,14 @@
 import Decimal from "decimal.js";
 import { useEffect, useMemo, useState } from "react";
+import { FANTOM } from "src/chain";
 import { BLOCK_RATE_SECONDS } from "src/constants";
-import { EpochInfo, getEpochInfo } from "src/contracts/stakingContract";
+import { getEpochInfo } from "src/contracts/stakingContract";
 import { getBlockNumber } from "src/provider";
 import { prettifySeconds } from "src/util";
-import { useWallet, WalletState } from "src/wallet";
+import { useWallet } from "src/wallet";
 
 function RebaseTimer() {
-  const wallet = useWallet();
+  const wallet = useWallet(FANTOM);
   const [currentBlock, setCurrentBlock] = useState<string>();
   const [endBlock, setEndBlock] = useState<Decimal>();
 
@@ -18,15 +19,13 @@ function RebaseTimer() {
 
   useEffect(() => {
     const getBlockInfo = async () => {
-      if (wallet.state === WalletState.Connected) {
-        const currentBlockNumber = await getBlockNumber(wallet.provider);
-        if (currentBlockNumber.isOk) {
-          setCurrentBlock(currentBlockNumber.value);
-        }
-        const epoch = await getEpochInfo(wallet.provider);
-        if (epoch.isOk) {
-          setEndBlock(epoch.value.endBlock);
-        }
+      const currentBlockNumber = await getBlockNumber(FANTOM);
+      if (currentBlockNumber.isOk) {
+        setCurrentBlock(currentBlockNumber.value);
+      }
+      const epoch = await getEpochInfo(FANTOM);
+      if (epoch.isOk) {
+        setEndBlock(epoch.value.endBlock);
       }
     };
     getBlockInfo();

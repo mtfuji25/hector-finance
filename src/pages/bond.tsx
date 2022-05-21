@@ -7,7 +7,7 @@ export default function BondPage() {
         <title>Bond — Hector Finance</title>
       </Head>
       <div>
-        <h1 className="text-2xl font-semibold">Bond</h1>
+        <h1 className="font-semibold text-2xl">Bond</h1>
         <h2>Swap selected tokens in exchange for HEC</h2>
       </div>
       <div className="mt-24 text-center">

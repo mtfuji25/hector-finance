@@ -4,7 +4,6 @@ import { StaticImg } from "./StaticImg";
 import HectorLogoLarge from "public/hector-wordmark.svg";
 import DarkHectorLogoLarge from "public/dark-hector-wordmark.svg";
 import WatermelonLight from "src/icons/watermelon-slice-light.svgr";
-import AbacusLight from "src/icons/abacus-light.svgr";
 import BookLight from "src/icons/book-light.svgr";
 import BoxBallotLight from "src/icons/box-ballot-light.svgr";
 import BoxDollarLight from "src/icons/box-dollar-light.svgr";
@@ -80,7 +79,7 @@ const Wallet: VFC = () => {
           <ArrowUpRightFromSquareRegular className="h-3 w-3 opacity-50" />
         </a>
       )}
-      {wallet.state === WalletState.Disconnected && (
+      {wallet.state === WalletState.Locked && (
         <button
           className="rounded bg-orange-400 px-6 py-2 font-medium text-white"
           onClick={() => wallet.connect()}
@@ -88,15 +87,7 @@ const Wallet: VFC = () => {
           Connect
         </button>
       )}
-      {wallet.state === WalletState.SwitchFantomChain && (
-        <button
-          className="rounded bg-orange-400 px-6 py-2 font-medium text-white"
-          onClick={() => wallet.switchToFantom()}
-        >
-          Switch to Fantom
-        </button>
-      )}
-      {wallet.state === WalletState.Connected && (
+      {wallet.connected && (
         <button
           onClick={() => wallet.changeAccounts()}
           className="flex items-center gap-2 rounded bg-gray-100 px-4 py-2 text-gray-500 dark:bg-gray-700 dark:text-gray-200  dark:hover:text-gray-100"

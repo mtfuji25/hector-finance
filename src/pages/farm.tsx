@@ -22,9 +22,9 @@ import {
   FANTOM_CURVE,
   FANTOM_STAKED_CURVE,
   LP_FARM,
-  FANTOM_BLOCK_TIME,
 } from "src/constants";
 import Decimal from "decimal.js";
+import { FANTOM } from "src/chain";
 
 const FarmPage: NextPage = () => {
   return (
@@ -58,7 +58,7 @@ const SectionTitle: FC = ({ children }) => (
 // ----------------------------------------------------------------------------
 
 const Pool: VFC = () => {
-  const wallet = useWallet();
+  const wallet = useWallet(FANTOM);
   const [view, setView] = useState<"deposit" | "withdraw">("deposit");
   return (
     <div className="space-y-4">
@@ -106,13 +106,28 @@ const PoolDeposit: VFC<{ wallet: Wallet }> = ({ wallet }) => {
   const [dai, daiInput, setDaiInput] = useDecimalInput();
   const [usdc, usdcInput, setUsdcInput] = useDecimalInput();
 
-  const [daiBalance, refreshDaiBalance] = useBalance(FANTOM_DAI, wallet);
-  const [torBalance, refreshTorBalance] = useBalance(FANTOM_TOR, wallet);
-  const [usdcBalance, refreshUsdcBalance] = useBalance(FANTOM_USDC, wallet);
+  const [daiBalance] = useBalance(FANTOM, FANTOM_DAI, wallet);
+  const [torBalance] = useBalance(FANTOM, FANTOM_TOR, wallet);
+  const [usdcBalance] = useBalance(FANTOM, FANTOM_USDC, wallet);
 
-  const daiAllowance = useAllowance(FANTOM_DAI, wallet, DAI_TOR_USDC_FARM);
-  const torAllowance = useAllowance(FANTOM_TOR, wallet, DAI_TOR_USDC_FARM);
-  const usdcAllowance = useAllowance(FANTOM_USDC, wallet, DAI_TOR_USDC_FARM);
+  const daiAllowance = useAllowance(
+    FANTOM,
+    FANTOM_DAI,
+    wallet,
+    DAI_TOR_USDC_FARM,
+  );
+  const torAllowance = useAllowance(
+    FANTOM,
+    FANTOM_TOR,
+    wallet,
+    DAI_TOR_USDC_FARM,
+  );
+  const usdcAllowance = useAllowance(
+    FANTOM,
+    FANTOM_USDC,
+    wallet,
+    DAI_TOR_USDC_FARM,
+  );
 
   const [allowanceModal, showAllowanceModal] = useState(false);
 
@@ -126,23 +141,25 @@ const PoolDeposit: VFC<{ wallet: Wallet }> = ({ wallet }) => {
       return;
     }
 
-    if (wallet.state === WalletState.Connected) {
-      const response = await Curve.addLiquidity(
-        wallet.provider,
-        wallet.address,
-        DAI_TOR_USDC_POOL,
-        tor,
-        dai,
-        usdc,
-      );
-      if (response.isOk) {
-        setTorInput("");
-        setUsdcInput("");
-        setDaiInput("");
-        // TODO: Add success toast
-      } else {
-        // TODO: Add error toast
-      }
+    if (wallet.state !== WalletState.CanWrite) {
+      return;
+    }
+
+    const response = await Curve.addLiquidity(
+      wallet.provider,
+      wallet.address,
+      DAI_TOR_USDC_POOL,
+      tor,
+      dai,
+      usdc,
+    );
+    if (response.isOk) {
+      setTorInput("");
+      setUsdcInput("");
+      setDaiInput("");
+      // TODO: Add success toast
+    } else {
+      // TODO: Add error toast
     }
   };
 
@@ -275,23 +292,25 @@ const Modal: FC<{ className?: string }> = ({ children, className }) => (
 const PoolWithdraw: VFC<{ wallet: Wallet }> = ({ wallet }) => {
   const [output, setOutput] = useState<Curve.WithdrawAs>(Curve.WithdrawAs.Tor);
   const [curve, curveInput, setCurveInput] = useDecimalInput();
-  const [curveBalance, refreshCurveBalance] = useBalance(FANTOM_CURVE, wallet);
+  const [curveBalance] = useBalance(FANTOM, FANTOM_CURVE, wallet);
 
   const withdraw = async () => {
-    if (wallet.state === WalletState.Connected) {
-      const response = await Curve.removeLiquidity(
-        wallet.provider,
-        wallet.address,
-        DAI_TOR_USDC_POOL,
-        curve,
-        output,
-      );
-      if (response.isOk) {
-        setCurveInput("");
-        // TODO: display success toast
-      } else {
-        // TODO: display error toast
-      }
+    if (wallet.state !== WalletState.CanWrite) {
+      return;
+    }
+
+    const response = await Curve.removeLiquidity(
+      wallet.provider,
+      wallet.address,
+      DAI_TOR_USDC_POOL,
+      curve,
+      output,
+    );
+    if (response.isOk) {
+      setCurveInput("");
+      // TODO: display success toast
+    } else {
+      // TODO: display error toast
     }
   };
 
@@ -369,7 +388,7 @@ const PoolWithdraw: VFC<{ wallet: Wallet }> = ({ wallet }) => {
 // ----------------------------------------------------------------------------
 
 const Farm: VFC = () => {
-  const wallet = useWallet();
+  const wallet = useWallet(FANTOM);
   const [view, setView] = useState<"stake" | "unstake">("stake");
   return (
     <div className="space-y-4">
@@ -396,8 +415,8 @@ const Farm: VFC = () => {
 
 const Stake: VFC<{ wallet: Wallet }> = ({ wallet }) => {
   const [curve, curveInput, setCurveInput] = useDecimalInput();
-  const [curveBalance, refreshCurveBalance] = useBalance(FANTOM_CURVE, wallet);
-  const canStake = wallet.state === WalletState.Connected && curve.gt(0);
+  const [curveBalance] = useBalance(FANTOM, FANTOM_CURVE, wallet);
+  const canStake = wallet.state === WalletState.CanWrite && curve.gt(0);
   return (
     <>
       <CoinInput
@@ -432,11 +451,8 @@ const Stake: VFC<{ wallet: Wallet }> = ({ wallet }) => {
 
 const Unstake: VFC<{ wallet: Wallet }> = ({ wallet }) => {
   const [curve, curveInput, setCurveInput] = useDecimalInput();
-  const [curveBalance, refreshCurveBalance] = useBalance(
-    FANTOM_STAKED_CURVE,
-    wallet,
-  );
-  const canWithdraw = wallet.state === WalletState.Connected && curve.gt(0);
+  const [curveBalance] = useBalance(FANTOM, FANTOM_STAKED_CURVE, wallet);
+  const canWithdraw = wallet.state === WalletState.CanWrite && curve.gt(0);
   return (
     <>
       <CoinInput
@@ -474,18 +490,14 @@ const Unstake: VFC<{ wallet: Wallet }> = ({ wallet }) => {
 // ----------------------------------------------------------------------------
 
 const Claim: VFC = () => {
-  const wallet = useWallet();
+  const wallet = useWallet(FANTOM);
   const [earned, setEarned] = useState<Decimal>(new Decimal(0));
   useEffect(() => {
     let abort = false;
     (async () => {
       while (!abort) {
-        if (wallet.state === WalletState.Connected) {
-          const current = await Staking.earned(
-            LP_FARM,
-            wallet.provider,
-            wallet.address,
-          );
+        if (wallet.connected) {
+          const current = await Staking.earned(FANTOM, LP_FARM, wallet.address);
           if (abort) {
             return;
           }
@@ -495,7 +507,7 @@ const Claim: VFC = () => {
             );
           }
         }
-        await sleep(FANTOM_BLOCK_TIME / 2);
+        await sleep(FANTOM.millisPerBlock / 2);
       }
     })();
     return () => {
@@ -504,7 +516,7 @@ const Claim: VFC = () => {
     };
   }, [wallet]);
 
-  const canClaim = earned.gt(0.1) && wallet.state === WalletState.Connected;
+  const canClaim = earned.gt(0.1) && wallet.state === WalletState.CanWrite;
 
   return (
     <div className="space-y-4">

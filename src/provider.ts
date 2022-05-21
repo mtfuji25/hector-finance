@@ -1,39 +1,38 @@
 import { z } from "zod";
 import { ok, err, Result } from "src/util";
 import { RpcErrorCode } from "./rpc";
+import { Chain, request as chainRequest } from "./chain";
 
 /** Returns the balance of an address in wei */
 export async function getBalanceAtBlock(
-  provider: Provider,
+  chain: Chain,
   address: string,
   block: "latest" | "earliest" | "pending" = "latest",
 ): Promise<Result<string, ProviderRpcError>> {
-  return provider
-    .request({
-      method: "eth_getBalance",
-      params: [address, block],
-    })
-    .then(
-      (_balance) => {
-        const balance = z.string().parse(_balance);
-        return ok(balance);
-      },
-      (e) => err(ProviderRpcError.parse(e)),
-    );
+  return chainRequest(chain, {
+    method: "eth_getBalance",
+    params: [address, block],
+  }).then(
+    (_balance) => {
+      const balance = z.string().parse(_balance);
+      return ok(balance);
+    },
+    (e) => err(ProviderRpcError.parse(e)),
+  );
 }
 
 export async function getBalance(
-  provider: Provider,
+  chain: Chain,
   address: string,
 ): Promise<Result<string, ProviderRpcError>> {
-  return getBalanceAtBlock(provider, address, "latest");
+  return getBalanceAtBlock(chain, address, "latest");
 }
 
 /** Returns the number of the most recent block seen by this client */
 export async function getBlockNumber(
-  provider: Provider,
+  chain: Chain,
 ): Promise<Result<string, ProviderRpcError>> {
-  return provider.request({ method: "eth_blockNumber" }).then(
+  return chainRequest(chain, { method: "eth_blockNumber" }).then(
     (_block) => {
       const block = z.string().parse(_block);
       return ok(block);
@@ -43,7 +42,7 @@ export async function getBlockNumber(
 }
 
 export async function getChain(
-  provider: Provider,
+  provider: WalletProvider,
 ): Promise<Result<string, ProviderRpcError>> {
   return provider.request({ method: "eth_chainId" }).then(
     (chain) => ok(z.string().parse(chain)),
@@ -53,7 +52,7 @@ export async function getChain(
 
 /** Returns a list of addresses owned by client.  */
 export async function getAccount(
-  provider: Provider,
+  provider: WalletProvider,
 ): Promise<Result<string[], ProviderRpcError>> {
   return provider.request({ method: "eth_accounts" }).then(
     (_addresses) => {
@@ -64,23 +63,18 @@ export async function getAccount(
   );
 }
 
-/** Returns a list of addresses owned by client.  */
+// /** Returns a list of addresses owned by client.  */
 export async function changeAccounts(
-  provider: Provider,
+  provider: WalletProvider,
 ): Promise<Result<string[], ProviderRpcError>> {
   return await provider
     .request({
       method: "wallet_requestPermissions",
-      params: [
-        {
-          eth_accounts: {},
-        },
-      ],
+      params: [{ eth_accounts: {} }],
     })
-    .then(() =>
-      provider.request({
-        method: "eth_requestAccounts",
-      }),
+    .then(
+      () => ok([]),
+      (e) => err(ProviderRpcError.parse(e)),
     );
 }
 
@@ -88,7 +82,7 @@ export async function changeAccounts(
  * @returns Current address.
  */
 export async function getAccountsPermission(
-  provider: Provider,
+  provider: WalletProvider,
 ): Promise<Result<string[], ProviderRpcError>> {
   return provider.request({ method: "eth_requestAccounts" }).then(
     (_addresses) => {
@@ -118,7 +112,7 @@ export async function getAccountsPermission(
  * , but may do so in the future.
  */
 export async function addEthereumChain(
-  provider: Provider,
+  provider: WalletProvider,
   /** A 0x-prefixed hexadecimal string */
   chainId: string,
   chainName: string,
@@ -153,14 +147,13 @@ export async function addEthereumChain(
 }
 
 export async function switchEthereumChain(
-  provider: Provider,
-  /** Chain to switch to, by `0x`-prefixed hexadecimal chain id. */
-  chainId: string,
+  provider: WalletProvider,
+  chainId: number,
 ): Promise<Result<null, ProviderRpcError>> {
   return provider
     .request({
       method: "wallet_switchEthereumChain",
-      params: [{ chainId }],
+      params: [{ chainId: "0x" + chainId.toString(16) }],
     })
     .then(
       (value) => ok(z.null().parse(value)),
@@ -177,7 +170,7 @@ export async function switchEthereumChain(
  * This lets MetaMask redirect the user back to your site after onboarding has completed.
  */
 export async function registerOnboarding(
-  provider: Provider,
+  provider: WalletProvider,
 ): Promise<Result<boolean, ProviderRpcError>> {
   return provider.request({ method: "wallet_registerOnboarding" }).then(
     (isOk) => ok(z.boolean().parse(isOk)),
@@ -189,7 +182,7 @@ export async function registerOnboarding(
  * Returns a boolean indicating if the token was successfully added.
  */
 export async function watchAsset(
-  provider: Provider,
+  provider: WalletProvider,
   address: string,
   symbol: string,
   decimals: number,
@@ -219,32 +212,30 @@ export async function watchAsset(
     );
 }
 
-export interface CallOptions {
+export type CallOptions = {
   from?: string;
   to: string;
   gas?: string;
   gasPrice?: string;
   value?: string;
   data?: string;
-}
+};
 
 export async function call(
-  provider: Provider,
+  chain: Chain,
   options: CallOptions,
   block: "latest" | "earliest" | "pending" = "latest",
 ): Promise<Result<string, ProviderRpcError>> {
-  return provider
-    .request({
-      method: "eth_call",
-      params: [options, block],
-    })
-    .then(
-      (data) => ok(z.string().parse(data)),
-      (e) => err(ProviderRpcError.parse(e)),
-    );
+  return chainRequest(chain, {
+    method: "eth_call",
+    params: [options, block],
+  }).then(
+    (data) => ok(z.string().parse(data)),
+    (e) => err(ProviderRpcError.parse(e)),
+  );
 }
 
-export interface TransactionOptions {
+export type TransactionOptions = {
   /** transaction sender */
   from: string;
   /** transaction recipient */
@@ -259,11 +250,11 @@ export interface TransactionOptions {
   data?: string;
   /** unique number identifying this transaction */
   nonce?: string;
-}
+};
 
 /** Creates, signs, and sends a new transaction to the network. */
 export async function sendTransaction(
-  provider: Provider,
+  provider: WalletProvider,
   options: TransactionOptions,
 ): Promise<Result<TransactionAddress, ProviderRpcError>> {
   return provider
@@ -274,7 +265,7 @@ export async function sendTransaction(
     );
 }
 
-export interface Provider {
+export type WalletProvider = {
   /**
    * Note that this method has nothing to do with the user's accounts.
    *
@@ -288,10 +279,10 @@ export interface Provider {
   /** Submit RPC requests to Ethereum via MetaMask. Returns the result of the RPC call.
    * @throws ProviderRpcError
    */
-  request: <T>(args: {
+  request: (args: {
     method: string;
     params?: unknown[] | object;
-  }) => Promise<T>;
+  }) => Promise<unknown>;
 
   on: <K extends keyof ProviderEventMap>(
     eventName: K,
@@ -305,7 +296,7 @@ export interface Provider {
 
   /** Property set by MetaMask. Non-standard. */
   isMetaMask?: boolean;
-}
+};
 
 /** Get the Ethereum provider (most likely MetaMask).
  *
@@ -313,7 +304,7 @@ export interface Provider {
  * by the time this is called. Using `getProvider` will ensure you get the provider
  * when it's actually ready.
  */
-export async function getProvider(): Promise<Provider> {
+export async function getProvider(): Promise<WalletProvider> {
   return new Promise((resolve) => {
     function _getProvider(): void {
       if (window.ethereum != undefined) {
@@ -327,7 +318,7 @@ export async function getProvider(): Promise<Provider> {
 }
 
 // File-local override of `Window` which includes the Web3 declaration.
-declare const window: { ethereum?: Provider } & Window;
+declare const window: { ethereum?: WalletProvider } & Window;
 
 interface ProviderEventMap {
   /**
@@ -370,7 +361,7 @@ export type TokenAddress = string;
 /** Address of an account. This isn't very type-safe, so be careful! */
 export type AccountAddress = string;
 
-enum ProviderErrorCode {
+export enum ProviderErrorCode {
   /** The user rejected the request. */
   UserRejectedRequest = 4001,
 

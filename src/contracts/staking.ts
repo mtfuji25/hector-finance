@@ -7,11 +7,12 @@ import {
   StateMutability,
   token256,
 } from "src/abi";
+import { Chain } from "src/chain";
 import {
   call,
-  Provider,
   ProviderRpcError,
   sendTransaction,
+  WalletProvider,
 } from "src/provider";
 import { Result, ok } from "src/util";
 import { Erc20Token } from "./erc20";
@@ -24,7 +25,7 @@ export type Farm = {
 
 export async function stake(
   farm: Farm,
-  provider: Provider,
+  provider: WalletProvider,
   owner: string,
   amount: Decimal,
 ): Promise<Result<null, ProviderRpcError>> {
@@ -49,7 +50,7 @@ const STAKE_ABI: Interface = {
 
 export async function withdraw(
   farm: Farm,
-  provider: Provider,
+  provider: WalletProvider,
   owner: string,
   amount: Decimal,
 ): Promise<Result<null, ProviderRpcError>> {
@@ -74,7 +75,7 @@ const WITHDRAW_ABI: Interface = {
 
 export async function getReward(
   farm: Farm,
-  provider: Provider,
+  provider: WalletProvider,
   owner: string,
 ): Promise<Result<null, ProviderRpcError>> {
   const method = await methodId(GET_REWARD_ABI);
@@ -97,12 +98,12 @@ const GET_REWARD_ABI: Interface = {
 };
 
 export async function earned(
+  chain: Chain,
   farm: Farm,
-  provider: Provider,
   owner: string,
 ): Promise<Result<Decimal, ProviderRpcError>> {
   const method = await methodId(EARNED_ABI);
-  const result = await call(provider, {
+  const result = await call(chain, {
     to: farm.address,
     data: "0x" + method + hex256(owner),
   });

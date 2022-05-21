@@ -5,60 +5,58 @@ import { StaticImageData } from "next/image";
 import DaiLogo from "public/icons/dai.svg";
 import TorLogo from "public/icons/tor.svg";
 import React, { useEffect, useState, VFC } from "react";
+import { FANTOM } from "src/chain";
 import { CoinInput } from "src/components/CoinInput";
 import { PageHeader, PageSubheader } from "src/components/Header";
 import { StaticImg } from "src/components/StaticImg";
 import { Submit } from "src/components/Submit";
 import { Tab, Tabs } from "src/components/Tab";
-import { FANTOM, FANTOM_DAI, FANTOM_TOR } from "src/constants";
-import {
-  getMintLimit,
-  getRedeemLimit,
-  mintWithDai,
-  redeemToDai,
-} from "src/contracts/torMinter";
-import { useAllowance } from "src/hooks/allowance";
+import { Transaction, TransactionModal } from "src/components/Transaction";
+import { FANTOM_ADDRESS, FANTOM_DAI, FANTOM_TOR } from "src/constants";
+import * as Minter from "src/contracts/torMinter";
 import { useBalance } from "src/hooks/balance";
-import { useDecimalInput } from "src/util";
-import { useWallet, WalletState } from "src/wallet";
+import { asyncEffect, useDecimalInput } from "src/util";
+import { useWallet } from "src/wallet";
 
 const MintPage: NextPage = () => {
-  const wallet = useWallet();
+  const wallet = useWallet(FANTOM);
   const [dai, daiInput, setDaiInput] = useDecimalInput();
   const [tor, torInput, setTorInput] = useDecimalInput();
   const [view, setView] = useState<"mint" | "redeem">("mint");
-  const [mintLimit, setMintLimit] = useState<Decimal>();
-  const [redeemLimit, setRedeemLimit] = useState<Decimal>();
+  const [tx, setTx] = useState<Transaction>();
+  const [mintLimit, setMintLimit] = useState(new Decimal(0));
+  const [redeemLimit, setRedeemLimit] = useState(new Decimal(0));
 
-  const daiAllowance = useAllowance(
+  const [daiBalance, refreshDaiBalance] = useBalance(
+    FANTOM,
     FANTOM_DAI,
     wallet,
-    FANTOM.TOR_MINTER_ADDRESS,
   );
-  const torAllowance = useAllowance(
+  const [torBalance, refreshTorBalance] = useBalance(
+    FANTOM,
     FANTOM_TOR,
     wallet,
-    FANTOM.TOR_MINTER_ADDRESS,
   );
-  const [daiBalance, refreshDaiBalance] = useBalance(FANTOM_DAI, wallet);
-  const [torBalance, refreshTorBalance] = useBalance(FANTOM_TOR, wallet);
 
   useEffect(() => {
-    const getLimits = async () => {
-      if (wallet.state === WalletState.Connected) {
-        const [mintLimit, redeemLimit] = await Promise.all([
-          getMintLimit(wallet.provider, wallet.address),
-          getRedeemLimit(wallet.provider, wallet.address),
-        ]);
-        if (mintLimit.isOk) {
-          setMintLimit(mintLimit.value);
-        }
-        if (redeemLimit.isOk) {
-          setRedeemLimit(redeemLimit.value);
-        }
+    asyncEffect(async (abort) => {
+      if (!wallet.connected) {
+        return;
       }
-    };
-    getLimits();
+      const [mintLimit, redeemLimit] = await Promise.all([
+        Minter.getMintLimit(FANTOM, wallet.address),
+        Minter.getRedeemLimit(FANTOM, wallet.address),
+      ]);
+      if (abort()) {
+        return;
+      }
+      if (mintLimit.isOk) {
+        setMintLimit(mintLimit.value);
+      }
+      if (redeemLimit.isOk) {
+        setRedeemLimit(redeemLimit.value);
+      }
+    });
   }, [wallet]);
 
   return (
@@ -114,30 +112,21 @@ const MintPage: NextPage = () => {
             {mintLimit && <div>{mintLimit.toFixed(2)}</div>}
           </div>
 
-          {wallet.state !== WalletState.Connected && (
-            <Submit label="Connect wallet" disabled />
-          )}
-          {wallet.state === WalletState.Connected &&
-            daiAllowance.type === "Updating" && (
-              <Submit label="Updating..." disabled />
-            )}
-          {wallet.state === WalletState.Connected &&
-            daiAllowance.type === "NoAllowance" && (
-              <Submit label="Approve" onClick={daiAllowance.approve} />
-            )}
-          {wallet.state === WalletState.Connected &&
-            daiAllowance.type === "HasAllowance" &&
-            mintLimit?.greaterThan(0) && (
-              <Submit
-                label="Mint"
-                disabled={dai.lte(0)}
-                onClick={() =>
-                  mintWithDai(wallet.provider, wallet.address, dai).then(
-                    console.info,
-                  )
-                }
-              />
-            )}
+          <Submit
+            label="Mint"
+            disabled={dai.lte(0) || dai.gt(daiBalance) || !wallet.connected}
+            onClick={() => {
+              setTx({
+                title: "Mint",
+                chain: FANTOM,
+                token: FANTOM_DAI,
+                spender: FANTOM_ADDRESS.TOR_MINTER,
+                amount: dai,
+                send: (wallet) =>
+                  Minter.mintWithDai(wallet.provider, wallet.address, dai),
+              });
+            }}
+          />
         </>
       )}
       {/* Redeem */}
@@ -157,31 +146,35 @@ const MintPage: NextPage = () => {
             {redeemLimit && <div>{redeemLimit.toFixed(2)}</div>}
           </div>
 
-          {wallet.state !== WalletState.Connected && (
-            <Submit label="Connect wallet" disabled />
-          )}
-          {wallet.state === WalletState.Connected &&
-            torAllowance.type === "Updating" && (
-              <Submit label="Updating..." disabled />
-            )}
-          {wallet.state === WalletState.Connected &&
-            torAllowance.type === "NoAllowance" && (
-              <Submit label="Approve" onClick={torAllowance.approve} />
-            )}
-          {wallet.state === WalletState.Connected &&
-            torAllowance.type === "HasAllowance" &&
-            redeemLimit?.greaterThan(0) && (
-              <Submit
-                label="Redeem"
-                disabled={tor.lte(0)}
-                onClick={() =>
-                  redeemToDai(wallet.provider, wallet.address, tor).then(
-                    console.info,
-                  )
-                }
-              />
-            )}
+          <Submit
+            label="Redeem"
+            disabled={tor.lte(0) || tor.gt(torBalance) || !wallet.connected}
+            onClick={() => {
+              setTx({
+                title: "Redeem",
+                chain: FANTOM,
+                token: FANTOM_TOR,
+                spender: FANTOM_ADDRESS.TOR_MINTER,
+                amount: tor,
+                send: (wallet) =>
+                  Minter.redeemToDai(wallet.provider, wallet.address, tor),
+              });
+            }}
+          />
         </>
+      )}
+      {wallet.connected && tx && (
+        <TransactionModal
+          tx={tx}
+          wallet={wallet}
+          onClose={(success) => {
+            setTx(undefined);
+            if (success) {
+              setDaiInput("");
+              setTorInput("");
+            }
+          }}
+        />
       )}
     </main>
   );

@@ -27,7 +27,7 @@ module.exports = {
       gray: colors.stone,
       red: {
         50: "#ffebe6",
-        700: "#ea011a",
+        700: "#dd3535",
       },
       green: {
         50: "#ecf3ed",

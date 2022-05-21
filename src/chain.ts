@@ -11,10 +11,19 @@ export type Chain = {
   shortName: string;
   longName: string;
   color: string;
-  rpc: string[];
+  rpc: [string, ...string[]];
   explorers: string[];
   token: string;
   logo: StaticImageData;
+
+  /**
+   * This is a rough estimate of the chain's block time in milliseconds.
+   * You should use this when polling the blockchain for changes.
+   */
+  // TODO: Block times can vary based on chain and congestion.
+  // Polling could be made more efficient if the `BLOCK_TIME` was
+  // dynamically updated. There's no reason to poll more often than
+  // the blocks are actually produced.
   millisPerBlock: number;
 };
 
@@ -104,3 +113,27 @@ export const CHAINS: Chain[] = [
   MOONRIVER,
   POLYGON,
 ];
+
+export async function request(
+  chain: Chain,
+  args: {
+    method: string;
+    params?: unknown[] | object;
+  },
+): Promise<unknown> {
+  const response = await fetch(chain.rpc[0], {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: 800000000085, // we don't use id, so it can be anything
+      method: args.method,
+      params: args.params,
+    }),
+  });
+  const body = await response.json();
+  if (body.error) {
+    throw body.error;
+  }
+  return body.result;
+}

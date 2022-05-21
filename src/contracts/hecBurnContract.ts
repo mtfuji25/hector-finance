@@ -1,21 +1,22 @@
 import { Interface, InterfaceType, methodId, StateMutability } from "src/abi";
 import { ok } from "src/util";
-import { FANTOM, FANTOM_HECTOR } from "src/constants";
-import { call, Provider, ProviderRpcError } from "src/provider";
+import { FANTOM_ADDRESS, FANTOM_HECTOR } from "src/constants";
+import { call, ProviderRpcError } from "src/provider";
 import { Result } from "src/util";
 import { Decimal } from "decimal.js";
+import { Chain } from "src/chain";
 
 export async function getHecBurned(
-  provider: Provider,
+  chain: Chain,
 ): Promise<Result<Decimal, ProviderRpcError>> {
   const method = await methodId(HECTOR_BURNED);
   const [res1, res2] = await Promise.all([
-    call(provider, {
-      to: FANTOM.HEC_BURN_ALLOCATOR,
+    call(chain, {
+      to: FANTOM_ADDRESS.HEC_BURN_ALLOCATOR,
       data: "0x" + method,
     }),
-    call(provider, {
-      to: FANTOM.OLD_HEC_BURN_ALLOCATOR,
+    call(chain, {
+      to: FANTOM_ADDRESS.OLD_HEC_BURN_ALLOCATOR,
       data: "0x" + method,
     }),
   ]);

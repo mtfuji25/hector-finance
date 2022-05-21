@@ -194,28 +194,14 @@ export function ellipsisBetween(
  * }, [url]); // Update every time the url changes
  * ```
  */
-function asyncEffect(
-  callback: (signal: { abort: boolean }) => Promise<void>,
+export function asyncEffect(
+  callback: (abort: () => boolean) => Promise<void>,
 ): () => void {
   const status = { abort: false };
-  callback(status);
+  callback(() => status.abort);
   return () => {
     status.abort = true;
   };
-}
-
-/**
- * Intended as a convenient alternative to `useEffect` for async functions.
- *
- * **!! IMPORTANT !!**
- * - You MUST return as soon as possible when `signal.abort` is `true`.
- * - You MUST NOT destructure `signal` in the `callback` parameter.
- */
-export function useAsyncEffect(
-  callback: (signal: { abort: boolean }) => Promise<void>,
-  deps: React.DependencyList,
-) {
-  return useEffect(() => asyncEffect(callback), deps);
 }
 
 /** Your typical sleep function, for async tasks. */
@@ -269,4 +255,12 @@ export function formatCurrency(c: number, precision = 0) {
     maximumFractionDigits: precision,
     minimumFractionDigits: precision,
   }).format(c);
+}
+
+export function assertExists<T>(
+  value: T | null | undefined,
+): asserts value is T {
+  if (value == undefined) {
+    throw new Error("unexpected null value");
+  }
 }

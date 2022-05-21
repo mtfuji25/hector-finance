@@ -1,15 +1,16 @@
 import Decimal from "decimal.js";
 import { Interface, InterfaceType, methodId, StateMutability } from "src/abi";
-import { FANTOM } from "src/constants";
-import { call, Provider, ProviderRpcError } from "src/provider";
+import { Chain } from "src/chain";
+import { FANTOM_ADDRESS } from "src/constants";
+import { call, ProviderRpcError } from "src/provider";
 import { Result, ok, getParameter } from "src/util";
 
 export async function getMarketPrice(
-  provider: Provider,
+  chain: Chain,
 ): Promise<Result<Decimal, ProviderRpcError>> {
   const method = await methodId(GET_RESERVES_ABI);
-  const result = await call(provider, {
-    to: FANTOM.DAILP_ADDRESS,
+  const result = await call(chain, {
+    to: FANTOM_ADDRESS.DAILP,
     data: "0x" + method,
   });
   if (!result.isOk) {

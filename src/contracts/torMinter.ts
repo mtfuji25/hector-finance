@@ -6,20 +6,21 @@ import {
   InterfaceType,
   token256,
 } from "src/abi";
-import { FANTOM, FANTOM_DAI, FANTOM_TOR } from "src/constants";
+import { Chain } from "src/chain";
+import { FANTOM_ADDRESS, FANTOM_DAI, FANTOM_TOR } from "src/constants";
 import {
   call,
-  Provider,
   ProviderRpcError,
   sendTransaction,
   TransactionAddress,
+  WalletProvider,
 } from "src/provider";
 import { ok, Result } from "src/util";
 
 export const TOR_MINTER_ADDRESS = "0x9b0c6FfA7d0Ec29EAb516d3F2dC809eE43DD60ca";
 
 export async function mintWithDai(
-  provider: Provider,
+  provider: WalletProvider,
   owner: string,
   dai: Decimal,
 ): Promise<Result<TransactionAddress, ProviderRpcError>> {
@@ -50,7 +51,7 @@ const MINT_WITH_DAI_ABI: Interface = {
 };
 
 export async function redeemToDai(
-  provider: Provider,
+  provider: WalletProvider,
   owner: string,
   tor: Decimal,
 ): Promise<Result<TransactionAddress, ProviderRpcError>> {
@@ -82,13 +83,13 @@ const REDEEM_TO_DAI_ABI: Interface = {
 };
 
 export async function getMintLimit(
-  provider: Provider,
+  chain: Chain,
   owner: string,
 ): Promise<Result<Decimal, ProviderRpcError>> {
   const method = await methodId(MINT_LIMIT_ABI);
-  const result = await call(provider, {
+  const result = await call(chain, {
     from: owner,
-    to: FANTOM.TOR_REDEEM_ADDRESS,
+    to: FANTOM_ADDRESS.TOR_REDEEM,
     data: "0x" + method,
   });
   if (!result.isOk) {
@@ -114,13 +115,13 @@ const MINT_LIMIT_ABI: Interface = {
 };
 
 export async function getRedeemLimit(
-  provider: Provider,
+  chain: Chain,
   owner: string,
 ): Promise<Result<Decimal, ProviderRpcError>> {
   const method = await methodId(REDEEM_LIMIT_ABI);
-  const result = await call(provider, {
+  const result = await call(chain, {
     from: owner,
-    to: FANTOM.TOR_REDEEM_ADDRESS,
+    to: FANTOM_ADDRESS.TOR_REDEEM,
     data: "0x" + method,
   });
   if (!result.isOk) {

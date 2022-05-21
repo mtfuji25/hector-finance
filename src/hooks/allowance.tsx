@@ -1,10 +1,10 @@
 import Decimal from "decimal.js";
-import { useMemo } from "react";
-import { sleep, useAsyncEffect } from "src/util";
+import { useEffect, useMemo } from "react";
+import { asyncEffect, sleep } from "src/util";
 import { useWalletState, Wallet, WalletState } from "src/wallet";
 import * as Erc20 from "src/contracts/erc20";
 import { Erc20Token } from "src/contracts/erc20";
-import { FANTOM_BLOCK_TIME } from "src/constants";
+import { Chain } from "src/chain";
 
 /** A value that could be either fresh or stale. Ideally, values
  * should be kept fresh. If a value is made stale, replace it with
@@ -21,29 +21,30 @@ export type Allowance =
   | { type: "HasAllowance"; token: Erc20Token; disapprove: () => void };
 
 export function useAllowance(
+  chain: Chain,
   token: Erc20Token,
   wallet: Wallet,
   spender: string,
 ): Allowance {
   const [allowance, setAllowance] = useWalletState<
     Perishable<Decimal> | undefined
-  >(undefined);
+  >(wallet, undefined);
 
-  useAsyncEffect(
-    async (signal) => {
-      if (wallet.state !== WalletState.Connected || allowance?.isFresh) {
+  useEffect(() => {
+    asyncEffect(async (abort) => {
+      if (!wallet.connected || allowance?.isFresh) {
         return;
       }
 
-      while (!signal.abort) {
+      while (!abort()) {
         const freshAllowance = await Erc20.allowance(
-          wallet.provider,
+          chain,
           token,
           wallet.address,
           spender,
         );
 
-        if (signal.abort) {
+        if (abort()) {
           return;
         }
 
@@ -57,14 +58,13 @@ export function useAllowance(
           }
         }
 
-        await sleep(FANTOM_BLOCK_TIME / 2);
+        await sleep(chain.millisPerBlock);
       }
-    },
-    [token, wallet, allowance],
-  );
+    });
+  }, [chain, spender, token, wallet, setAllowance, allowance]);
 
   return useMemo(() => {
-    if (wallet.state != WalletState.Connected) {
+    if (wallet.state !== WalletState.CanWrite) {
       return { type: "NoWallet", token };
     }
     if (allowance == undefined || !allowance.isFresh) {

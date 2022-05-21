@@ -50,8 +50,8 @@ function queryLookup(
   let results: Erc20TokenResult[] = [];
   query = query.toLowerCase();
   for (let i = 0; i < table.tokens.length; i += 1) {
-    if (table.symbols[i].includes(query) || table.names[i].includes(query)) {
-      results.push(table.tokens[i]);
+    if (table.symbols[i]!.includes(query) || table.names[i]!.includes(query)) {
+      results.push(table.tokens[i]!);
     }
     if (results.length >= max) {
       break;

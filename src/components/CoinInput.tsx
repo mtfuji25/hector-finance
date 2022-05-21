@@ -26,12 +26,12 @@ export const CoinInput: VFC<{
         </div>
         <input
           className={classes(
-            "w-full rounded-t px-3 py-3 pl-11 text-right  ",
+            "w-full rounded-t py-3 pl-11 pr-3.5 text-right",
             amount.isValid
               ? "bg-gray-100 dark:bg-gray-700 dark:text-gray-200"
               : "bg-red-50 text-red-700 dark:bg-red-700 dark:text-gray-200",
           )}
-          title={token.symbol}
+          title={token.name}
           pattern="[0-9]*"
           inputMode="decimal"
           value={amount.input}
@@ -69,7 +69,7 @@ export const CoinInput: VFC<{
           1/2
         </button>
         <button
-          className="px-3 py-2 hover:text-gray-600 dark:hover:bg-gray-500 dark:hover:text-gray-100"
+          className="px-3 py-2 pr-3.5 hover:text-gray-600 dark:hover:bg-gray-500 dark:hover:text-gray-100"
           tabIndex={-1}
           onClick={() => onChange(balance.toString())}
         >

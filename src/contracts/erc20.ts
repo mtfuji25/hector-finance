@@ -8,12 +8,13 @@ import {
   StateMutability,
   token256,
 } from "src/abi";
+import { Chain } from "src/chain";
 import {
   call,
-  Provider,
   ProviderRpcError,
   sendTransaction,
   TokenAddress,
+  WalletProvider,
 } from "src/provider";
 import { ok, Result } from "src/util";
 
@@ -52,13 +53,13 @@ export interface LpToken extends Erc20Token {
 }
 
 export async function allowance(
-  provider: Provider,
+  chain: Chain,
   token: Erc20Token,
   owner: string,
   spender: string,
 ): Promise<Result<Decimal, ProviderRpcError>> {
   const method = await methodId(ALLOWANCE_ABI);
-  const result = await call(provider, {
+  const result = await call(chain, {
     to: token.address,
     data: "0x" + method + hex256(owner) + hex256(spender),
   });
@@ -95,7 +96,7 @@ const ALLOWANCE_ABI: Interface = {
 };
 
 export async function approve(
-  provider: Provider,
+  provider: WalletProvider,
   token: Erc20Token,
   owner: string,
   spender: string,
@@ -138,12 +139,12 @@ const APPROVE_ABI = {
 };
 
 export async function balanceOf(
-  provider: Provider,
+  chain: Chain,
   token: Erc20Token,
   owner: string,
 ): Promise<Result<Decimal, ProviderRpcError>> {
   const method = await methodId(BALANCE_ABI);
-  const result = await call(provider, {
+  const result = await call(chain, {
     to: token.address,
     data: "0x" + method + hex256(owner),
   });
@@ -176,11 +177,11 @@ const BALANCE_ABI: Interface = {
 };
 
 export async function getTotalSupply(
-  provider: Provider,
+  chain: Chain,
   token: Erc20Token,
 ): Promise<Result<Decimal, ProviderRpcError>> {
   const method = await methodId(TOTAL_SUPPLY);
-  const result = await call(provider, {
+  const result = await call(chain, {
     to: token.address,
     data: "0x" + method,
   });

@@ -2,48 +2,41 @@ import Decimal from "decimal.js";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import RebaseTimer from "src/components/RebaseTimer";
-import hectorImg from "public/icons/hector.svg";
 import {
-  FANTOM,
+  FANTOM_ADDRESS,
   FANTOM_HECTOR,
   FANTOM_sHEC,
   THE_GRAPH_URL,
 } from "src/constants";
-import {
-  getEpochInfo,
-  getHecCircSupply,
-  getStakingIndex,
-  stake,
-  unStake,
-} from "src/contracts/stakingContract";
+import * as Staking from "src/contracts/stakingContract";
 import { formatCurrency, useDecimalInput } from "src/util";
-import { useWallet, WalletState } from "src/wallet";
+import { useWallet } from "src/wallet";
 import { CoinInput } from "src/components/CoinInput";
 import { Submit } from "src/components/Submit";
-import { useAllowance } from "src/hooks/allowance";
 import { useBalance } from "src/hooks/balance";
 import { PageHeader } from "src/components/Header";
 import { Tab, Tabs } from "src/components/Tab";
+import { FANTOM } from "src/chain";
+import { Transaction, TransactionModal } from "src/components/Transaction";
 
 export default function StakePage() {
-  const wallet = useWallet();
+  const wallet = useWallet(FANTOM);
   const [hec, hecInput, setHecInput] = useDecimalInput();
   const [sHec, sHecInput, setsHecInput] = useDecimalInput();
   const [stakingAPY, setStakingAPY] = useState<Decimal>();
-  const stakeAllowance = useAllowance(
-    FANTOM_HECTOR,
-    wallet,
-    FANTOM.STAKING_HELPER_ADDRESS,
-  );
-  const unStakeAllowance = useAllowance(
-    FANTOM_sHEC,
-    wallet,
-    FANTOM.STAKING_ADDRESS,
-  );
+  const [tx, setTx] = useState<Transaction>();
   const [stakingTVL, setStakingTVL] = useState<string>();
   const [currentIndex, setCurrentIndex] = useState<Decimal>();
-  const [hecBalance, refreshHecBalance] = useBalance(FANTOM_HECTOR, wallet);
-  const [sHecBalance, refreshsHecBalance] = useBalance(FANTOM_sHEC, wallet);
+  const [hecBalance, refreshHecBalance] = useBalance(
+    FANTOM,
+    FANTOM_HECTOR,
+    wallet,
+  );
+  const [sHecBalance, refreshsHecBalance] = useBalance(
+    FANTOM,
+    FANTOM_sHEC,
+    wallet,
+  );
   const [nextRewardAmount, setNextRewardAmount] = useState<Decimal>();
   const [nextRewardYield, setNextRewardYield] = useState<Decimal>();
   const [ROI, setROI] = useState<Decimal>();
@@ -51,42 +44,40 @@ export default function StakePage() {
 
   useEffect(() => {
     const getStakingData = async () => {
-      if (wallet.state === WalletState.Connected) {
-        Promise.all([
-          getEpochInfo(wallet.provider),
-          getHecCircSupply(wallet.provider),
-        ]).then(([epoch, circ]) => {
-          if (circ.isOk && epoch.isOk) {
-            const stakingRebase = epoch.value.distribute.div(
-              new Decimal(circ.value),
-            );
-            const stakingRebasePercentage = stakingRebase.times(100);
-            const trimmedBalance = Number(
-              [sHecBalance]
-                .filter(Boolean)
-                .map((balance) => Number(balance))
-                .reduce((a, b) => a + b, 0),
-            );
-            setROI(
-              Decimal.pow(stakingRebase.plus(1), 5 * 3)
-                .minus(1)
-                .times(100),
-            );
-            setNextRewardYield(stakingRebasePercentage);
-            setNextRewardAmount(
-              stakingRebasePercentage.div(100).times(trimmedBalance),
-            );
-            setStakingAPY(
-              Decimal.pow(stakingRebase.plus(1), 365 * 3)
-                .minus(1)
-                .times(100),
-            );
-          }
-        });
-        const index = await getStakingIndex(wallet.provider);
-        if (index.isOk) {
-          setCurrentIndex(new Decimal(index.value).div(FANTOM_HECTOR.wei));
+      Promise.all([
+        Staking.getEpochInfo(FANTOM),
+        Staking.getHecCircSupply(FANTOM),
+      ]).then(([epoch, circ]) => {
+        if (circ.isOk && epoch.isOk) {
+          const stakingRebase = epoch.value.distribute.div(
+            new Decimal(circ.value),
+          );
+          const stakingRebasePercentage = stakingRebase.times(100);
+          const trimmedBalance = Number(
+            [sHecBalance]
+              .filter(Boolean)
+              .map((balance) => Number(balance))
+              .reduce((a, b) => a + b, 0),
+          );
+          setROI(
+            Decimal.pow(stakingRebase.plus(1), 5 * 3)
+              .minus(1)
+              .times(100),
+          );
+          setNextRewardYield(stakingRebasePercentage);
+          setNextRewardAmount(
+            stakingRebasePercentage.div(100).times(trimmedBalance),
+          );
+          setStakingAPY(
+            Decimal.pow(stakingRebase.plus(1), 365 * 3)
+              .minus(1)
+              .times(100),
+          );
         }
+      });
+      const index = await Staking.getStakingIndex(FANTOM);
+      if (index.isOk) {
+        setCurrentIndex(new Decimal(index.value).div(FANTOM_HECTOR.wei));
       }
     };
     getStakingData();
@@ -172,16 +163,16 @@ export default function StakePage() {
       <div>
         {hecBalance && view === "stake" && (
           <CoinInput
-            amount={hecInput}
             token={FANTOM_HECTOR}
+            amount={hecInput}
             onChange={setHecInput}
             balance={hecBalance}
           />
         )}
         {sHecBalance && view === "unstake" && (
           <CoinInput
-            amount={sHecInput}
             token={FANTOM_sHEC}
+            amount={sHecInput}
             onChange={setsHecInput}
             balance={sHecBalance}
           />
@@ -213,54 +204,67 @@ export default function StakePage() {
         </div>
       </div>
 
-      {wallet.state === WalletState.Connected && (
+      {wallet.connected && (
         <>
           {view === "stake" && (
-            <>
-              {stakeAllowance.type === "NoAllowance" && (
-                <Submit onClick={stakeAllowance.approve} label={"Approve"} />
-              )}
-              {stakeAllowance.type === "Updating" && (
-                <Submit label={"Updating..."} disabled></Submit>
-              )}
-              {stakeAllowance.type === "HasAllowance" && (
-                <Submit
-                  onClick={() => stake(wallet.provider, wallet.address, hec)}
-                  label={"Stake"}
-                />
-              )}
-            </>
+            <Submit
+              label="Stake"
+              onClick={() => {
+                setTx({
+                  title: "Stake",
+                  chain: FANTOM,
+                  amount: hec,
+                  spender: FANTOM_ADDRESS.STAKING_HELPER,
+                  token: FANTOM_HECTOR,
+                  send: (wallet) =>
+                    Staking.stake(wallet.provider, wallet.address, hec),
+                });
+              }}
+              disabled={hec.isZero() || hec.gt(hecBalance)}
+            />
           )}
           {view === "unstake" && (
-            <>
-              {unStakeAllowance.type === "NoAllowance" && (
-                <Submit onClick={unStakeAllowance.approve} label={"Approve"} />
-              )}
-              {unStakeAllowance.type === "Updating" && (
-                <Submit label={"Updating..."} disabled></Submit>
-              )}
-              {unStakeAllowance.type === "HasAllowance" && (
-                <Submit
-                  onClick={() => unStake(wallet.provider, wallet.address, sHec)}
-                  label={"Unstake"}
-                ></Submit>
-              )}
-            </>
+            <Submit
+              label="Unstake"
+              onClick={() => {
+                setTx({
+                  title: "Unstake",
+                  chain: FANTOM,
+                  amount: sHec,
+                  spender: FANTOM_ADDRESS.STAKING,
+                  token: FANTOM_sHEC,
+                  send: (wallet) =>
+                    Staking.unstake(wallet.provider, wallet.address, sHec),
+                });
+              }}
+              disabled={sHec.isZero() || sHec.gt(sHecBalance)}
+            />
           )}
         </>
       )}
-      {wallet.state === WalletState.Disconnected && (
-        <Submit label="Connect wallet" disabled />
-      )}
+      {!wallet.connected && <Submit label="Connect wallet" disabled />}
       <div className="mt-5 text-center dark:text-gray-200">
         Planning to sell more than 15k $HEC? Making an OTC deal with the team
         could save you a huge amount of losses! Please open a ticket on our
         Discord Server if you want to talk about an OTC deal with the team:
-        <a className="text-blue-500" href="https://discord.gg/hector">
-          {" "}
+        <br />
+        <a className="text-blue-500 underline" href="https://discord.gg/hector">
           https://discord.gg/hector
-        </a>{" "}
+        </a>
       </div>
+      {tx && wallet.connected && (
+        <TransactionModal
+          wallet={wallet}
+          tx={tx}
+          onClose={(success) => {
+            setTx(undefined);
+            if (success) {
+              setHecInput("");
+              setsHecInput("");
+            }
+          }}
+        />
+      )}
     </main>
   );
 }

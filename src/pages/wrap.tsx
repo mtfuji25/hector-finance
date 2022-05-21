@@ -2,59 +2,55 @@ import Decimal from "decimal.js";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { CoinInput } from "src/components/CoinInput";
-import {
-  FANTOM,
-  FANTOM_HECTOR,
-  FANTOM_sHEC,
-  FANTOM_wsHEC,
-} from "src/constants";
+import { FANTOM_HECTOR, FANTOM_sHEC, FANTOM_wsHEC } from "src/constants";
 import { getStakingIndex } from "src/contracts/stakingContract";
 import { getMarketPrice } from "src/contracts/uniswapV2";
-import { useAllowance } from "src/hooks/allowance";
 import { useBalance } from "src/hooks/balance";
-import { useDecimalInput } from "src/util";
-import hectorImg from "public/icons/hector.svg";
-import { useWallet, WalletState } from "src/wallet";
+import { asyncEffect, useDecimalInput } from "src/util";
+import { useWallet } from "src/wallet";
 import { Submit } from "src/components/Submit";
-import { unwrap, wrap } from "src/contracts/wrapStakingContract";
 import { PageHeader, PageSubheader } from "src/components/Header";
 import { Tab, Tabs } from "src/components/Tab";
+import { FANTOM } from "src/chain";
+import * as Staking from "src/contracts/wrapStakingContract";
+import { Transaction, TransactionModal } from "src/components/Transaction";
 
 export default function WrapPage() {
-  const wallet = useWallet();
+  const wallet = useWallet(FANTOM);
   const [view, setView] = useState<"wrap" | "unwrap">("wrap");
   const [marketPrice, setMarketPrice] = useState<Decimal>();
   const [currentIndex, setCurrentIndex] = useState<Decimal>();
-  const [sHecBalance, refreshsHecBalance] = useBalance(FANTOM_sHEC, wallet);
-  const [wsHecBalance, refreshwsHecBalance] = useBalance(FANTOM_wsHEC, wallet);
-  const [sHec, sHecInput, setsHecInput] = useDecimalInput();
-  const [wsHec, wsHecInput, setwsHecInput] = useDecimalInput();
-  const wrapAllowance = useAllowance(FANTOM_sHEC, wallet, FANTOM.WSHEC_ADDRESS);
-  const unWrapAllowance = useAllowance(
+  const [tx, setTx] = useState<Transaction>();
+  const [sHecBalance, refreshsHecBalance] = useBalance(
+    FANTOM,
+    FANTOM_sHEC,
+    wallet,
+  );
+  const [wsHecBalance, refreshwsHecBalance] = useBalance(
+    FANTOM,
     FANTOM_wsHEC,
     wallet,
-    FANTOM.WSHEC_ADDRESS,
   );
+  const [sHec, sHecInput, setsHecInput] = useDecimalInput();
+  const [wsHec, wsHecInput, setwsHecInput] = useDecimalInput();
 
   useEffect(() => {
-    const loadWrapData = async () => {
-      if (wallet.state === WalletState.Connected) {
-        Promise.all([
-          getMarketPrice(wallet.provider),
-          getStakingIndex(wallet.provider),
-        ]).then(([marketPrice, index]) => {
-          if (marketPrice.isOk) {
-            setMarketPrice(marketPrice.value.div(FANTOM_sHEC.wei));
-          }
-          if (index.isOk) {
-            setCurrentIndex(new Decimal(index.value).div(FANTOM_HECTOR.wei));
-          }
-        });
+    return asyncEffect(async (abort) => {
+      const [price, index] = await Promise.all([
+        getMarketPrice(FANTOM),
+        getStakingIndex(FANTOM),
+      ]);
+      if (abort()) {
+        return;
       }
-    };
-
-    loadWrapData();
-  }, [wallet]);
+      if (price.isOk) {
+        setMarketPrice(price.value.div(FANTOM_sHEC.wei));
+      }
+      if (index.isOk) {
+        setCurrentIndex(new Decimal(index.value).div(FANTOM_HECTOR.wei));
+      }
+    });
+  }, []);
 
   return (
     <main className="w-full space-y-4">
@@ -135,44 +131,58 @@ export default function WrapPage() {
           />
         )}
       </div>
-      {wallet.state === WalletState.Connected && (
+      {wallet.connected && (
         <>
           {view === "wrap" && (
-            <>
-              {wrapAllowance.type === "NoAllowance" && (
-                <Submit onClick={wrapAllowance.approve} label={"Approve"} />
-              )}
-              {wrapAllowance.type === "Updating" && (
-                <Submit label={"Updating..."} disabled />
-              )}
-              {wrapAllowance.type === "HasAllowance" && (
-                <Submit
-                  onClick={() => wrap(wallet.provider, wallet.address, sHec)}
-                  label={"Wrap"}
-                />
-              )}
-            </>
+            <Submit
+              label="Wrap"
+              onClick={() =>
+                setTx({
+                  title: "Wrap",
+                  chain: FANTOM,
+                  token: FANTOM_sHEC,
+                  spender: FANTOM_wsHEC.address,
+                  amount: sHec,
+                  send: (wallet) =>
+                    Staking.wrap(wallet.provider, wallet.address, sHec),
+                })
+              }
+              disabled={sHec.isZero() || sHec.gt(sHecBalance)}
+            />
           )}
           {view === "unwrap" && (
-            <>
-              {unWrapAllowance.type === "NoAllowance" && (
-                <Submit onClick={unWrapAllowance.approve} label={"Approve"} />
-              )}
-              {unWrapAllowance.type === "Updating" && (
-                <Submit label={"Updating..."} disabled />
-              )}
-              {unWrapAllowance.type === "HasAllowance" && (
-                <Submit
-                  onClick={() => unwrap(wallet.provider, wallet.address, wsHec)}
-                  label={"Unwrap"}
-                />
-              )}
-            </>
+            <Submit
+              label="Unwrap"
+              onClick={() =>
+                setTx({
+                  title: "Unwrap",
+                  chain: FANTOM,
+                  token: FANTOM_wsHEC,
+                  spender: FANTOM_wsHEC.address,
+                  amount: wsHec,
+                  send: (wallet) =>
+                    Staking.unwrap(wallet.provider, wallet.address, wsHec),
+                })
+              }
+              disabled={wsHec.isZero() || wsHec.gt(wsHecBalance)}
+            />
           )}
         </>
       )}
-      {wallet.state === WalletState.Disconnected && (
-        <Submit label="Connect wallet" disabled />
+      {!wallet.connected && <Submit label="Connect wallet" />}
+
+      {tx && wallet.connected && (
+        <TransactionModal
+          wallet={wallet}
+          tx={tx}
+          onClose={(success) => {
+            setTx(undefined);
+            if (success) {
+              setsHecInput("");
+              setwsHecInput("");
+            }
+          }}
+        />
       )}
     </main>
   );
