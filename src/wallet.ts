@@ -19,10 +19,10 @@ import {
 } from "./provider";
 import { Result } from "./util";
 
-export function useWallet(chain?: Chain): Wallet {
+export function useWallet(txChain?: Chain): Wallet {
   const provider = useProvider();
   const [address, setAddress] = useState<string>();
-  const [network, setNetwork] = useState<number>();
+  const [chain, setChain] = useState<number>();
 
   useEffect(() => {
     if (!provider) {
@@ -40,11 +40,11 @@ export function useWallet(chain?: Chain): Wallet {
       if (!result.isOk) {
         return;
       }
-      setNetwork(parseInt(result.value, 16));
+      setChain(parseInt(result.value, 16));
     });
 
     const onChainChanged = (chainId: string) => {
-      setNetwork(parseInt(chainId, 16));
+      setChain(parseInt(chainId, 16));
     };
 
     const onAccountsChanged = (accounts: string[]) => {
@@ -66,7 +66,7 @@ export function useWallet(chain?: Chain): Wallet {
         connected: false,
       };
     }
-    if (!network || !address) {
+    if (!chain || !address) {
       return {
         state: WalletState.Locked,
         connected: false,
@@ -79,20 +79,20 @@ export function useWallet(chain?: Chain): Wallet {
         },
       };
     }
-    if (network !== chain?.id) {
+    if (chain !== txChain?.id) {
       return {
         state: WalletState.CanRead,
         connected: true,
         address,
-        network,
+        chain,
         changeAccounts: async () => {
           await changeAccounts(provider);
         },
         switchChain: async () => {
-          if (!chain) {
+          if (!txChain) {
             throw new Error("failed to switch to undefined chain");
           }
-          return switchEthereumChain(provider, chain.id);
+          return switchEthereumChain(provider, txChain.id);
         },
       };
     }
@@ -100,13 +100,13 @@ export function useWallet(chain?: Chain): Wallet {
       state: WalletState.CanWrite,
       connected: true,
       address,
-      network,
+      chain,
       provider,
       changeAccounts: async () => {
         await changeAccounts(provider);
       },
     };
-  }, [chain, provider, address, network]);
+  }, [txChain, provider, address, chain]);
 }
 
 function useProvider(): WalletProvider | undefined {
@@ -153,7 +153,7 @@ export type ReadWallet = {
   state: WalletState.CanRead;
   connected: true;
   address: string;
-  network: number;
+  chain: number;
   changeAccounts: () => Promise<void>;
   switchChain: () => Promise<Result<null, ProviderRpcError>>;
 };
@@ -162,7 +162,7 @@ export type WriteWallet = {
   state: WalletState.CanWrite;
   connected: true;
   address: string;
-  network: number;
+  chain: number;
   changeAccounts: () => Promise<void>;
   provider: WalletProvider;
 };

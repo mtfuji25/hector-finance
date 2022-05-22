@@ -617,7 +617,7 @@ function useRubic(wallet: Wallet): Rubic.SDK | undefined {
       ...configWithoutWallet,
       walletProvider: {
         address: wallet.address,
-        chainId: wallet.network,
+        chainId: wallet.chain,
         // @ts-ignore this must exist when the wallet is connected
         core: window.ethereum,
       },
