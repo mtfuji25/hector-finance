@@ -26,7 +26,7 @@ import { getTotalSupply } from "src/contracts/erc20";
 import { getHecBurned } from "src/contracts/hecBurnContract";
 import { getStakingIndex } from "src/contracts/stakingContract";
 import { getMarketPrice } from "src/contracts/uniswapV2";
-import { formatCurrency } from "src/util";
+import { ellipsisBetween, formatCurrency } from "src/util";
 import treasury from "src/icons/treasury.svgr";
 import buyback from "src/icons/buyback.svgr";
 import Link from "src/icons/link.svgr";
@@ -36,181 +36,19 @@ import hectorLogo from "public/icons/hector.svg";
 import usdcLogo from "public/icons/usdc.svg";
 import curveLogo from "public/icons/curve.webp";
 import ethLogo from "public/icons/eth.svg";
+import binanceLogo from "public/icons/binance.svg";
 import wftmLogo from "public/icons/wftm.svg";
 import { StaticImg } from "src/components/StaticImg";
 import { FANTOM } from "src/chain";
 
-const COINS = [
-  {
-    name: "Illuvium",
-    ticker: "ILV",
-    stopColor: ["#3E2D71", "#3E2D71"],
-    marketValue: "treasuryIlluviumBalance",
-    riskFree: "treasuryRFIlluviumBalance",
-    tokenAmount: "illuviumTokenAmount",
-  },
-  {
-    name: "CRV",
-    ticker: "CRV",
-    stopColor: ["#96ADC9", "#96ADC9"],
-    marketValue: "treasuryCRVMarketValue",
-    riskFree: "treasuryCRVRiskFreeValue",
-    tokenAmount: "treasuryCRVTokenAmount",
-  },
-  {
-    name: "Matic",
-    ticker: "MATIC",
-    stopColor: ["#8247e5", "#8247E5"],
-    marketValue: "treasuryMaticBalance",
-    riskFree: "treasuryRFMaticBalance",
-    tokenAmount: "maticTokenAmount",
-  },
-  {
-    name: "Tor LP",
-    ticker: "TOR",
-    stopColor: ["#BE7C40", "#BE7C40"],
-    marketValue: "treasuryTORLPValue",
-    tokenAmount: "treasuryTORLPValue",
-  },
-  {
-    name: "FTM Validator",
-    ticker: "FTM VAL",
-    stopColor: ["#10b981", "#059669"],
-    marketValue: "treasuryFantomValidatorValue",
-  },
-  {
-    name: "FTM Delegator",
-    ticker: "FTM DEL",
-    stopColor: ["#10b981", "#059669"],
-    marketValue: "treasuryFantomDelegatorValue",
-  },
-  {
-    name: "wETH",
-    ticker: "wETH",
-    stopColor: ["#EC1E7A", "#EC1E7A"],
-    marketValue: "treasuryWETHMarketValue",
-    riskFree: "treasuryWETHRiskFreeValue",
-    tokenAmount: "treasuryWETHTokenAmount",
-  },
-  {
-    name: "BOO",
-    ticker: "BOO",
-    stopColor: ["#6665DD", "#6665DD"],
-    marketValue: "treasuryBOOMarketValue",
-    riskFree: "treasuryBOORiskFreeValue",
-    tokenAmount: "treasuryBOOTokenAmount",
-  },
-  {
-    name: "wFTM",
-    stopColor: ["#3b82f6", "#2563eb"],
-    marketValue: "treasuryWFTMMarketValue",
-    riskFree: "treasuryWFTMRiskFreeValue",
-    tokenAmount: "treasuryWFTMTokenAmount",
-  },
-  {
-    name: "FRAX",
-    ticker: "FRAX",
-    stopColor: ["#78716c", "#57534e"],
-    marketValue: "treasuryFRAXMarketValue",
-    riskFree: "treasuryFRAXRiskFreeValue",
-    tokenAmount: "treasuryFRAXTokenAmount",
-  },
-  {
-    name: "DAI LP",
-    ticker: "DAI LP",
-    stopColor: ["#fef9c3", "#fef08a"],
-    marketValue: "treasuryDaiLPMarketValue",
-    tokenAmount: "hecDaiTokenAmount",
-  },
-  {
-    name: "USDC LP",
-    stopColor: ["#cffafe", "#a5f3fc"],
-    marketValue: "treasuryUsdcLPMarketValue",
-  },
-  {
-    name: "MIM",
-    stopColor: ["#7573FA", "#7573FA"],
-    marketValue: "treasuryMIMMarketValue",
-    riskFree: "treasuryMIMRiskFreeValue",
-  },
-  {
-    name: "USDC",
-    ticker: "USDC",
-    stopColor: ["#768299", "#98B3E9"],
-    marketValue: "treasuryUsdcMarketValue",
-    riskFree: "treasuryUsdcMarketValue",
-    tokenAmount: "treasuryUsdcTokenAmount",
-  },
-  {
-    name: "DAI",
-    ticker: "DAI",
-    stopColor: ["#ffd89b", "#fbbe5d"],
-    marketValue: "treasuryDaiMarketValue",
-    riskFree: "treasuryDaiMarketValue",
-    tokenAmount: "treasuryDaiTokenAmount",
-  },
-  {
-    stopColor: ["#FB9804", "#FB9804"],
-    name: "Convex Gauge",
-    ticker: "CONVEX",
-    marketValue: "treasuryBaseRewardPool",
-    riskFree: "treasuryBaseRewardPool",
-  },
-];
-
-const tokenImage = (ticker: string) => {
-  switch (ticker) {
-    case "HEC":
-      <StaticImg className="h-5" alt={"HEC_Logo"} src={hectorLogo}></StaticImg>;
-      return;
-    case "CRV":
-      return (
-        <StaticImg
-          className="h-5"
-          alt={"Curve_Logo"}
-          src={curveLogo}
-        ></StaticImg>
-      );
-    case "DAI":
-      return (
-        <StaticImg className="h-5" alt={"DAI_Logo"} src={daiLogo}></StaticImg>
-      );
-    case "DAI LP":
-      return (
-        <StaticImg className="h-5" alt={"DAI_Logo"} src={daiLogo}></StaticImg>
-      );
-    case "wFTM":
-      return (
-        <StaticImg className="h-5" alt={"wFTM_Logo"} src={wftmLogo}></StaticImg>
-      );
-    case "FTM VAL":
-      return (
-        <StaticImg className="h-5" alt={"wFTM_Logo"} src={wftmLogo}></StaticImg>
-      );
-    case "FTM DEL":
-      return (
-        <StaticImg className="h-5" alt={"wFTM_Logo"} src={wftmLogo}></StaticImg>
-      );
-    case "USDC":
-      return (
-        <StaticImg className="h-5" alt={"USDC_Logo"} src={usdcLogo}></StaticImg>
-      );
-    case "USDC LP":
-      return (
-        <StaticImg className="h-5" alt={"USDC_Logo"} src={usdcLogo}></StaticImg>
-      );
-  }
-};
-
 interface CoinInfo {
   name: string;
   ticker: string;
-  marketValue: string;
-  riskFree: string;
   amount: number;
-  percent: number;
-  tokenAmount: string;
-  stopColor: string[];
+  tokenAmount: Decimal;
+  decimal: number;
+  logo: string;
+  chain: string;
 }
 
 export interface Transaction {
@@ -256,6 +94,123 @@ export interface FTMScanTransaction {
   value: string;
 }
 
+export interface ChainData {
+  wallet?: DebankWallet[];
+  protocols: ProtocolList[];
+  source: string;
+  chain: string;
+}
+
+interface DebankWallet {
+  id: string;
+  chain: string;
+  name: string;
+  symbol: string;
+  display_symbol?: any;
+  optimized_symbol: string;
+  decimals: number;
+  logo_url: string;
+  protocol_id: string;
+  price: number;
+  is_verified: boolean;
+  is_core: boolean;
+  is_wallet: boolean;
+  time_at: number;
+  amount: number;
+  raw_amount: number;
+  raw_amount_hex_str: string;
+}
+
+interface Stats {
+  asset_usd_value: number;
+  debt_usd_value: number;
+  net_usd_value: number;
+}
+
+interface SupplyTokenList {
+  id: string;
+  chain: string;
+  name: string;
+  symbol: string;
+  display_symbol?: any;
+  optimized_symbol: string;
+  decimals: number;
+  logo_url: string;
+  protocol_id: string;
+  price: number;
+  is_verified: boolean;
+  is_core: boolean;
+  is_wallet: boolean;
+  time_at: number;
+  amount: number;
+}
+
+export interface RewardTokenList {
+  id: string;
+  chain: string;
+  name: string;
+  symbol: string;
+  display_symbol?: any;
+  optimized_symbol: string;
+  decimals: number;
+  logo_url: string;
+  protocol_id: string;
+  price: number;
+  is_verified: boolean;
+  is_core: boolean;
+  is_wallet: boolean;
+  time_at?: any;
+  amount: number;
+}
+
+export interface BorrowTokenList {
+  id: string;
+  chain: string;
+  name: string;
+  symbol: string;
+  display_symbol?: any;
+  optimized_symbol: string;
+  decimals: number;
+  logo_url: string;
+  protocol_id: string;
+  price: number;
+  is_verified: boolean;
+  is_core: boolean;
+  is_wallet: boolean;
+  time_at: number;
+  amount: number;
+}
+
+interface Detail {
+  supply_token_list?: SupplyTokenList[];
+  reward_token_list?: RewardTokenList[];
+  borrow_token_list?: BorrowTokenList[];
+}
+
+interface ProxyDetail {}
+
+interface PortfolioItemList {
+  stats: Stats;
+  update_at: number;
+  name: string;
+  detail_types: string[];
+  detail: Detail;
+  proxy_detail: ProxyDetail;
+  pool_id: string;
+}
+
+interface ProtocolList {
+  id: string;
+  chain: string;
+  name: string;
+  site_url: string;
+  logo_url: string;
+  has_supported_portfolio: boolean;
+  tvl: number;
+  portfolio_item_list: PortfolioItemList[];
+  source: string;
+}
+
 export default function DashBoard() {
   const [view, setView] = useState<string>("graph");
   const [marketCap, setMarketCap] = useState<Decimal>();
@@ -268,6 +223,8 @@ export default function DashBoard() {
   const [backingPerHec, setBackingPerHec] = useState<Decimal>();
   const [currentIndex, setCurrentIndex] = useState<Decimal>();
   const [investmentsData, setInvestmentsData] = useState<CoinInfo[]>();
+  const [protocolData, setProtocolData] = useState<ProtocolList[]>();
+  const [deBankData, setDeBankData] = useState<ChainData[]>();
   const [sortedTransactions, setSortedTransactions] = useState<Transaction[]>(
     [],
   );
@@ -288,6 +245,73 @@ export default function DashBoard() {
 
     return runwayCurrent;
   };
+
+  useEffect(() => {
+    if (view === "investments")
+      (async () => {
+        const response = await fetch(`/api/debank`);
+        const results: ChainData[] = await response.json();
+        setDeBankData(results);
+        let treasuryVal = 0;
+        let walletAssets: CoinInfo[] = [];
+        let protocols: ProtocolList[] = [];
+        results.forEach((deBank) => {
+          if (deBank.wallet) {
+            const coins: CoinInfo[] = deBank.wallet
+              .filter((asset) => asset.amount > 1)
+              .map((asset) => {
+                const coinAmount = asset.amount * asset.price;
+                const tokenAmount = new Decimal(asset.raw_amount).div(
+                  10 ** asset.decimals,
+                );
+                treasuryVal += coinAmount;
+                const existingCoinIndex = walletAssets.findIndex(
+                  (coin) => asset.symbol === coin.ticker,
+                );
+                if (existingCoinIndex >= 0) {
+                  walletAssets[existingCoinIndex]!.amount += asset.amount;
+                  walletAssets[existingCoinIndex]!.tokenAmount =
+                    walletAssets[existingCoinIndex]!.tokenAmount.plus(
+                      tokenAmount,
+                    );
+                  return {} as CoinInfo;
+                }
+                return {
+                  amount: coinAmount,
+                  tokenAmount: tokenAmount,
+                  decimal: asset.decimals,
+                  name: asset.name,
+                  ticker: asset.symbol,
+                  logo: asset.logo_url,
+                  chain: asset.chain,
+                };
+              });
+            walletAssets.push(...coins.filter((coin) => coin.amount));
+          }
+          if (deBank.protocols) {
+            protocols.push(
+              ...deBank.protocols.map((protocol) => ({
+                ...protocol,
+                source: deBank.source,
+              })),
+            );
+            deBank.protocols.forEach((protocol) => {
+              const totalVal = protocol.portfolio_item_list.reduce(
+                (partialSum, a) =>
+                  a.stats.asset_usd_value > 1
+                    ? partialSum + a.stats.asset_usd_value
+                    : partialSum,
+                0,
+              );
+              treasuryVal += totalVal;
+            });
+          }
+        });
+        setProtocolData(protocols);
+        setTreasuryValue(new Decimal(treasuryVal));
+        setInvestmentsData(walletAssets.sort((a, b) => b.amount - a.amount));
+      })();
+  }, [view]);
 
   useEffect(() => {
     const getGraphData: Promise<SubgraphData> = fetch(THE_GRAPH_URL, {
@@ -395,29 +419,12 @@ export default function DashBoard() {
           return data as ProtocolMetrics;
         });
         setGraphData(joinedGraphData);
-        setTreasuryValue(treasuryVal);
         setBackingPerHec(treasuryVal.div(circSupply));
         setCircSupply(circSupply);
         setMarketCap(
           marketPrice.value.times(circSupply).div(FANTOM_HECTOR.wei),
         );
         setMarketPrice(marketPrice.value.div(FANTOM_HECTOR.wei));
-        const data = COINS.map((token) => {
-          const coin = {
-            ...token,
-            amount: +(joinedGraphData[0] as any)[token.marketValue],
-            percent: treasuryVal
-              ? new Decimal((joinedGraphData[0] as any)[token.marketValue])
-                  .div(treasuryVal)
-                  .times(100)
-              : 0,
-            tokenAmount: token.tokenAmount
-              ? (joinedGraphData[0] as any)[token.tokenAmount]
-              : "N/A",
-          };
-          return coin;
-        }) as CoinInfo[];
-        setInvestmentsData(data.sort((a, b) => b.amount - a.amount));
       }
     };
     loadDashboardInfo();
@@ -556,7 +563,7 @@ export default function DashBoard() {
           }}
         />
         <Tab
-          label="BuyBack"
+          label="Investments"
           selected={view === "investments"}
           onSelect={() => {
             setView("investments");
@@ -618,22 +625,27 @@ export default function DashBoard() {
           <Graphs graphData={graphData}></Graphs>
         </>
       )}
-      {view === "investments" && treasuryValue && investmentsData && (
-        <>
-          {/* <GlobalInfo
-            transactions={sortedTransactions}
-            treasuryValue={treasuryValue}
-          ></GlobalInfo>
-          <Chains
-            treasuryValue={treasuryValue}
-            metrics={investmentsData}
-          ></Chains>
-          <Investments metrics={investmentsData}></Investments> */}
-          {sortedTransactions && (
-            <LatestTransactions ftmScanTransactionData={sortedTransactions} />
-          )}
-        </>
-      )}
+      {view === "investments" &&
+        treasuryValue &&
+        deBankData &&
+        investmentsData &&
+        protocolData && (
+          <>
+            <GlobalInfo
+              transactions={sortedTransactions}
+              treasuryValue={treasuryValue}
+            ></GlobalInfo>
+            <Chains
+              treasuryValue={treasuryValue}
+              deBankData={deBankData}
+            ></Chains>
+            <Investments metrics={investmentsData}></Investments>
+            <Protocols protocols={protocolData}></Protocols>
+            {sortedTransactions && (
+              <LatestTransactions ftmScanTransactionData={sortedTransactions} />
+            )}
+          </>
+        )}
     </main>
   );
 }
@@ -643,7 +655,7 @@ const LatestTransactions: VFC<{ ftmScanTransactionData: Transaction[] }> = ({
 }) => {
   return (
     <div className="grid h-[500px] ">
-      {/* <hr className="w-5/6 justify-self-center border-t-2 bg-gray-300"></hr> */}
+      <hr className="w-5/6 justify-self-center border-t-2 bg-gray-300 dark:bg-gray-500"></hr>
       <div className="mt-3 justify-self-center text-xl dark:text-gray-200">
         Latest Transactions
       </div>
@@ -680,41 +692,41 @@ const LatestTransactions: VFC<{ ftmScanTransactionData: Transaction[] }> = ({
 };
 
 const Investments: VFC<{ metrics: CoinInfo[] }> = ({ metrics }) => {
-  console.log(metrics);
   return (
     <>
       <div className="grid space-y-2">
         <hr className="w-5/6 justify-self-center border-t-2 bg-gray-300"></hr>
         <div className="flex items-center justify-center">
-          <div className="text-xl">Investments</div>
+          <div className="text-xl dark:text-gray-200">Investments</div>
         </div>
         {metrics && (
           <>
             {" "}
-            <Chart metrics={metrics} />
-            <div className="grid h-[500px] space-y-2 overflow-auto ">
-              {metrics
-                .filter((token) => token.ticker)
-                .map((token, i) => (
-                  <React.Fragment key={token.name}>
-                    <div
-                      style={{ borderLeftColor: token.stopColor[0] }}
-                      className="flex items-center rounded border-l-2 bg-gray-100 p-2"
-                    >
+            <div className="grid h-[400px] space-y-2 overflow-auto ">
+              {metrics.map((token, i) => (
+                <React.Fragment key={token.name}>
+                  <div className="flex items-center rounded bg-gray-100 p-2 dark:bg-gray-700 dark:text-gray-200">
+                    <div className="flex items-center">
+                      <img
+                        className="mr-2 h-8 w-auto"
+                        alt={token.name}
+                        src={token.logo}
+                      />
                       <div>
                         <div className="name">{token.name}</div>
                         <div className="balance">
                           {token.tokenAmount
-                            ? (+token.tokenAmount).toFixed(2)
+                            ? token.tokenAmount.toFixed(2)
                             : "N/A"}
                         </div>
                       </div>
-                      <div className="flex-1 text-right">
-                        {formatCurrency(token.amount, 2)}
-                      </div>
                     </div>
-                  </React.Fragment>
-                ))}
+                    <div className="flex-1 text-right">
+                      {formatCurrency(token.amount, 2)}
+                    </div>
+                  </div>
+                </React.Fragment>
+              ))}
             </div>
           </>
         )}
@@ -723,44 +735,65 @@ const Investments: VFC<{ metrics: CoinInfo[] }> = ({ metrics }) => {
   );
 };
 
-const Chart: VFC<{ metrics: CoinInfo[] }> = ({ metrics }) => {
-  const data = metrics.map((token) => ({
-    name: token.name,
-    value: token.amount,
-    color: token.stopColor[0],
-    tokenAmount: token.tokenAmount,
-  }));
+const Protocols: VFC<{ protocols: ProtocolList[] }> = ({ protocols }) => {
   return (
-    <div className="chart">
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie
-            data={data}
-            cx="50%"
-            cy="50%"
-            labelLine={false}
-            outerRadius="80%"
-            dataKey="value"
-          >
-            {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color} />
-            ))}
-          </Pie>
-          <Tooltip content={<PieChartToolTip />} />
-        </PieChart>
-      </ResponsiveContainer>
-    </div>
-  );
-};
-
-const PieChartToolTip: VFC<any> = ({ payload }) => {
-  return (
-    <div className="MuiPaper-root hec-card chart-tooltip">
-      <div>
-        {payload?.[0]?.name} : {formatCurrency(payload?.[0]?.value, 2)}
+    <div className="grid h-[400px]  space-y-2">
+      <div className="flex items-center justify-center">
+        <div className="text-xl dark:text-gray-200">Protocols</div>
       </div>
-      <div>
-        Token amount: {payload?.[0]?.payload?.tokenAmount.toFixed(2) ?? "N/A"}
+      <div className="space-y-2 overflow-auto">
+        {protocols.map((protocol, i) => (
+          <React.Fragment key={protocol.source + i}>
+            <div className="space-y-2 rounded bg-gray-100 p-2 dark:bg-gray-700 dark:text-gray-200">
+              <div className="mb-2 flex items-center">
+                <div className="flex items-center">
+                  <img
+                    className="mr-2 h-8 w-auto"
+                    src={protocol.logo_url}
+                    alt={protocol.name}
+                  />
+                  <div className="mr-2">{protocol.name}</div>
+                </div>
+                <a
+                  href={"https://debank.com/profile/" + protocol.source}
+                  rel="noreferrer"
+                  target={"_blank"}
+                  className="flex-1 cursor-pointer  items-center  text-gray-500 dark:text-gray-200"
+                >
+                  <Link className="h-4 cursor-pointer" />
+                </a>
+                <div>
+                  {formatCurrency(
+                    protocol.portfolio_item_list.reduce(
+                      (sum, a) => sum + a.stats.asset_usd_value,
+                      0,
+                    ),
+                    2,
+                  )}
+                </div>
+              </div>
+              <hr className="w-full justify-self-center bg-gray-900 dark:bg-gray-300 "></hr>
+              {protocol.portfolio_item_list.map((item, i) => (
+                <div className="space-y-2" key={item.name + i}>
+                  {item.detail.supply_token_list?.map((token) => (
+                    <div className="flex justify-between " key={token.id}>
+                      <div className="flex">
+                        <img
+                          className="mr-2 h-8 w-auto"
+                          src={token.logo_url}
+                          alt={token.name}
+                        />
+                        <div>{token.optimized_symbol}</div>
+                      </div>
+                      <div>{token.amount.toFixed(2)}</div>
+                      <div>{formatCurrency(token.price * token.amount, 2)}</div>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </React.Fragment>
+        ))}
       </div>
     </div>
   );
@@ -813,61 +846,96 @@ const GlobalInfo: VFC<{
         data.map((info, i) => (
           <React.Fragment key={info.text}>
             <div className="grid justify-items-center space-y-2">
-              <div className="text-xl">{info.text}</div>
-              <div className="text-2xl text-orange-400">{info.amount}</div>
-              <info.logo className="w-9" />
+              <div className="text-xl dark:text-gray-200">{info.text}</div>
+              <div className="text-2xl text-orange-400 dark:text-orange-400">
+                {info.amount}
+              </div>
+              <info.logo className="w-9 dark:text-gray-200" />
             </div>
-            {i !== data.length - 1 && (
-              <div className=" border-l-2 border-gray-300"></div>
-            )}
           </React.Fragment>
         ))}
     </div>
   );
 };
 
-const Chains: VFC<{ metrics: CoinInfo[]; treasuryValue: Decimal }> = ({
-  metrics,
+const Chains: VFC<{ deBankData: ChainData[]; treasuryValue: Decimal }> = ({
+  deBankData,
   treasuryValue,
 }) => {
   const [ethPercent, setEthPercent] = useState<Decimal>();
   const [fantomPercent, setFantomPercent] = useState<Decimal>();
+  const [binancePercent, setBinancePercent] = useState<Decimal>();
 
   useEffect(() => {
-    if (metrics && treasuryValue) {
-      const baseRewardPoolAmount =
-        metrics.find((asset) => asset.marketValue === "treasuryBaseRewardPool")
-          ?.amount ?? 0;
-      const maticAmount =
-        metrics.find((asset) => asset.marketValue === "treasuryMaticBalance")
-          ?.amount ?? 0;
-      const illuviumTokenAmount =
-        metrics.find((asset) => asset.marketValue === "treasuryIlluviumBalance")
-          ?.amount ?? 0;
-      const ethTotal = baseRewardPoolAmount + maticAmount + illuviumTokenAmount;
-      const ethPercent = new Decimal(ethTotal).div(treasuryValue);
-      setEthPercent(ethPercent.times(100));
-      setFantomPercent(new Decimal(1).minus(ethPercent).times(100));
+    const fantomData = deBankData.filter((data) => data.chain === "ftm");
+    const ethData = deBankData.filter((data) => data.chain === "eth");
+    const binanceData = deBankData.filter((data) => data.chain === "bsc");
+    const getChainTotal = (chainData: ChainData[]) => {
+      const walletTotal = new Decimal(
+        chainData
+          .map(
+            (asset) =>
+              asset.wallet?.reduce((sum, a) => sum + a.amount * a.price, 0) ??
+              0,
+          )
+          .reduce((sum, a) => sum + a),
+      );
+      const protocolTotal = new Decimal(
+        chainData
+          .map((protocol) =>
+            protocol.protocols.map((item) =>
+              item.portfolio_item_list.reduce(
+                (sum, a) => sum + a.stats.asset_usd_value,
+                0,
+              ),
+            ),
+          )
+          .flat()
+          .reduce((sum, a) => sum + a),
+      );
+      return walletTotal.plus(protocolTotal).div(treasuryValue).times(100);
+    };
+
+    if (fantomData) {
+      setFantomPercent(getChainTotal(fantomData));
     }
-  }, [metrics, treasuryValue]);
+    if (ethData) {
+      setEthPercent(getChainTotal(ethData));
+    }
+    if (binanceData) {
+      setBinancePercent(getChainTotal(binanceData));
+    }
+  }, [deBankData, treasuryValue]);
   return (
     <div className="grid space-y-2">
       <hr className="w-5/6 justify-self-center border-t-2 bg-gray-300"></hr>
-      <div className="justify-self-center text-xl">Allocations</div>
+      <div className="justify-self-center text-xl dark:text-gray-200">
+        Allocations
+      </div>
       <div className="flex justify-evenly">
         <div className="grid justify-items-center">
           <StaticImg src={ftmLogo} alt={"fantom_logo"} className="h-8 w-auto" />
-          <div className="text-xl">Fantom</div>
+          <div className="text-xl dark:text-gray-200">Fantom</div>
           <div className="text-2xl text-orange-400">
             {fantomPercent?.toFixed(2)}%
           </div>
         </div>
-        <div className=""></div>
         <div className="grid justify-items-center">
           <StaticImg src={ethLogo} alt={"eth_logo"} className="h-8 w-auto" />
-          <div className="text-xl">Ethereum</div>
+          <div className="text-xl dark:text-gray-200">Ethereum</div>
           <div className=" text-2xl text-orange-400">
             {ethPercent?.toFixed(2)}%
+          </div>
+        </div>
+        <div className="grid justify-items-center">
+          <StaticImg
+            src={binanceLogo}
+            alt={"binance_logo"}
+            className="h-8 w-auto"
+          />
+          <div className="text-xl dark:text-gray-200">Binance</div>
+          <div className=" text-2xl text-orange-400">
+            {binancePercent?.toFixed(2)}%
           </div>
         </div>
       </div>
