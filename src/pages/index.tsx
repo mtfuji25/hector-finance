@@ -39,7 +39,7 @@ import ethLogo from "public/icons/eth.svg";
 import binanceLogo from "public/icons/binance.svg";
 import wftmLogo from "public/icons/wftm.svg";
 import { StaticImg } from "src/components/StaticImg";
-import { FANTOM } from "src/chain";
+import { Chain, FANTOM } from "src/chain";
 import BigSpinner from "src/icons/spinner-big.svgr";
 
 interface CoinInfo {
@@ -212,7 +212,24 @@ interface ProtocolList {
   source: string;
 }
 
-export default function DashBoard() {
+export async function getStaticProps() {
+  const server =
+    process.env.NODE_ENV !== "production"
+      ? "http://localhost:3000"
+      : "https://stagingn.hector.finance";
+  const response = await fetch(`${server}/api/debank`);
+  const results: ChainData[] = await response.json();
+
+  return {
+    props: {
+      results,
+    },
+
+    revalidate: process.env.NODE_ENV === "development" ? 1 : 43200, // In seconds
+  };
+}
+
+export default function DashBoard({ results }: { results: ChainData[] }) {
   const [view, setView] = useState<string>("graph");
   const [marketCap, setMarketCap] = useState<Decimal>();
   const [marketPrice, setMarketPrice] = useState<Decimal>();
@@ -250,8 +267,6 @@ export default function DashBoard() {
   useEffect(() => {
     if (view === "investments")
       (async () => {
-        const response = await fetch(`/api/debank`);
-        const results: ChainData[] = await response.json();
         setDeBankData(results);
         let treasuryVal = 0;
         let walletAssets: CoinInfo[] = [];
@@ -312,7 +327,7 @@ export default function DashBoard() {
         setTreasuryValue(new Decimal(treasuryVal));
         setInvestmentsData(walletAssets.sort((a, b) => b.amount - a.amount));
       })();
-  }, [view]);
+  }, [view, results]);
 
   useEffect(() => {
     const getGraphData: Promise<SubgraphData> = fetch(THE_GRAPH_URL, {
