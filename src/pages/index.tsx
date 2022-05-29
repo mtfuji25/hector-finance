@@ -655,10 +655,7 @@ const LatestTransactions: VFC<{ ftmScanTransactionData: Transaction[] }> = ({
 }) => {
   return (
     <div className="grid h-[500px] ">
-      <hr className="w-5/6 justify-self-center border-t-2 bg-gray-300 dark:bg-gray-500"></hr>
-      <div className="mt-3 justify-self-center text-xl dark:text-gray-200">
-        Latest Transactions
-      </div>
+      <SectionTitle>Latest Transactions</SectionTitle>
 
       <div className="transactions overflow-auto dark:text-gray-200">
         <>
@@ -695,10 +692,8 @@ const Investments: VFC<{ metrics: CoinInfo[] }> = ({ metrics }) => {
   return (
     <>
       <div className="grid space-y-2">
-        <hr className="w-5/6 justify-self-center border-t-2 bg-gray-300"></hr>
-        <div className="flex items-center justify-center">
-          <div className="text-xl dark:text-gray-200">Investments</div>
-        </div>
+        <SectionTitle>Investments</SectionTitle>
+
         {metrics && (
           <>
             {" "}
@@ -738,9 +733,7 @@ const Investments: VFC<{ metrics: CoinInfo[] }> = ({ metrics }) => {
 const Protocols: VFC<{ protocols: ProtocolList[] }> = ({ protocols }) => {
   return (
     <div className="grid h-[400px]  space-y-2">
-      <div className="flex items-center justify-center">
-        <div className="text-xl dark:text-gray-200">Protocols</div>
-      </div>
+      <SectionTitle>Protocols</SectionTitle>
       <div className="space-y-2 overflow-auto">
         {protocols.map((protocol, i) => (
           <React.Fragment key={protocol.source + i}>
@@ -772,7 +765,7 @@ const Protocols: VFC<{ protocols: ProtocolList[] }> = ({ protocols }) => {
                   )}
                 </div>
               </div>
-              <hr className="w-full justify-self-center bg-gray-900 dark:bg-gray-300 "></hr>
+              <hr className="w-full justify-self-center bg-gray-900 dark:bg-gray-600 "></hr>
               {protocol.portfolio_item_list.map((item, i) => (
                 <div className="space-y-2" key={item.name + i}>
                   {item.detail.supply_token_list?.map((token) => (
@@ -908,10 +901,7 @@ const Chains: VFC<{ deBankData: ChainData[]; treasuryValue: Decimal }> = ({
   }, [deBankData, treasuryValue]);
   return (
     <div className="grid space-y-2">
-      <hr className="w-5/6 justify-self-center border-t-2 bg-gray-300"></hr>
-      <div className="justify-self-center text-xl dark:text-gray-200">
-        Allocations
-      </div>
+      <SectionTitle>Allocations</SectionTitle>
       <div className="flex justify-evenly">
         <div className="grid justify-items-center">
           <StaticImg src={ftmLogo} alt={"fantom_logo"} className="h-8 w-auto" />
@@ -1181,3 +1171,13 @@ const CustomTooltip = ({
 
   return null;
 };
+
+const SectionTitle: FC = ({ children }) => (
+  <div className="my-1 flex items-center">
+    <div className="h-px flex-grow bg-gray-300" />
+    <h3 className="mx-4 text-sm font-medium uppercase text-gray-400">
+      {children}
+    </h3>
+    <div className="h-px flex-grow bg-gray-300" />
+  </div>
+);
