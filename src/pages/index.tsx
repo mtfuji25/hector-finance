@@ -26,7 +26,7 @@ import { getTotalSupply } from "src/contracts/erc20";
 import { getHecBurned } from "src/contracts/hecBurnContract";
 import { getStakingIndex } from "src/contracts/stakingContract";
 import { getMarketPrice } from "src/contracts/uniswapV2";
-import { ellipsisBetween, formatCurrency } from "src/util";
+import { classes, ellipsisBetween, formatCurrency } from "src/util";
 import treasury from "src/icons/treasury.svgr";
 import buyback from "src/icons/buyback.svgr";
 import Link from "src/icons/link.svgr";
@@ -40,6 +40,7 @@ import binanceLogo from "public/icons/binance.svg";
 import wftmLogo from "public/icons/wftm.svg";
 import { StaticImg } from "src/components/StaticImg";
 import { FANTOM } from "src/chain";
+import BigSpinner from "src/icons/spinner-big.svgr";
 
 interface CoinInfo {
   name: string;
@@ -625,6 +626,14 @@ export default function DashBoard() {
           <Graphs graphData={graphData}></Graphs>
         </>
       )}
+      {!deBankData && (
+        <BigSpinner
+          className={classes(
+            "pointer-events-none text-blue-500 transition-opacity delay-75 duration-500",
+          )}
+        />
+      )}
+
       {view === "investments" &&
         treasuryValue &&
         deBankData &&
