@@ -33,6 +33,10 @@ export const TransactionModal: VFC<{
         return;
       }
       setChainTask(TaskState.Working);
+      if (!wallet.switchChain) {
+        setChainTask(TaskState.Failed);
+        return;
+      }
       const switched = await wallet.switchChain();
       if (abort()) {
         setChainTask(TaskState.Unstarted);

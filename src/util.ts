@@ -211,6 +211,10 @@ export async function sleep(millis: number): Promise<void> {
   });
 }
 
+export function hexString(num: number): string {
+  return "0x" + num.toString(16);
+}
+
 // for getting object values from contract
 export function getParameter(index: number, value: string): string {
   let offset = 0;

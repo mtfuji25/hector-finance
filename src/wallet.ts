@@ -8,16 +8,16 @@ import {
 } from "react";
 import { Chain } from "./chain";
 import {
-  getProvider,
   getAccount,
   getChain,
   getAccountsPermission,
   WalletProvider,
-  switchEthereumChain,
   changeAccounts,
   ProviderRpcError,
+  addEthereumChain,
+  getProvider,
 } from "./provider";
-import { Result } from "./util";
+import { hexString, Result } from "./util";
 
 export function useWallet(txChain?: Chain): Wallet {
   const provider = useProvider();
@@ -66,6 +66,7 @@ export function useWallet(txChain?: Chain): Wallet {
         connected: false,
       };
     }
+
     if (!chain || !address) {
       return {
         state: WalletState.Locked,
@@ -79,6 +80,7 @@ export function useWallet(txChain?: Chain): Wallet {
         },
       };
     }
+
     if (chain !== txChain?.id) {
       return {
         state: WalletState.CanRead,
@@ -88,14 +90,23 @@ export function useWallet(txChain?: Chain): Wallet {
         changeAccounts: async () => {
           await changeAccounts(provider);
         },
-        switchChain: async () => {
-          if (!txChain) {
-            throw new Error("failed to switch to undefined chain");
-          }
-          return switchEthereumChain(provider, txChain.id);
-        },
+        switchChain: txChain
+          ? async () =>
+              addEthereumChain(provider, {
+                chainId: hexString(txChain.id),
+                chainName: txChain.longName,
+                nativeCurrency: {
+                  name: txChain.token.name,
+                  decimals: txChain.token.decimals,
+                  symbol: txChain.token.symbol,
+                },
+                rpcUrls: txChain.rpc,
+                blockExplorerUrls: txChain.explorers,
+              })
+          : undefined,
       };
     }
+
     return {
       state: WalletState.CanWrite,
       connected: true,
@@ -155,7 +166,7 @@ export type ReadWallet = {
   address: string;
   chain: number;
   changeAccounts: () => Promise<void>;
-  switchChain: () => Promise<Result<null, ProviderRpcError>>;
+  switchChain?: () => Promise<Result<null, ProviderRpcError>>;
 };
 
 export type WriteWallet = {

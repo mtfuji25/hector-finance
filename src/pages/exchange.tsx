@@ -198,6 +198,10 @@ const ConfirmationModal: FC<{
     let abort = false;
     (async () => {
       if (!isChainCorrect) {
+        if (!wallet.switchChain) {
+          onClose();
+          return;
+        }
         const isOk = await wallet.switchChain();
         if (abort) {
           return;

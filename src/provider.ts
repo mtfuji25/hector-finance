@@ -113,32 +113,24 @@ export async function getAccountsPermission(
  */
 export async function addEthereumChain(
   provider: WalletProvider,
-  /** A 0x-prefixed hexadecimal string */
-  chainId: string,
-  chainName: string,
-  tokenName: string,
-  /** 2-6 characters long */
-  tokenSymbol: string,
-  tokenDecimals: number,
-  rpcUrls: string[],
-  blockExplorerUrls?: string[],
+  chain: {
+    /** A 0x-prefixed hexadecimal string */
+    chainId: string;
+    chainName: string;
+    nativeCurrency: {
+      name: string;
+      /** 2-6 characters long */
+      symbol: string;
+      decimals: number;
+    };
+    rpcUrls: string[];
+    blockExplorerUrls?: string[];
+  },
 ): Promise<Result<null, ProviderRpcError>> {
   return provider
     .request({
       method: "wallet_addEthereumChain",
-      params: [
-        {
-          chainId,
-          chainName,
-          nativeCurrency: {
-            name: tokenName,
-            symbol: tokenSymbol,
-            decimals: tokenDecimals,
-          },
-          rpcUrls,
-          blockExplorerUrls,
-        },
-      ],
+      params: [chain],
     })
     .then(
       (value) => ok(z.null().parse(value)),
