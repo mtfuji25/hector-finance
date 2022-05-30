@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ok, err, Result } from "src/util";
+import { ok, err, Result, sleep } from "src/util";
 import { RpcErrorCode } from "./rpc";
 import { Chain, request as chainRequest } from "./chain";
 
@@ -290,23 +290,22 @@ export type WalletProvider = {
   isMetaMask?: boolean;
 };
 
-/** Get the Ethereum provider (most likely MetaMask).
- *
- * Why is this a promise? There's a high chance that a provider isn't loaded
- * by the time this is called. Using `getProvider` will ensure you get the provider
- * when it's actually ready.
- */
-export async function getProvider(): Promise<WalletProvider> {
-  return new Promise((resolve) => {
-    function _getProvider(): void {
-      if (window.ethereum != undefined) {
-        resolve(window.ethereum);
-      } else {
-        setTimeout(_getProvider, 350);
-      }
+/** Get the Ethereum provider (most likely MetaMask). */
+export async function getProvider(): Promise<WalletProvider | undefined> {
+  // There's a chance that MetaMask (or similar extension) hasn't loaded at the
+  // time getProvider is called. So, we'll try multiple times over a short duration
+  // to get the provider.
+  let attempts = 3;
+  while (true) {
+    if (window.ethereum != undefined) {
+      return window.ethereum;
     }
-    _getProvider();
-  });
+    attempts -= 1;
+    if (attempts === 0) {
+      return undefined;
+    }
+    await sleep(50);
+  }
 }
 
 // File-local override of `Window` which includes the Web3 declaration.
