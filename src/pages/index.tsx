@@ -225,7 +225,7 @@ export async function getStaticProps() {
       results,
     },
 
-    revalidate: 43200, // In seconds
+    revalidate: process.env.NODE_ENV === "development" ? 1 : 43200, // In seconds
   };
 }
 
