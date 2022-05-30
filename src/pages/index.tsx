@@ -214,9 +214,7 @@ interface ProtocolList {
 
 export async function getStaticProps() {
   const server =
-    process.env.NODE_ENV !== "production"
-      ? "http://localhost:3000"
-      : "https://stagingn.hector.finance";
+    process.env.NODE_ENV !== "production" ? "http://localhost:3000" : "";
   const response = await fetch(`${server}/api/debank`);
   const results: ChainData[] = await response.json();
 
