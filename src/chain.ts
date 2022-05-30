@@ -95,7 +95,7 @@ export const FANTOM: Chain = {
   shortName: "Fantom",
   longName: "Fantom Opera",
   color: "#1969FF",
-  rpc: ["https://rpc.fantom.network/", "https://rpc.ftm.tools/"],
+  rpc: ["https://rpc.ftm.tools/"],
   explorers: ["https://ftmscan.com/"],
   token: {
     name: "Fantom",
