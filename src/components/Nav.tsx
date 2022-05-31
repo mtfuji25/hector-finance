@@ -135,7 +135,7 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
       className={classes(
         " h-fit flex-shrink-0 flex-grow-0 space-y-4 sm:block",
         isNavOpen
-          ? " absolute top-0 left-0 z-10 h-full w-3/5 border-r-4 border-r-gray-400 bg-white px-4 py-8 drop-shadow-xl dark:border-r-gray-200 dark:bg-gray-900"
+          ? " fixed top-0 left-0 z-10 h-full w-3/5 border-r-4 border-r-gray-400 bg-white px-4 py-8 drop-shadow-xl dark:border-r-gray-200 dark:bg-gray-900"
           : "hidden",
       )}
     >
