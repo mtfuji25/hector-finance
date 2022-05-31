@@ -387,7 +387,6 @@ export default function DashBoard({ results }: { results: ChainData[] }) {
   const [hecBurned, setHecBurned] = useState<Decimal>();
   const [treasuryValue, setTreasuryValue] = useState<Decimal>();
   const [graphData, setGraphData] = useState<ProtocolMetrics[]>();
-  const [backingPerHec, setBackingPerHec] = useState<Decimal>();
   const [currentIndex, setCurrentIndex] = useState<Decimal>();
   const [investmentsData, setInvestmentsData] = useState<CoinInfo[]>();
   const [protocolData, setProtocolData] = useState<ProtocolList[]>();
@@ -414,69 +413,68 @@ export default function DashBoard({ results }: { results: ChainData[] }) {
   };
 
   useEffect(() => {
-    if (view === "investments")
-      (async () => {
-        setDeBankData(results);
-        let treasuryVal = 0;
-        let walletAssets: CoinInfo[] = [];
-        let protocols: ProtocolList[] = [];
-        results.forEach((deBank) => {
-          if (deBank.wallet) {
-            const coins: CoinInfo[] = deBank.wallet
-              .filter((asset) => asset.amount > 1)
-              .map((asset) => {
-                const coinAmount = asset.amount * asset.price;
-                const tokenAmount = new Decimal(asset.raw_amount).div(
-                  10 ** asset.decimals,
-                );
-                treasuryVal += coinAmount;
-                const existingCoinIndex = walletAssets.findIndex(
-                  (coin) => asset.symbol === coin.ticker,
-                );
-                if (existingCoinIndex >= 0) {
-                  walletAssets[existingCoinIndex]!.amount += asset.amount;
-                  walletAssets[existingCoinIndex]!.tokenAmount =
-                    walletAssets[existingCoinIndex]!.tokenAmount.plus(
-                      tokenAmount,
-                    );
-                  return {} as CoinInfo;
-                }
-                return {
-                  amount: coinAmount,
-                  tokenAmount: tokenAmount,
-                  decimal: asset.decimals,
-                  name: asset.name,
-                  ticker: asset.symbol,
-                  logo: asset.logo_url,
-                  chain: asset.chain,
-                };
-              });
-            walletAssets.push(...coins.filter((coin) => coin.amount));
-          }
-          if (deBank.protocols) {
-            protocols.push(
-              ...deBank.protocols.map((protocol) => ({
-                ...protocol,
-                source: deBank.source,
-              })),
-            );
-            deBank.protocols.forEach((protocol) => {
-              const totalVal = protocol.portfolio_item_list.reduce(
-                (partialSum, a) =>
-                  a.stats.asset_usd_value > 1
-                    ? partialSum + a.stats.asset_usd_value
-                    : partialSum,
-                0,
+    (async () => {
+      setDeBankData(results);
+      let treasuryVal = 0;
+      let walletAssets: CoinInfo[] = [];
+      let protocols: ProtocolList[] = [];
+      results.forEach((deBank) => {
+        if (deBank.wallet) {
+          const coins: CoinInfo[] = deBank.wallet
+            .filter((asset) => asset.amount > 1)
+            .map((asset) => {
+              const coinAmount = asset.amount * asset.price;
+              const tokenAmount = new Decimal(asset.raw_amount).div(
+                10 ** asset.decimals,
               );
-              treasuryVal += totalVal;
+              treasuryVal += coinAmount;
+              const existingCoinIndex = walletAssets.findIndex(
+                (coin) => asset.symbol === coin.ticker,
+              );
+              if (existingCoinIndex >= 0) {
+                walletAssets[existingCoinIndex]!.amount += asset.amount;
+                walletAssets[existingCoinIndex]!.tokenAmount =
+                  walletAssets[existingCoinIndex]!.tokenAmount.plus(
+                    tokenAmount,
+                  );
+                return {} as CoinInfo;
+              }
+              return {
+                amount: coinAmount,
+                tokenAmount: tokenAmount,
+                decimal: asset.decimals,
+                name: asset.name,
+                ticker: asset.symbol,
+                logo: asset.logo_url,
+                chain: asset.chain,
+              };
             });
-          }
-        });
-        setProtocolData(protocols);
-        setTreasuryValue(new Decimal(treasuryVal));
-        setInvestmentsData(walletAssets.sort((a, b) => b.amount - a.amount));
-      })();
-  }, [view, results]);
+          walletAssets.push(...coins.filter((coin) => coin.amount));
+        }
+        if (deBank.protocols) {
+          protocols.push(
+            ...deBank.protocols.map((protocol) => ({
+              ...protocol,
+              source: deBank.source,
+            })),
+          );
+          deBank.protocols.forEach((protocol) => {
+            const totalVal = protocol.portfolio_item_list.reduce(
+              (partialSum, a) =>
+                a.stats.asset_usd_value > 1
+                  ? partialSum + a.stats.asset_usd_value
+                  : partialSum,
+              0,
+            );
+            treasuryVal += totalVal;
+          });
+        }
+      });
+      setProtocolData(protocols);
+      setTreasuryValue(new Decimal(treasuryVal));
+      setInvestmentsData(walletAssets.sort((a, b) => b.amount - a.amount));
+    })();
+  }, [results]);
 
   useEffect(() => {
     const getGraphData: Promise<SubgraphData> = fetch(THE_GRAPH_URL, {
@@ -533,9 +531,6 @@ export default function DashBoard({ results }: { results: ChainData[] }) {
         const circSupply = new Decimal(
           graphData.protocolMetrics[0]!.hecCirculatingSupply,
         );
-        const treasuryVal = new Decimal(
-          graphData.protocolMetrics[0]!.treasuryMarketValue,
-        ).plus(new Decimal(ethData[0]!.treasuryEthMarketValue));
 
         const joinedGraphData = graphData.protocolMetrics.map((entry, i) => {
           const bankTotal = (
@@ -584,7 +579,6 @@ export default function DashBoard({ results }: { results: ChainData[] }) {
           return data as ProtocolMetrics;
         });
         setGraphData(joinedGraphData);
-        setBackingPerHec(treasuryVal.div(circSupply));
         setCircSupply(circSupply);
         setMarketCap(
           marketPrice.value.times(circSupply).div(FANTOM_HECTOR.wei),
@@ -771,10 +765,10 @@ export default function DashBoard({ results }: { results: ChainData[] }) {
               )}
             </div>
             <div className="basis-1/3">
-              <div className="dark:text-gray-200">RPH</div>
-              {backingPerHec && (
+              <div className="dark:text-gray-200">Treasury</div>
+              {treasuryValue && (
                 <div className="text-xl font-medium text-orange-400">
-                  {formatCurrency(backingPerHec.toNumber(), 2)}
+                  {formatCurrency(treasuryValue.toNumber(), 2)}
                 </div>
               )}
             </div>
