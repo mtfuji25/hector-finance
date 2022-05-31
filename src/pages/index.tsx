@@ -836,10 +836,6 @@ export default function DashBoard({ results }: { results: ChainData[] }) {
               transactions={sortedTransactions}
               treasuryValue={treasuryValue}
             ></GlobalInfo>
-            <Chains
-              treasuryValue={treasuryValue}
-              deBankData={deBankData}
-            ></Chains>
             <Investments metrics={investmentsData}></Investments>
             <Protocols protocols={protocolData}></Protocols>
             {sortedTransactions && (
@@ -1051,88 +1047,6 @@ const GlobalInfo: VFC<{
             </div>
           </React.Fragment>
         ))}
-    </div>
-  );
-};
-
-const Chains: VFC<{ deBankData: ChainData[]; treasuryValue: Decimal }> = ({
-  deBankData,
-  treasuryValue,
-}) => {
-  const [ethPercent, setEthPercent] = useState<Decimal>();
-  const [fantomPercent, setFantomPercent] = useState<Decimal>();
-  const [binancePercent, setBinancePercent] = useState<Decimal>();
-
-  useEffect(() => {
-    const fantomData = deBankData.filter((data) => data.chain === "ftm");
-    const ethData = deBankData.filter((data) => data.chain === "eth");
-    const binanceData = deBankData.filter((data) => data.chain === "bsc");
-    const getChainTotal = (chainData: ChainData[]) => {
-      const walletTotal = new Decimal(
-        chainData
-          .map(
-            (asset) =>
-              asset.wallet?.reduce((sum, a) => sum + a.amount * a.price, 0) ??
-              0,
-          )
-          .reduce((sum, a) => sum + a),
-      );
-      const protocolTotal = new Decimal(
-        chainData
-          .map((protocol) =>
-            protocol.protocols.map((item) =>
-              item.portfolio_item_list.reduce(
-                (sum, a) => sum + a.stats.asset_usd_value,
-                0,
-              ),
-            ),
-          )
-          .flat()
-          .reduce((sum, a) => sum + a),
-      );
-      return walletTotal.plus(protocolTotal).div(treasuryValue).times(100);
-    };
-
-    if (fantomData) {
-      setFantomPercent(getChainTotal(fantomData));
-    }
-    if (ethData) {
-      setEthPercent(getChainTotal(ethData));
-    }
-    if (binanceData) {
-      setBinancePercent(getChainTotal(binanceData));
-    }
-  }, [deBankData, treasuryValue]);
-  return (
-    <div className="grid space-y-2">
-      <SectionTitle>Allocations</SectionTitle>
-      <div className="flex justify-evenly">
-        <div className="grid justify-items-center">
-          <StaticImg src={ftmLogo} alt={"fantom_logo"} className="h-8 w-auto" />
-          <div className="text-xl dark:text-gray-200">Fantom</div>
-          <div className="text-2xl text-orange-400">
-            {fantomPercent?.toFixed(2)}%
-          </div>
-        </div>
-        <div className="grid justify-items-center">
-          <StaticImg src={ethLogo} alt={"eth_logo"} className="h-8 w-auto" />
-          <div className="text-xl dark:text-gray-200">Ethereum</div>
-          <div className=" text-2xl text-orange-400">
-            {ethPercent?.toFixed(2)}%
-          </div>
-        </div>
-        <div className="grid justify-items-center">
-          <StaticImg
-            src={binanceLogo}
-            alt={"binance_logo"}
-            className="h-8 w-auto"
-          />
-          <div className="text-xl dark:text-gray-200">Binance</div>
-          <div className=" text-2xl text-orange-400">
-            {binancePercent?.toFixed(2)}%
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
