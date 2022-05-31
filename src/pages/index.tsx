@@ -30,6 +30,7 @@ import { classes, ellipsisBetween, formatCurrency } from "src/util";
 import treasury from "src/icons/treasury.svgr";
 import buyback from "src/icons/buyback.svgr";
 import Link from "src/icons/link.svgr";
+import Info from "src/icons/circle-info.svgr";
 import ftmLogo from "public/icons/ftm.svg";
 import daiLogo from "public/icons/dai.svg";
 import hectorLogo from "public/icons/hector.svg";
@@ -453,10 +454,43 @@ export default function DashBoard({ results }: { results: ChainData[] }) {
         }
         if (deBank.protocols) {
           protocols.push(
-            ...deBank.protocols.map((protocol) => ({
-              ...protocol,
-              source: deBank.source,
-            })),
+            ...deBank.protocols.map((protocol) => {
+              if (protocol.id === "ftm_beefy") {
+                console.log("hit");
+                protocol.portfolio_item_list.push(
+                  {
+                    detail: { supply_token_list: [] },
+                    detail_types: [""],
+                    name: "yield",
+                    pool_id: "1",
+                    proxy_detail: {},
+                    stats: {
+                      asset_usd_value: 18240000,
+                      debt_usd_value: 0,
+                      net_usd_value: 18240000,
+                    },
+                    update_at: 0,
+                  },
+                  {
+                    detail: { supply_token_list: [] },
+                    detail_types: [""],
+                    name: "yield",
+                    pool_id: "1",
+                    proxy_detail: {},
+                    stats: {
+                      asset_usd_value: 4500000,
+                      debt_usd_value: 0,
+                      net_usd_value: 4500000,
+                    },
+                    update_at: 0,
+                  },
+                );
+              }
+              return {
+                ...protocol,
+                source: deBank.source,
+              };
+            }),
           );
           deBank.protocols.forEach((protocol) => {
             const totalVal = protocol.portfolio_item_list.reduce(
@@ -923,13 +957,16 @@ const Protocols: VFC<{ protocols: ProtocolList[] }> = ({ protocols }) => {
                   <Link className="h-4 cursor-pointer" />
                 </a>
                 <div>
-                  {formatCurrency(
-                    protocol.portfolio_item_list.reduce(
-                      (sum, a) => sum + a.stats.asset_usd_value,
-                      0,
-                    ),
-                    2,
-                  )}
+                  <div>
+                    {formatCurrency(
+                      protocol.portfolio_item_list.reduce(
+                        (sum, a) => sum + a.stats.asset_usd_value,
+                        0,
+                      ),
+                      2,
+                    )}
+                  </div>
+                  {/* <Info onMouseOver={} className="h-4 cursor-pointer"/> */}
                 </div>
               </div>
               <hr className="w-full justify-self-center bg-gray-900 dark:bg-gray-600 "></hr>
