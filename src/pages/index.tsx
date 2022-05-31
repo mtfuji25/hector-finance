@@ -790,7 +790,7 @@ export default function DashBoard({ results }: { results: ChainData[] }) {
           <Graphs graphData={graphData}></Graphs>
         </>
       )}
-      {!deBankData && (
+      {!deBankData && view === "investments" && (
         <BigSpinner
           className={classes(
             "pointer-events-none text-blue-500 transition-opacity delay-75 duration-500",
