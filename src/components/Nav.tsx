@@ -185,7 +185,7 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
       <div>
         <ExternalNav href="https://hectorbank.com/">
           <BuildingColumnsLight width={16} height={16} />
-          Hector Bank
+          Hector Institute
         </ExternalNav>
         <ExternalNav href="https://snapshot.org/#/hectordao.eth">
           <BoxBallotLight width={16} height={16} />
