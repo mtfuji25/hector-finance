@@ -5,7 +5,7 @@ import Circle from "src/icons/circle.svgr";
 
 export const RadioGroup: FC<{ label?: string }> = ({ label, children }) => (
   <div className="space-y-1">
-    {label && <div>{label}</div>}
+    {label && <div className="dark:text-gray-200">{label}</div>}
     <div className="space-y-2 rounded">{children}</div>
   </div>
 );
@@ -22,8 +22,10 @@ export const Radio: FC<{ checked: boolean; onCheck: () => void }> = ({
   >
     <div
       className={classes(
-        "flex items-center gap-2.5 rounded px-3 py-3",
-        checked ? "bg-gray-200" : "bg-gray-100/80 text-gray-500",
+        "flex items-center gap-2.5 rounded px-3 py-3 dark:text-gray-200",
+        checked
+          ? "bg-gray-200 dark:bg-gray-600  "
+          : "bg-gray-100/80 text-gray-500 dark:bg-gray-700 ",
       )}
     >
       {checked && (

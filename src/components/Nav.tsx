@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { FC, useEffect, useRef, useState, VFC } from "react";
 import { StaticImg } from "./StaticImg";
-import HectorLogoLarge from "public/hector-wordmark.svg";
-import DarkHectorLogoLarge from "public/dark-hector-wordmark.svg";
+import HectorLogoLarge from "public/light-hec-logo.svg";
+import DarkHectorLogoLarge from "public/dark-hec-logo.svg";
 import WatermelonLight from "src/icons/watermelon-slice-light.svgr";
 import BookLight from "src/icons/book-light.svgr";
 import BoxBallotLight from "src/icons/box-ballot-light.svgr";
@@ -36,7 +36,7 @@ export default function TopNav() {
         <StaticImg
           src={theme === "dark" ? DarkHectorLogoLarge : HectorLogoLarge}
           alt="Hector Finance"
-          className="hidden h-6 w-auto object-contain sm:block"
+          className="hidden h-10 w-auto object-contain sm:block"
         />
         <Bars
           onClick={() => setIsNavOpen((prev) => !prev)}
@@ -133,7 +133,7 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
     <nav
       ref={ref}
       className={classes(
-        " h-fit flex-shrink-0 flex-grow-0 space-y-4 sm:block",
+        "  h-fit flex-shrink-0 flex-grow-0 space-y-4 sm:block",
         isNavOpen
           ? " fixed top-0 left-0 z-10 h-full w-3/5 border-r-4 border-r-gray-400 bg-white px-4 py-8 drop-shadow-xl dark:border-r-gray-200 dark:bg-gray-900"
           : "hidden",

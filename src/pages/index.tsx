@@ -457,34 +457,19 @@ export default function DashBoard({ results }: { results: ChainData[] }) {
             protocols.push(
               ...deBank.protocols.map((protocol) => {
                 if (protocol.id === "ftm_beefy") {
-                  protocol.portfolio_item_list.push(
-                    {
-                      detail: { supply_token_list: [] },
-                      detail_types: [""],
-                      name: "yield",
-                      pool_id: "1",
-                      proxy_detail: {},
-                      stats: {
-                        asset_usd_value: 18240000,
-                        debt_usd_value: 0,
-                        net_usd_value: 18240000,
-                      },
-                      update_at: 0,
+                  protocol.portfolio_item_list.push({
+                    detail: { supply_token_list: [] },
+                    detail_types: [""],
+                    name: "yield",
+                    pool_id: "1",
+                    proxy_detail: {},
+                    stats: {
+                      asset_usd_value: 18240000,
+                      debt_usd_value: 0,
+                      net_usd_value: 18240000,
                     },
-                    {
-                      detail: { supply_token_list: [] },
-                      detail_types: [""],
-                      name: "yield",
-                      pool_id: "1",
-                      proxy_detail: {},
-                      stats: {
-                        asset_usd_value: 4500000,
-                        debt_usd_value: 0,
-                        net_usd_value: 4500000,
-                      },
-                      update_at: 0,
-                    },
-                  );
+                    update_at: 0,
+                  });
                 }
                 return {
                   ...protocol,
@@ -1095,7 +1080,7 @@ const Graphs: VFC<{
               },
               {
                 dataKey: "bankTotal",
-                tooltipLabel: "Bank",
+                tooltipLabel: "Institute",
                 fill: "#2563eb",
                 stroke: "#60a5fa",
               },
@@ -1256,17 +1241,17 @@ const CustomTooltip = ({
 }: any) => {
   if (active) {
     return (
-      <div className="bg-white p-4">
+      <div className="rounded bg-white p-4 dark:bg-gray-700 dark:text-gray-200">
         {itemNames.map((name: string, index: number) => (
           <React.Fragment key={name + index}>
-            <div className="flex">
+            <div className="flex ">
               <div
                 style={{
                   backgroundColor: payload?.[index].fill,
                 }}
-                className=" mr-3 h-2 w-2 self-center rounded-full shadow-sm"
+                className=" mr-3 h-2 w-2 self-center rounded-full shadow-sm "
               ></div>
-              <div className="flex">
+              <div className="flex ">
                 <div className="mr-2">{name}:</div>
                 <div>
                   {" "}

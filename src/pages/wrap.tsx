@@ -67,7 +67,7 @@ export default function WrapPage() {
         <div>
           <div className="dark:text-gray-200">sHEC Price</div>
           {marketPrice && (
-            <div className="text-xl font-medium text-orange-400">
+            <div className="text-2xl font-medium text-orange-400">
               ${marketPrice?.toFixed(2)}
             </div>
           )}
@@ -76,7 +76,7 @@ export default function WrapPage() {
           <div className="dark:text-gray-200">Current Index</div>
           <div className="text-xl font-medium text-orange-400">
             {currentIndex && (
-              <div className="text-xl font-medium text-orange-400">
+              <div className="text-2xl font-medium text-orange-400">
                 {currentIndex?.toFixed(2)}
               </div>
             )}
@@ -85,7 +85,7 @@ export default function WrapPage() {
         <div>
           <div className="dark:text-gray-200">wsHEC Price</div>
           {currentIndex && marketPrice && (
-            <div className="text-xl font-medium text-orange-400">
+            <div className="text-2xl font-medium text-orange-400">
               ${marketPrice.times(currentIndex)?.toFixed(2)}
             </div>
           )}

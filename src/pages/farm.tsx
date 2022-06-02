@@ -4,13 +4,14 @@ import CheckIcon from "src/icons/circle-check-solid.svgr";
 import CloseIcon from "src/icons/xmark-solid.svgr";
 import * as Curve from "src/contracts/curve";
 import * as Staking from "src/contracts/staking";
+import * as FarmAggregator from "src/contracts/farmAggregator";
 import React, { FC, useEffect, useState, VFC } from "react";
 import { CoinInput } from "src/components/CoinInput";
 import { Radio, RadioGroup } from "src/components/Radio";
 import { Submit } from "src/components/Submit";
 import { Allowance, useAllowance } from "src/hooks/allowance";
 import { useBalance } from "src/hooks/balance";
-import { classes, sleep, useDecimalInput } from "src/util";
+import { classes, formatCurrency, sleep, useDecimalInput } from "src/util";
 import { useWallet, Wallet, WalletState } from "src/wallet";
 import { Tab, Tabs } from "src/components/Tab";
 import { PageHeader, PageSubheader } from "src/components/Header";
@@ -25,17 +26,19 @@ import {
 } from "src/constants";
 import Decimal from "decimal.js";
 import { FANTOM } from "src/chain";
+import { TorStats } from "src/contracts/farmAggregator";
 
 const FarmPage: NextPage = () => {
   return (
-    <main className="w-full space-y-20">
+    <main className="w-full space-y-5">
       <Head>
         <title>Farm — Hector Finance</title>
       </Head>
-      <div className="-mb-12">
+      <div className="">
         <PageHeader>Farm</PageHeader>
         <PageSubheader>Earn passive income by lending to Hector</PageSubheader>
       </div>
+      <FarmStats></FarmStats>
       <Pool />
       <Farm />
       <Claim />
@@ -52,6 +55,39 @@ const SectionTitle: FC = ({ children }) => (
     <div className="h-px flex-grow bg-gray-300" />
   </div>
 );
+
+const FarmStats: VFC = () => {
+  const [farmStats, setFarmStats] = useState<TorStats>();
+
+  useEffect(() => {
+    (async () => {
+      const getTorStats = await FarmAggregator.getTorStats(FANTOM);
+      if (getTorStats.isOk) {
+        setFarmStats(getTorStats.value);
+      }
+    })();
+  }, []);
+  return (
+    <div className="flex flex-wrap justify-around text-center">
+      <div>
+        <div className="dark:text-gray-200">APR</div>
+        {farmStats && (
+          <div className="text-2xl font-medium text-orange-400">
+            {farmStats.apr?.toFixed(2)}%
+          </div>
+        )}
+      </div>
+      <div>
+        <div className="dark:text-gray-200">Total Deposited</div>
+        {farmStats && (
+          <div className="text-2xl font-medium text-orange-400">
+            {formatCurrency(farmStats.tvl.toNumber(), 2)}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 // ----------------------------------------------------------------------------
 // --------------------------------  POOL  ------------------------------------
