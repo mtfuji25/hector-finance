@@ -155,13 +155,20 @@ async function getChainTotals(): Promise<ChainData[]> {
   ]);
 }
 
+let data: ChainData[];
+setInterval(async () => {
+  data = await getChainTotals();
+}, 43200);
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const data = await getChainTotals();
   if (!data) {
-    res.status(404).end();
+    await getChainTotals()
+      .then((repsonse) => (data = repsonse))
+      .catch(() => res.status(404).end());
   }
+
   res.send(data);
 }
