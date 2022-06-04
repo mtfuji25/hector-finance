@@ -218,19 +218,24 @@ function getTreasuryInfo(data: ChainData[]): DeBankData {
       protocols.push(
         ...deBank.protocols.map((protocol) => {
           if (protocol.id === "ftm_beefy") {
-            protocol.portfolio_item_list.push({
-              detail: { supply_token_list: [] },
-              detail_types: [""],
-              name: "yield",
-              pool_id: "1",
-              proxy_detail: {},
-              stats: {
-                asset_usd_value: 18240000,
-                debt_usd_value: 0,
-                net_usd_value: 18240000,
-              },
-              update_at: 0,
-            });
+            const tempData = protocol.portfolio_item_list.find(
+              (item) => item.pool_id === "temp",
+            );
+            if (!tempData) {
+              protocol.portfolio_item_list.push({
+                detail: { supply_token_list: [] },
+                detail_types: [""],
+                name: "yield",
+                pool_id: "temp",
+                proxy_detail: {},
+                stats: {
+                  asset_usd_value: 18240000,
+                  debt_usd_value: 0,
+                  net_usd_value: 18240000,
+                },
+                update_at: 0,
+              });
+            }
           }
           return {
             ...protocol,
