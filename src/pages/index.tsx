@@ -43,7 +43,13 @@ import { StaticImg } from "src/components/StaticImg";
 import { Chain, FANTOM } from "src/chain";
 import BigSpinner from "src/icons/spinner-big.svgr";
 
-interface CoinInfo {
+export interface DeBankData {
+  treasuryVal: number;
+  walletAssets: CoinInfo[];
+  protocols: ProtocolList[];
+}
+
+export interface CoinInfo {
   name: string;
   ticker: string;
   amount: number;
@@ -201,7 +207,7 @@ interface PortfolioItemList {
   pool_id: string;
 }
 
-interface ProtocolList {
+export interface ProtocolList {
   id: string;
   chain: string;
   name: string;
@@ -225,7 +231,7 @@ export default function DashBoard() {
   const [currentIndex, setCurrentIndex] = useState<Decimal>();
   const [investmentsData, setInvestmentsData] = useState<CoinInfo[]>();
   const [protocolData, setProtocolData] = useState<ProtocolList[]>();
-  const [deBankData, setDeBankData] = useState<ChainData[]>();
+  const [deBankData, setDeBankData] = useState<DeBankData>();
   const [sortedTransactions, setSortedTransactions] = useState<Transaction[]>(
     [],
   );
@@ -251,83 +257,13 @@ export default function DashBoard() {
     if (!deBankData) {
       (async () => {
         const res = await fetch("/api/debank");
-        const results: ChainData[] = await res.json();
+        const results: DeBankData = await res.json();
         setDeBankData(results);
-        let treasuryVal = 0;
-        let walletAssets: CoinInfo[] = [];
-        let protocols: ProtocolList[] = [];
-        results.forEach((deBank) => {
-          if (deBank.wallet) {
-            const coins: CoinInfo[] = deBank.wallet
-              .filter((asset) => asset.amount > 1)
-              .map((asset) => {
-                const coinAmount = asset.amount * asset.price;
-                const tokenAmount = new Decimal(asset.raw_amount).div(
-                  10 ** asset.decimals,
-                );
-                treasuryVal += coinAmount;
-                const existingCoinIndex = walletAssets.findIndex(
-                  (coin) => asset.symbol === coin.ticker,
-                );
-                if (existingCoinIndex >= 0) {
-                  walletAssets[existingCoinIndex]!.amount += asset.amount;
-                  walletAssets[existingCoinIndex]!.tokenAmount =
-                    walletAssets[existingCoinIndex]!.tokenAmount.plus(
-                      tokenAmount,
-                    );
-                  return {} as CoinInfo;
-                }
-                return {
-                  amount: coinAmount,
-                  tokenAmount: tokenAmount,
-                  decimal: asset.decimals,
-                  name: asset.name,
-                  ticker: asset.symbol,
-                  logo: asset.logo_url,
-                  chain: asset.chain,
-                };
-              });
-            walletAssets.push(...coins.filter((coin) => coin.amount));
-          }
-          if (deBank.protocols) {
-            protocols.push(
-              ...deBank.protocols.map((protocol) => {
-                if (protocol.id === "ftm_beefy") {
-                  protocol.portfolio_item_list.push({
-                    detail: { supply_token_list: [] },
-                    detail_types: [""],
-                    name: "yield",
-                    pool_id: "1",
-                    proxy_detail: {},
-                    stats: {
-                      asset_usd_value: 18240000,
-                      debt_usd_value: 0,
-                      net_usd_value: 18240000,
-                    },
-                    update_at: 0,
-                  });
-                }
-                return {
-                  ...protocol,
-                  source: deBank.source,
-                };
-              }),
-            );
-            deBank.protocols.forEach((protocol) => {
-              const totalVal = protocol.portfolio_item_list.reduce(
-                (partialSum, a) =>
-                  a.stats.asset_usd_value > 1
-                    ? partialSum + a.stats.asset_usd_value
-                    : partialSum,
-                0,
-              );
-              treasuryVal += totalVal;
-            });
-          }
-        });
-        setProtocolData(protocols);
-        setTreasuryValue(new Decimal(treasuryVal));
-        setInvestmentsData(walletAssets.sort((a, b) => b.amount - a.amount));
+        setProtocolData(results.protocols);
+        setTreasuryValue(new Decimal(results.treasuryVal));
+        setInvestmentsData(
+          results.walletAssets.sort((a, b) => b.amount - a.amount),
+        );
       })();
     }
   }, [deBankData]);
@@ -730,7 +666,7 @@ const Investments: VFC<{ metrics: CoinInfo[] }> = ({ metrics }) => {
                         <div className="name">{token.name}</div>
                         <div className="balance">
                           {token.tokenAmount
-                            ? token.tokenAmount.toFixed(2)
+                            ? (+token.tokenAmount).toFixed(2)
                             : "N/A"}
                         </div>
                       </div>

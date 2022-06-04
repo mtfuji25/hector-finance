@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { ChainData } from "..";
+import { ChainData, CoinInfo, DeBankData, ProtocolList } from "..";
 import Cors from "cors";
+import Decimal from "decimal.js";
 // Initializing the cors middleware
 const cors = Cors({
   methods: ["GET", "HEAD"],
@@ -178,6 +179,81 @@ function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: any) {
   });
 }
 
+function getTreasuryInfo(data: ChainData[]): DeBankData {
+  let treasuryVal = 0;
+  let walletAssets: CoinInfo[] = [];
+  let protocols: ProtocolList[] = [];
+  data.forEach((deBank) => {
+    if (deBank.wallet) {
+      const coins: CoinInfo[] = deBank.wallet
+        .filter((asset) => asset.amount > 1)
+        .map((asset) => {
+          const coinAmount = asset.amount * asset.price;
+          const tokenAmount = new Decimal(asset.raw_amount).div(
+            10 ** asset.decimals,
+          );
+          treasuryVal += coinAmount;
+          const existingCoinIndex = walletAssets.findIndex(
+            (coin) => asset.symbol === coin.ticker,
+          );
+          if (existingCoinIndex >= 0) {
+            walletAssets[existingCoinIndex]!.amount += asset.amount;
+            walletAssets[existingCoinIndex]!.tokenAmount =
+              walletAssets[existingCoinIndex]!.tokenAmount.plus(tokenAmount);
+            return {} as CoinInfo;
+          }
+          return {
+            amount: coinAmount,
+            tokenAmount,
+            decimal: asset.decimals,
+            name: asset.name,
+            ticker: asset.symbol,
+            logo: asset.logo_url,
+            chain: asset.chain,
+          };
+        });
+      walletAssets.push(...coins.filter((coin) => coin.amount));
+    }
+    if (deBank.protocols) {
+      protocols.push(
+        ...deBank.protocols.map((protocol) => {
+          if (protocol.id === "ftm_beefy") {
+            protocol.portfolio_item_list.push({
+              detail: { supply_token_list: [] },
+              detail_types: [""],
+              name: "yield",
+              pool_id: "1",
+              proxy_detail: {},
+              stats: {
+                asset_usd_value: 18240000,
+                debt_usd_value: 0,
+                net_usd_value: 18240000,
+              },
+              update_at: 0,
+            });
+          }
+          return {
+            ...protocol,
+            source: deBank.source,
+          };
+        }),
+      );
+      deBank.protocols.forEach((protocol) => {
+        const totalVal = protocol.portfolio_item_list.reduce(
+          (partialSum, a) =>
+            a.stats.asset_usd_value > 1
+              ? partialSum + a.stats.asset_usd_value
+              : partialSum,
+          0,
+        );
+        treasuryVal += totalVal;
+      });
+    }
+  });
+
+  return { treasuryVal, walletAssets, protocols };
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -189,6 +265,5 @@ export default async function handler(
       .then((repsonse) => (data = repsonse))
       .catch(() => res.status(404).end());
   }
-
-  res.send(data);
+  res.send(getTreasuryInfo(data));
 }
