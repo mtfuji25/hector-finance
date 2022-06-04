@@ -1,5 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ChainData } from "..";
+import Cors from "cors";
+// Initializing the cors middleware
+const cors = Cors({
+  methods: ["GET", "HEAD"],
+});
+
 const ACCESS_KEY = "6c1524d03b494820a54a07bbe6c32e85fe181fe2";
 
 const WALLET_1 = "0x4bfb33d65f4167ebe190145939479227e7bf2cb0";
@@ -160,10 +166,24 @@ setInterval(async () => {
   data = await getChainTotals();
 }, 43200);
 
+function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: any) {
+  return new Promise((resolve, reject) => {
+    fn(req, res, (result: any) => {
+      if (result instanceof Error) {
+        return reject(result);
+      }
+
+      return resolve(result);
+    });
+  });
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  // Run the middleware
+  await runMiddleware(req, res, cors);
   if (!data) {
     await getChainTotals()
       .then((repsonse) => (data = repsonse))
