@@ -7,7 +7,7 @@ const cors = Cors({
   methods: ["GET", "HEAD"],
 });
 
-const ACCESS_KEY = "6c1524d03b494820a54a07bbe6c32e85fe181fe2";
+const ACCESS_KEY = "c0d8553d17ccd2c54ddf36e8fe863a0bca47a2b9";
 
 const WALLET_1 = "0x4bfb33d65f4167ebe190145939479227e7bf2cb0";
 const TREASURY_WALLET = "0xcb54ea94191b280c296e6ff0e37c7e76ad42dc6a";
@@ -165,7 +165,7 @@ async function getChainTotals(): Promise<ChainData[]> {
 let data: ChainData[];
 setInterval(async () => {
   data = await getChainTotals();
-}, 43200);
+}, 43200000);
 
 function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: any) {
   return new Promise((resolve, reject) => {
@@ -270,5 +270,7 @@ export default async function handler(
       .then((repsonse) => (data = repsonse))
       .catch(() => res.status(404).end());
   }
-  res.send(getTreasuryInfo(data));
+  if (data) {
+    res.send(getTreasuryInfo(data));
+  }
 }
