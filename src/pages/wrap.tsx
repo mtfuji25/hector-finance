@@ -18,7 +18,8 @@ import { Transaction, TransactionModal } from "src/components/Transaction";
 export default function WrapPage() {
   const wallet = useWallet(FANTOM);
   const [view, setView] = useState<"wrap" | "unwrap">("wrap");
-  const [marketPrice, setMarketPrice] = useState<Decimal>();
+  const [sHecPrice, setsHecPrice] = useState<Decimal>();
+  const [wsHecPrice, setwsHecPrice] = useState<Decimal>();
   const [currentIndex, setCurrentIndex] = useState<Decimal>();
   const [tx, setTx] = useState<Transaction>();
   const [sHecBalance, refreshsHecBalance] = useBalance(
@@ -44,13 +45,19 @@ export default function WrapPage() {
         return;
       }
       if (price.isOk) {
-        setMarketPrice(price.value.div(FANTOM_sHEC.wei));
+        setsHecPrice(price.value.div(FANTOM_sHEC.wei));
       }
       if (index.isOk) {
         setCurrentIndex(new Decimal(index.value).div(FANTOM_HECTOR.wei));
       }
     });
   }, []);
+
+  useEffect(() => {
+    if (sHecPrice && currentIndex) {
+      setwsHecPrice(sHecPrice.times(currentIndex));
+    }
+  }, [sHecPrice, currentIndex]);
 
   return (
     <main className="w-full space-y-4">
@@ -66,9 +73,9 @@ export default function WrapPage() {
       <div className="flex flex-wrap justify-between text-center">
         <div>
           <div className="dark:text-gray-200">sHEC Price</div>
-          {marketPrice && (
+          {sHecPrice && (
             <div className="text-2xl font-medium text-orange-400">
-              ${marketPrice?.toFixed(2)}
+              ${sHecPrice?.toFixed(2)}
             </div>
           )}
         </div>
@@ -84,9 +91,9 @@ export default function WrapPage() {
         </div>
         <div>
           <div className="dark:text-gray-200">wsHEC Price</div>
-          {currentIndex && marketPrice && (
+          {wsHecPrice && (
             <div className="text-2xl font-medium text-orange-400">
-              ${marketPrice.times(currentIndex)?.toFixed(2)}
+              ${wsHecPrice?.toFixed(2)}
             </div>
           )}
         </div>
@@ -131,6 +138,30 @@ export default function WrapPage() {
           />
         )}
       </div>
+      {view === "wrap" && sHecPrice && wsHecPrice && sHec.greaterThan(0) && (
+        <div className="dark:text-gray-200">
+          Wrapping <span className="text-orange-400">{sHec.toString()}</span>{" "}
+          sHEC will result in wsHEC{" "}
+          <span className="text-orange-400">
+            {sHec
+              .times(sHecPrice)
+              .div(wsHecPrice)
+              .toFixed(FANTOM_sHEC.decimals)}
+          </span>
+        </div>
+      )}
+      {view === "unwrap" && sHecPrice && wsHecPrice && wsHec.greaterThan(0) && (
+        <div className="dark:text-gray-200">
+          Unwrapping <span className="text-orange-400">{wsHec.toString()}</span>{" "}
+          wsHEC will result in sHEC{" "}
+          <span className="text-orange-400">
+            {wsHec
+              .times(wsHecPrice)
+              .div(sHecPrice)
+              .toFixed(FANTOM_wsHEC.decimals)}
+          </span>
+        </div>
+      )}
       {wallet.connected && (
         <>
           {view === "wrap" && (
