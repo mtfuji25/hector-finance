@@ -256,7 +256,7 @@ export default function DashBoard() {
   useEffect(() => {
     if (!deBankData) {
       (async () => {
-        const res = await fetch("/api/debank");
+        const res = await fetch("https://beta.hector.finance/api/debank");
         const results: DeBankData = await res.json();
         setDeBankData(results);
         setProtocolData(results.protocols);
@@ -725,10 +725,13 @@ const Protocols: VFC<{ protocols: ProtocolList[] }> = ({ protocols }) => {
               </div>
               <hr className="w-full justify-self-center bg-gray-900 dark:bg-gray-600 "></hr>
               {protocol.portfolio_item_list.map((item, i) => (
-                <div className="space-y-2" key={item.name + i}>
+                <div className=" space-y-2" key={item.name + i}>
                   {item.detail.supply_token_list?.map((token) => (
-                    <div className="flex justify-between " key={token.id}>
-                      <div className="flex">
+                    <div
+                      className="grid grid-cols-3 items-center"
+                      key={token.id}
+                    >
+                      <div className="flex ">
                         <img
                           className="mr-2 h-8 w-auto"
                           src={token.logo_url}
@@ -736,8 +739,12 @@ const Protocols: VFC<{ protocols: ProtocolList[] }> = ({ protocols }) => {
                         />
                         <div>{token.optimized_symbol}</div>
                       </div>
-                      <div>{token.amount.toFixed(2)}</div>
-                      <div>{formatCurrency(token.price * token.amount, 2)}</div>
+                      <div className="justify-self-center">
+                        {token.amount.toFixed(2)}
+                      </div>
+                      <div className="justify-self-end">
+                        {formatCurrency(token.price * token.amount, 2)}
+                      </div>
                     </div>
                   ))}
                 </div>
