@@ -503,7 +503,7 @@ export default function DashBoard() {
   return (
     <main className="w-full space-y-6">
       <Head>
-        <title>DashBoard — Hector Finance</title>
+        <title>Dashboard — Hector Finance</title>
       </Head>
       <Tabs>
         <Tab

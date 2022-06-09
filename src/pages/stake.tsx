@@ -182,6 +182,12 @@ export default function StakePage() {
       <div className="space-y-2">
         <div className="flex">
           <div className="flex-1 text-base dark:text-gray-200">
+            Your Staked Balance
+          </div>
+          <div className="dark:text-gray-200">{sHecBalance?.toFixed(4)}</div>
+        </div>
+        <div className="flex">
+          <div className="flex-1 text-base dark:text-gray-200">
             Next Reward Amount
           </div>
           <div className="dark:text-gray-200">
