@@ -91,7 +91,6 @@ const ExchangePage: NextPage = () => {
             onChangeCoin={() => setSelectingSendToken(true)}
             balance={balance}
           />
-          <div></div>
         </div>
         <button
           className="relative mx-auto block p-2 text-gray-300 hover:text-gray-500"
@@ -743,7 +742,23 @@ function useRubicTrade(
           if (abort) {
             return;
           }
-          setTrade({ type: "Bridge", trade: crossTrade });
+          if (crossTrade.maxAmountError) {
+            setTrade({
+              type: "Error",
+              message: `Maximum sell amount is ${crossTrade.maxAmountError.toString()} ${
+                sendToken.symbol
+              }.`,
+            });
+          } else if (crossTrade.minAmountError) {
+            setTrade({
+              type: "Error",
+              message: `Minimum sell amount is ${crossTrade.minAmountError.toString()} ${
+                sendToken.symbol
+              }.`,
+            });
+          } else if (crossTrade.trade) {
+            setTrade({ type: "Bridge", trade: crossTrade.trade });
+          }
         }
       } catch (e) {
         if (abort) {
