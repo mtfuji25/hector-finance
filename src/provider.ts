@@ -133,7 +133,7 @@ export async function addEthereumChain(
       params: [chain],
     })
     .then(
-      (value) => ok(z.null().parse(value)),
+      (_) => ok(null),
       (e) => err(ProviderRpcError.parse(e)),
     );
 }
