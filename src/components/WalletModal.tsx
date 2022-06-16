@@ -46,10 +46,10 @@ export const WalletModal: VFC<{
         {wallets.map((wallet) => (
           <button
             onClick={() => onConnect(wallet)}
-            className="flex w-full items-center rounded bg-gray-100 p-4 px-5 hover:bg-gray-200"
+            className="flex w-full items-center rounded bg-gray-100 p-4 px-5 hover:bg-gray-200 dark:bg-gray-600 dark:text-gray-200 hover:dark:bg-gray-500"
             key={wallet.name}
           >
-            <div className="flex-shrink-0 flex-grow text-left">
+            <div className="flex-shrink-0 flex-grow text-left dark:text-gray-200">
               {wallet.name}
             </div>
             <StaticImg

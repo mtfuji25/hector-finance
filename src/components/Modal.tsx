@@ -35,7 +35,7 @@ export const Modal: FC<{ className?: string; onClose?: () => void }> = ({
   }, [onClose]);
 
   return (
-    <div className="fixed top-0 left-0 right-0 bottom-0 z-10 m-0 bg-gray-900/50 p-4 backdrop-blur-sm">
+    <div className="fixed top-0 left-0 right-0 bottom-0 z-10 m-0 bg-gray-900/50 p-4 backdrop-blur-sm dark:text-gray-200">
       <div
         ref={ref}
         className={classes(
@@ -51,7 +51,7 @@ export const Modal: FC<{ className?: string; onClose?: () => void }> = ({
 
 export const ModalCloseButton: FC<{ onClick: () => void }> = ({ onClick }) => (
   <button
-    className="absolute top-0 right-0 block p-4 text-gray-300 hover:text-gray-600"
+    className="absolute top-0 right-0 block p-4 text-gray-300 hover:text-gray-600 dark:text-gray-500 hover:dark:text-gray-200"
     title="Close"
     onClick={onClick}
   >
