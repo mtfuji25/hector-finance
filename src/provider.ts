@@ -287,38 +287,88 @@ export type WalletProvider = {
   ) => void;
 };
 
+/** Sanitize an unsafe provider and proxy it to avoid problems
+ * caused by the numerous wallets that refuse to follow EIP1193.
+ *
+ * Returns undefined if the provider is unsafe to use.
+ */
+function sanitizeUnsafeProvider(
+  provider: UnsafeEthereumProvider,
+): WalletProvider | undefined {
+  // If any of the required properties don't exist, the provider is invalid.
+  if (
+    !provider.isConnected ||
+    !provider.request ||
+    !provider.on ||
+    !provider.removeListener
+  ) {
+    return;
+  }
+
+  const isConnected = provider.isConnected.bind(provider);
+  const on = provider.on.bind(provider);
+  const removeListener = provider.removeListener.bind(provider);
+  const request = provider.request.bind(provider);
+
+  return {
+    isConnected,
+    on,
+    removeListener,
+    request: async (args) => {
+      try {
+        return await request(args);
+      } catch (e: any) {
+        // Some wallets stringify the body of the error and put it in `message`.
+        // So for every error, we'll try to parse the message and see if it
+        // contains a valid error.
+        const message = e?.message;
+        const code = e?.code;
+
+        if (typeof code === "number" && typeof message === "string") {
+          // This is a valid error and should be returned as-is.
+          throw e;
+        }
+
+        if (typeof message === "string") {
+          try {
+            const parsedError = JSON.parse(e?.message);
+            if (typeof parsedError?.code === "number") {
+              throw message;
+            }
+          } catch {}
+        }
+
+        console.error("Unexpected error:", e);
+        throw e;
+      }
+    },
+  };
+}
+
+// File-local override of `Window` which includes the Web3 declaration.
+declare const window: { ethereum?: UnsafeEthereumProvider } & Window;
+
+export type UnsafeEthereumProvider = Partial<WalletProvider>;
+
 /** Get the Ethereum provider (most likely MetaMask). */
 export async function getProvider(): Promise<WalletProvider | undefined> {
   // There's a chance that MetaMask (or similar extension) hasn't loaded at the
   // time getProvider is called. So, we'll try multiple times over a short duration
   // to get the provider.
-  let attempts = 3;
+  let attempts = 10;
   while (true) {
-    if (window.ethereum != undefined) {
-      // Coinbase being the trash that it is, will overwrite
-      // the STANDARD window.ethereum object with a NONSTANDARD
-      // object, throwing exceptions when attempting to use
-      // EIP1193 functions without selecting which wallet to use.
-      //
-      // So, we'll use a really bad heuristic to detect that
-      // Coinbase fucked everything up, and abort if so.
-      const isOverriddenByCoinbase = window.ethereum.isConnected == undefined;
-
-      if (!isOverriddenByCoinbase) {
-        // Good to go. (probably)
-        return window.ethereum;
-      }
+    const provider = window.ethereum && sanitizeUnsafeProvider(window.ethereum);
+    if (provider) {
+      return provider;
     }
+
     attempts -= 1;
     if (attempts === 0) {
       return undefined;
     }
-    await sleep(50);
+    await sleep(30);
   }
 }
-
-// File-local override of `Window` which includes the Web3 declaration.
-declare const window: { ethereum?: WalletProvider } & Window;
 
 interface ProviderEventMap {
   /**
