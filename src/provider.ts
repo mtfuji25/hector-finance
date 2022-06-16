@@ -285,9 +285,6 @@ export type WalletProvider = {
     eventName: K,
     listener: ProviderEventMap[K],
   ) => void;
-
-  /** Property set by MetaMask. Non-standard. */
-  isMetaMask?: boolean;
 };
 
 /** Get the Ethereum provider (most likely MetaMask). */
@@ -298,7 +295,19 @@ export async function getProvider(): Promise<WalletProvider | undefined> {
   let attempts = 3;
   while (true) {
     if (window.ethereum != undefined) {
-      return window.ethereum;
+      // Coinbase being the trash that it is, will overwrite
+      // the STANDARD window.ethereum object with a NONSTANDARD
+      // object, throwing exceptions when attempting to use
+      // EIP1193 functions without selecting which wallet to use.
+      //
+      // So, we'll use a really bad heuristic to detect that
+      // Coinbase fucked everything up, and abort if so.
+      const isOverriddenByCoinbase = window.ethereum.isConnected == undefined;
+
+      if (!isOverriddenByCoinbase) {
+        // Good to go. (probably)
+        return window.ethereum;
+      }
     }
     attempts -= 1;
     if (attempts === 0) {

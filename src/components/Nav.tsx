@@ -25,9 +25,10 @@ import Moon from "src/icons/moon.svgr";
 import { useWallet, WalletState } from "src/wallet";
 import { classes, ellipsisBetween } from "src/util";
 import { useDarkMode } from "src/hooks/theme";
+import { WalletModal } from "./WalletModal";
 
 export default function TopNav() {
-  const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
+  const [isNavOpen, setIsNavOpen] = useState(false);
   const [theme, themeToggler] = useDarkMode();
   return (
     <>
@@ -65,24 +66,29 @@ export default function TopNav() {
 
 const Wallet: VFC = () => {
   const wallet = useWallet();
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
   return (
     <>
-      {wallet.state === WalletState.NoWallet && (
-        <a
-          target="_blank"
-          rel="noreferrer"
-          href="https://metamask.io/download/"
-          title="MetaMask download"
-          className="flex items-center gap-1 rounded bg-orange-400 px-4 py-2 text-white dark:text-gray-200"
-        >
-          Install MetaMask
-          <ArrowUpRightFromSquareRegular className="h-3 w-3 opacity-50" />
-        </a>
+      {isWalletModalOpen && (
+        <WalletModal
+          onClose={() => setIsWalletModalOpen(false)}
+          onConnect={({ download }) => {
+            setIsWalletModalOpen(false);
+            switch (wallet.state) {
+              case WalletState.NoWallet:
+                window.open(download, "_blank");
+                break;
+              case WalletState.Locked:
+                wallet.connect();
+                break;
+            }
+          }}
+        />
       )}
-      {wallet.state === WalletState.Locked && (
+      {!wallet.connected && (
         <button
           className="rounded bg-orange-400 px-6 py-2 font-medium text-white"
-          onClick={() => wallet.connect()}
+          onClick={() => setIsWalletModalOpen(true)}
         >
           Connect
         </button>
