@@ -27,6 +27,7 @@ export function useBalance(
   useEffect(() => {
     return asyncEffect(async (abort) => {
       if (!wallet.connected) {
+        setBalance(new Decimal(0));
         return;
       }
 
