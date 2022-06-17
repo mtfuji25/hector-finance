@@ -75,7 +75,7 @@ const Wallet: VFC = () => {
           onConnect={({ download }) => {
             setIsWalletModalOpen(false);
             switch (wallet.state) {
-              case WalletState.NoWallet:
+              case WalletState.Missing:
                 window.open(download, "_blank");
                 break;
               case WalletState.Locked:

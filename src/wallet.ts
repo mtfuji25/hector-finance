@@ -5,69 +5,30 @@ import {
   Dispatch,
   SetStateAction,
   useRef,
+  useContext,
 } from "react";
 import { Chain } from "./chain";
 import {
-  getAccount,
-  getChain,
   getAccountsPermission,
   WalletProvider,
   changeAccounts,
   ProviderRpcError,
   addEthereumChain,
-  getProvider,
+  ProviderContext,
 } from "./provider";
 import { hexString, Result } from "./util";
 
 export function useWallet(txChain?: Chain): Wallet {
-  const provider = useProvider();
-  const [address, setAddress] = useState<string>();
-  const [chain, setChain] = useState<number>();
-
-  useEffect(() => {
-    if (!provider) {
-      return;
-    }
-
-    getAccount(provider).then((result) => {
-      if (!result.isOk) {
-        return;
-      }
-      setAddress(result.value[0]);
-    });
-
-    getChain(provider).then((result) => {
-      if (!result.isOk) {
-        return;
-      }
-      setChain(parseInt(result.value, 16));
-    });
-
-    const onChainChanged = (chainId: string) => {
-      setChain(parseInt(chainId, 16));
-    };
-
-    const onAccountsChanged = (accounts: string[]) => {
-      setAddress(accounts[0]);
-    };
-
-    provider.on("chainChanged", onChainChanged);
-    provider.on("accountsChanged", onAccountsChanged);
-    return () => {
-      provider.removeListener("chainChanged", onChainChanged);
-      provider.removeListener("accountsChanged", onAccountsChanged);
-    };
-  }, [provider]);
-
+  const { provider, address, chain } = useContext(ProviderContext);
   return useMemo(() => {
     if (!provider) {
       return {
-        state: WalletState.NoWallet,
+        state: WalletState.Missing,
         connected: false,
       };
     }
 
-    if (!chain || !address) {
+    if (chain == undefined || !address) {
       return {
         state: WalletState.Locked,
         connected: false,
@@ -76,7 +37,6 @@ export function useWallet(txChain?: Chain): Wallet {
           if (!accounts.isOk) {
             return;
           }
-          setAddress(accounts.value[0]);
         },
       };
     }
@@ -120,14 +80,6 @@ export function useWallet(txChain?: Chain): Wallet {
   }, [txChain, provider, address, chain]);
 }
 
-function useProvider(): WalletProvider | undefined {
-  const [provider, setProvider] = useState<WalletProvider>();
-  useEffect(() => {
-    getProvider().then(setProvider);
-  }, []);
-  return provider;
-}
-
 /**
  * Wrapper for `useState` that resets to the given `initialState` whenever the wallet changes.
  *
@@ -146,11 +98,11 @@ export function useWalletState<S>(
   return useMemo(() => [state, setState], [state, setState]);
 }
 
-export type Wallet = MissingWallet | LockedWallet | ReadWallet | WriteWallet;
+export type Wallet = NoWallet | LockedWallet | ReadWallet | WriteWallet;
 export type ConnectedWallet = ReadWallet | WriteWallet;
 
-export type MissingWallet = {
-  state: WalletState.NoWallet;
+export type NoWallet = {
+  state: WalletState.Missing;
   connected: false;
 };
 
@@ -179,7 +131,7 @@ export type WriteWallet = {
 };
 
 export enum WalletState {
-  NoWallet,
+  Missing,
   Locked,
   CanRead,
   CanWrite,

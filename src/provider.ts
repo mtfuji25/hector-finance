@@ -2,6 +2,7 @@ import { z } from "zod";
 import { ok, err, Result, sleep } from "src/util";
 import { RpcErrorCode } from "./rpc";
 import { Chain, request as chainRequest } from "./chain";
+import { createContext, useEffect, useState } from "react";
 
 /** Returns the balance of an address in wei */
 export async function getBalanceAtBlock(
@@ -436,3 +437,64 @@ const ProviderRpcError = z.object({
 });
 
 export type ProviderRpcError = z.infer<typeof ProviderRpcError>;
+
+// ============================================================================
+//
+// React
+//
+// ============================================================================
+
+type ProviderContextProps = {
+  provider?: WalletProvider;
+  address?: string;
+  chain?: number;
+};
+
+export const ProviderContext = createContext<ProviderContextProps>({});
+
+export function useProvider(): ProviderContextProps {
+  const [provider, setProvider] = useState<WalletProvider>();
+  const [address, setAddress] = useState<string>();
+  const [chain, setChain] = useState<number>();
+
+  useEffect(() => {
+    getProvider().then(setProvider);
+  }, []);
+
+  useEffect(() => {
+    if (!provider) {
+      return;
+    }
+
+    getAccount(provider).then((result) => {
+      if (!result.isOk) {
+        return;
+      }
+      setAddress(result.value[0]);
+    });
+
+    getChain(provider).then((result) => {
+      if (!result.isOk) {
+        return;
+      }
+      setChain(parseInt(result.value, 16));
+    });
+
+    const onChainChanged = (chainId: string) => {
+      setChain(parseInt(chainId, 16));
+    };
+
+    const onAccountsChanged = (accounts: string[]) => {
+      setAddress(accounts[0]);
+    };
+
+    provider.on("chainChanged", onChainChanged);
+    provider.on("accountsChanged", onAccountsChanged);
+    return () => {
+      provider.removeListener("chainChanged", onChainChanged);
+      provider.removeListener("accountsChanged", onAccountsChanged);
+    };
+  }, [provider]);
+
+  return { provider, address, chain };
+}
