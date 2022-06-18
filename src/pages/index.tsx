@@ -14,6 +14,7 @@ import {
 import { Tab, Tabs } from "src/components/Tab";
 import {
   ETH_GRAPH_URL,
+  FANTOM_ADDRESS,
   FANTOM_DAI,
   FANTOM_HECTOR,
   FANTOM_USDC,
@@ -383,7 +384,7 @@ export default function DashBoard() {
 
   useEffect(() => {
     const getHecBurnTransactions = fetch(
-      "https://api.ftmscan.com/api?module=account&action=tokentx&address=0xD3Ea3b2313d24e0f2302b21f04D0F784CDb6389B&startblock=0&endblock=99999999&sort=desc&apikey=HEB98UTKTRQYD7R4UG383BNGJZ82B4M1E8",
+      `https://api.ftmscan.com/api?module=account&action=tokentx&address=${FANTOM_ADDRESS.HEC_BURN_ALLOCATOR}&startblock=0&endblock=99999999&sort=desc&apikey=HEB98UTKTRQYD7R4UG383BNGJZ82B4M1E8`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -391,7 +392,15 @@ export default function DashBoard() {
       },
     ).then((res) => res.json());
     const getOldHecBurnTransactions = fetch(
-      "https://api.ftmscan.com/api?module=account&action=tokentx&address=0x3fF53A304d3672693e90bb880653925db6e63C51&startblock=0&endblock=99999999&sort=desc&apikey=HEB98UTKTRQYD7R4UG383BNGJZ82B4M1E8",
+      `https://api.ftmscan.com/api?module=account&action=tokentx&address=${FANTOM_ADDRESS.OLD_HEC_BURN_ALLOCATOR}&startblock=0&endblock=99999999&sort=desc&apikey=HEB98UTKTRQYD7R4UG383BNGJZ82B4M1E8`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    ).then((res) => res.json());
+    const getBuybackTransactions = fetch(
+      `https://api.ftmscan.com/api?module=account&action=tokentx&address=${FANTOM_ADDRESS.DAO_WALLET}&startblock=40511244&endblock=99999999&sort=desc&apikey=HEB98UTKTRQYD7R4UG383BNGJZ82B4M1E8`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -399,18 +408,24 @@ export default function DashBoard() {
       },
     ).then((res) => res.json());
     async function getTransactionData() {
-      const [transactions, oldTransactions] = await Promise.all([
-        getHecBurnTransactions,
-        getOldHecBurnTransactions,
-      ]);
+      const [transactions, oldTransactions, buyBackTransactions] =
+        await Promise.all([
+          getHecBurnTransactions,
+          getOldHecBurnTransactions,
+          getBuybackTransactions,
+        ]);
       const hecburnData: FTMScanTransaction[] = transactions.result;
       const oldHecburnData: FTMScanTransaction[] = oldTransactions.result;
+      const daoBuybackData: FTMScanTransaction[] = buyBackTransactions.result;
 
       const uniqueBlocks = Array.from(
         new Set(hecburnData.map((transactions) => transactions.blockNumber)),
       );
       const oldUniqueBlocks = Array.from(
         new Set(oldHecburnData.map((transactions) => transactions.blockNumber)),
+      );
+      const daoUniqueBlocks = Array.from(
+        new Set(daoBuybackData.map((transactions) => transactions.blockNumber)),
       );
       const groupedData = uniqueBlocks.map((blockNumber) =>
         hecburnData.filter(
@@ -422,7 +437,21 @@ export default function DashBoard() {
           (transaction) => transaction.blockNumber === blockNumber,
         ),
       );
-      formatFTMScanData([...groupedData, ...oldGroupedData]);
+      const groupedBuybackData = daoUniqueBlocks
+        .map((blockNumber) =>
+          daoBuybackData.filter(
+            (transaction) =>
+              transaction.blockNumber === blockNumber &&
+              (transaction?.tokenSymbol === "HEC" ||
+                transaction?.tokenSymbol === "DAI"),
+          ),
+        )
+        .filter((group) => group.length === 2);
+      formatFTMScanData([
+        ...groupedData,
+        ...oldGroupedData,
+        ...groupedBuybackData,
+      ]);
     }
 
     const getTokens = (data: FTMScanTransaction[]): TokenDetail[] => {
@@ -472,7 +501,7 @@ export default function DashBoard() {
     const formatFTMScanData = (groupedData: FTMScanTransaction[][]) => {
       const ftmScantransactions: Transaction[] = groupedData.map((trans, i) => {
         return {
-          title: "Buyback and Burn",
+          title: trans.length > 2 ? "Buyback and Burn" : "Buyback",
           type: "Buyback-Burn",
           investments: {
             tokenDetails: getTokens(groupedData[i]!),
