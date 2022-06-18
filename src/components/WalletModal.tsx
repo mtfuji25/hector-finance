@@ -101,7 +101,7 @@ export const WalletProtocolModal: VFC<{
         <ProtocolOption
           onClick={() => onSelect(ProviderProtocol.WalletConnect)}
         >
-          <div className="text-t font-bold">WalletConnect Wallet</div>
+          <div className="text-t font-bold">WalletConnect</div>
           <div>
             Connect to your wallet over the internet. WalletConnect offers
             limited functionality. Use only when necessary.
