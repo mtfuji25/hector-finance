@@ -1,26 +1,26 @@
 import {
-  useState,
-  useEffect,
-  useMemo,
   Dispatch,
   SetStateAction,
+  useEffect,
+  useMemo,
   useRef,
-  useContext,
+  useState,
 } from "react";
 import { Chain } from "./chain";
+import { useProvider } from "./components/Provider";
 import {
-  getAccountsPermission,
-  WalletProvider,
-  changeAccounts,
-  ProviderRpcError,
   addEthereumChain,
-  ProviderContext,
+  changeAccounts,
+  getAccountsPermission,
+  ProviderRpcError,
+  WalletProvider,
 } from "./provider";
 import { hexString, Result } from "./util";
 
 export function useWallet(txChain?: Chain): Wallet {
-  const { provider, address, chain } = useContext(ProviderContext);
+  const _provider = useProvider();
   return useMemo(() => {
+    const { provider, address, chain } = _provider;
     if (!provider) {
       return {
         state: WalletState.Missing,
@@ -33,10 +33,7 @@ export function useWallet(txChain?: Chain): Wallet {
         state: WalletState.Locked,
         connected: false,
         connect: async () => {
-          const accounts = await getAccountsPermission(provider);
-          if (!accounts.isOk) {
-            return;
-          }
+          await getAccountsPermission(provider);
         },
       };
     }
@@ -77,7 +74,7 @@ export function useWallet(txChain?: Chain): Wallet {
         await changeAccounts(provider);
       },
     };
-  }, [txChain, provider, address, chain]);
+  }, [txChain, _provider]);
 }
 
 /**

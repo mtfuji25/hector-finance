@@ -1,35 +1,39 @@
 import Link from "next/link";
-import { FC, useEffect, useRef, useState, VFC } from "react";
-import { StaticImg } from "./StaticImg";
-import HectorLogoLarge from "public/light-hec-logo.svg";
 import DarkHectorLogoLarge from "public/dark-hec-logo.svg";
-import WatermelonLight from "src/icons/watermelon-slice-light.svgr";
+import HectorLogoLarge from "public/light-hec-logo.svg";
+import { FC, useEffect, useRef, useState, VFC } from "react";
+import { useTheme } from "src/hooks/theme";
+import ArrowUpRightFromSquareRegular from "src/icons/arrow-up-right-from-square-regular.svgr";
+import Bars from "src/icons/bars.svgr";
 import BookLight from "src/icons/book-light.svgr";
 import BoxBallotLight from "src/icons/box-ballot-light.svgr";
 import BoxDollarLight from "src/icons/box-dollar-light.svgr";
 import BuildingColumnsLight from "src/icons/building-columns-light.svgr";
+import Discord from "src/icons/discord-brands.svgr";
+import Github from "src/icons/github-brands.svgr";
+import LayersRegular from "src/icons/layers.svgr";
+import Medium from "src/icons/medium-brands.svgr";
 import ScaleBalancedLight from "src/icons/scale-balanced-light.svgr";
 import SealLight from "src/icons/seal-light.svgr";
 import SeedlingLight from "src/icons/seedling-light.svgr";
 import SquarePollVerticalLight from "src/icons/square-poll-vertical-light.svgr";
-import Discord from "src/icons/discord-brands.svgr";
-import Github from "src/icons/github-brands.svgr";
-import Medium from "src/icons/medium-brands.svgr";
+import SunLight from "src/icons/sun-light.svgr";
 import Telegram from "src/icons/telegram-brands.svgr";
-import Twitter from "src/icons/twitter-brands.svgr";
 import Tor from "src/icons/tor.svgr";
-import ArrowUpRightFromSquareRegular from "src/icons/arrow-up-right-from-square-regular.svgr";
+import Twitter from "src/icons/twitter-brands.svgr";
 import WalletRegular from "src/icons/wallet-regular.svgr";
-import Bars from "src/icons/bars.svgr";
-import Moon from "src/icons/moon.svgr";
-import { useWallet, WalletState } from "src/wallet";
+import WatermelonLight from "src/icons/watermelon-slice-light.svgr";
+import { getProvider, WalletProvider } from "src/provider";
 import { classes, ellipsisBetween } from "src/util";
-import { useDarkMode } from "src/hooks/theme";
-import { WalletModal } from "./WalletModal";
+import { useWallet, WalletState } from "src/wallet";
+import * as WalletConnect from "src/walletconnect";
+import { ProviderProtocol, setPreferredWallet, useProvider } from "./Provider";
+import { StaticImg } from "./StaticImg";
+import { WalletProtocolModal } from "./WalletModal";
 
 export default function TopNav() {
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const [theme, themeToggler] = useDarkMode();
+  const [theme] = useTheme();
   return (
     <>
       <div className="flex flex-row items-center justify-between px-8 py-6">
@@ -49,15 +53,7 @@ export default function TopNav() {
             isNavOpen={isNavOpen}
           />
         )}
-
-        {/* Controls */}
-        <div className="flex items-center">
-          <Moon
-            onClick={() => themeToggler()}
-            className="mr-5  h-5 cursor-pointer rounded text-gray-500 dark:text-gray-200 "
-          />
-          <Wallet />
-        </div>
+        <Wallet />
       </div>
       <hr />
     </>
@@ -65,43 +61,81 @@ export default function TopNav() {
 }
 
 const Wallet: VFC = () => {
+  const { setProvider } = useProvider();
   const wallet = useWallet();
-  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+  const [walletModal, showWalletModal] = useState(false);
+  const [autoConnect, setAutoConnect] = useState(false);
+
+  useEffect(() => {
+    if (wallet.state === WalletState.Locked && autoConnect) {
+      setAutoConnect(false);
+      wallet.connect();
+    }
+  }, [wallet, autoConnect]);
+
   return (
     <>
-      {isWalletModalOpen && (
-        <WalletModal
-          onClose={() => setIsWalletModalOpen(false)}
-          onConnect={({ download }) => {
-            setIsWalletModalOpen(false);
-            switch (wallet.state) {
-              case WalletState.Missing:
-                window.open(download, "_blank");
+      {walletModal && (
+        <WalletProtocolModal
+          onClose={() => showWalletModal(false)}
+          onSelect={async (protocol) => {
+            showWalletModal(false);
+
+            let newProvider: WalletProvider | undefined;
+            switch (protocol) {
+              case ProviderProtocol.Eip1193:
+                newProvider = await getProvider();
                 break;
-              case WalletState.Locked:
-                wallet.connect();
+              case ProviderProtocol.WalletConnect:
+                newProvider = await WalletConnect.getProvider();
                 break;
+            }
+
+            if (newProvider) {
+              setAutoConnect(true);
+              setProvider(newProvider);
+              setPreferredWallet(protocol);
             }
           }}
         />
       )}
-      {!wallet.connected && (
-        <button
-          className="rounded bg-orange-400 px-6 py-2 font-medium text-white"
-          onClick={() => setIsWalletModalOpen(true)}
-        >
-          Connect
-        </button>
-      )}
-      {wallet.connected && (
-        <button
-          onClick={() => wallet.changeAccounts()}
-          className="flex items-center gap-2 rounded bg-gray-100 px-4 py-2 text-gray-500 dark:bg-gray-700 dark:text-gray-200  dark:hover:text-gray-100"
-        >
-          <WalletRegular className="h-4 w-4" />
-          {ellipsisBetween(4, 4, wallet.address.slice(2))}
-        </button>
-      )}
+      <div className="flex items-center gap-3">
+        {wallet.state === WalletState.Missing && (
+          <button
+            className="rounded bg-orange-400 px-6 py-2 font-medium text-white"
+            onClick={() => showWalletModal(true)}
+          >
+            Choose Wallet
+          </button>
+        )}
+        {wallet.state === WalletState.Locked && (
+          <button
+            className="h-10 rounded bg-orange-400 px-6 font-medium text-white"
+            onClick={() => wallet.connect()}
+          >
+            Connect
+          </button>
+        )}
+        {wallet.connected && (
+          <button
+            className="flex h-10 items-center gap-2 rounded bg-gray-100 px-4 text-gray-500 dark:bg-gray-700 dark:text-gray-200  dark:hover:text-gray-100"
+            onClick={() => wallet.changeAccounts()}
+            title="Change account"
+          >
+            <WalletRegular className="h-4 w-4" />
+            {ellipsisBetween(4, 4, wallet.address.slice(2))}
+          </button>
+        )}
+        {wallet.state !== WalletState.Missing && (
+          <button
+            onClick={() => showWalletModal(true)}
+            className="flex h-10 items-center gap-2 rounded bg-gray-100 px-4 text-gray-500 dark:bg-gray-700 dark:text-gray-200  dark:hover:text-gray-100"
+            title="Change wallet"
+          >
+            <LayersRegular className="h-4 w-4" />
+          </button>
+        )}
+      </div>
     </>
   );
 };
@@ -111,7 +145,7 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
   closeMenu,
 }) => {
   const ref = useRef<HTMLElement>(null);
-  const [theme, themeToggler] = useDarkMode();
+  const [theme, toggleTheme] = useTheme();
 
   useEffect(() => {
     const checkIfClickedOutside = (e: MouseEvent) => {
@@ -203,6 +237,16 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
         </ExternalNav>
       </div>
       <Divider />
+      <div>
+        <button
+          onClick={() => toggleTheme()}
+          className="group -mx-3 box-content flex w-full items-center gap-2 rounded px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-gray-100"
+        >
+          <SunLight height={16} width={16} />
+          Toggle theme
+        </button>
+      </div>
+      <Divider />
       <div className="-mx-3 flex items-center justify-center">
         <SocialNav href="https://discord.gg/hector" title="Discord">
           <Discord width={16} height={16} />
@@ -255,7 +299,7 @@ const ExternalNav: FC<{ href: string }> = ({ children, href }) => (
     <ArrowUpRightFromSquareRegular
       width={12}
       height={12}
-      className="text-gray-400 group-hover:text-gray-500"
+      className="text-gray-300 group-hover:text-gray-500"
     />
   </a>
 );

@@ -1,8 +1,7 @@
+import { err, ok, Result, sleep } from "src/util";
 import { z } from "zod";
-import { ok, err, Result, sleep } from "src/util";
-import { RpcErrorCode } from "./rpc";
 import { Chain, request as chainRequest } from "./chain";
-import { createContext, useEffect, useState } from "react";
+import { RpcErrorCode } from "./rpc";
 
 /** Returns the balance of an address in wei */
 export async function getBalanceAtBlock(
@@ -87,6 +86,13 @@ export async function getAccountsPermission(
 ): Promise<Result<string[], ProviderRpcError>> {
   return provider.request({ method: "eth_requestAccounts" }).then(
     (_addresses) => {
+      if (_addresses === "0x") {
+        // WalletConnect will return "0x" which isn't in the spec.
+        // So we have to check for it explicity because WalletConnect is dogshit.
+        // For reference: https://eips.ethereum.org/EIPS/eip-1102#eth_requestaccounts
+        return ok([]);
+      }
+
       // eth_requestAccounts is currently defined to return a single element array of strings.
       // It should be no more and no less than a single element.
       const addresses = z.array(z.string()).max(1).parse(_addresses);
@@ -291,7 +297,7 @@ export type WalletProvider = {
 /** Sanitize an unsafe provider and proxy it to avoid problems
  * caused by the numerous wallets that refuse to follow EIP1193.
  *
- * Returns undefined if the provider is unsafe to use.
+ * Returns `undefined` if the provider is unsafe to use.
  */
 function sanitizeUnsafeProvider(
   provider: UnsafeEthereumProvider,
@@ -429,72 +435,18 @@ export enum ProviderErrorCode {
   ChainDisconnected = 4901,
 }
 
+export enum WalletConnectErrorCode {
+  Error = 505050505,
+}
+
 const ProviderRpcError = z.object({
   message: z.string(),
-  code: z.nativeEnum(ProviderErrorCode).or(z.nativeEnum(RpcErrorCode)),
+  code: z
+    .nativeEnum(ProviderErrorCode)
+    .or(z.nativeEnum(RpcErrorCode))
+    .or(z.nativeEnum(WalletConnectErrorCode)),
   data: z.optional(z.unknown()),
   stack: z.optional(z.string()),
 });
 
 export type ProviderRpcError = z.infer<typeof ProviderRpcError>;
-
-// ============================================================================
-//
-// React
-//
-// ============================================================================
-
-type ProviderContextProps = {
-  provider?: WalletProvider;
-  address?: string;
-  chain?: number;
-};
-
-export const ProviderContext = createContext<ProviderContextProps>({});
-
-export function useProvider(): ProviderContextProps {
-  const [provider, setProvider] = useState<WalletProvider>();
-  const [address, setAddress] = useState<string>();
-  const [chain, setChain] = useState<number>();
-
-  useEffect(() => {
-    getProvider().then(setProvider);
-  }, []);
-
-  useEffect(() => {
-    if (!provider) {
-      return;
-    }
-
-    getAccount(provider).then((result) => {
-      if (!result.isOk) {
-        return;
-      }
-      setAddress(result.value[0]);
-    });
-
-    getChain(provider).then((result) => {
-      if (!result.isOk) {
-        return;
-      }
-      setChain(parseInt(result.value, 16));
-    });
-
-    const onChainChanged = (chainId: string) => {
-      setChain(parseInt(chainId, 16));
-    };
-
-    const onAccountsChanged = (accounts: string[]) => {
-      setAddress(accounts[0]);
-    };
-
-    provider.on("chainChanged", onChainChanged);
-    provider.on("accountsChanged", onAccountsChanged);
-    return () => {
-      provider.removeListener("chainChanged", onChainChanged);
-      provider.removeListener("accountsChanged", onAccountsChanged);
-    };
-  }, [provider]);
-
-  return { provider, address, chain };
-}
