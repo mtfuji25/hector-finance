@@ -74,10 +74,10 @@ export const WalletProtocolModal: VFC<{
   onClose: () => void;
   onSelect: (protocol: ProviderProtocol) => void;
 }> = ({ onClose, onSelect }) => (
-  <Modal onClose={onClose} className="max-w-sm bg-white">
-    <div className="space-y-5 p-5">
+  <Modal onClose={onClose} className="max-w-md bg-white">
+    <div className="space-y-5 p-6">
       <div className="text-lg">Connect a wallet</div>
-      <div className="space-y-5">
+      <div className="space-y-6">
         <ProtocolOption onClick={() => onSelect(ProviderProtocol.Eip1193)}>
           <div>
             <span className="text-t font-bold">Ethereum Wallet</span>{" "}
@@ -125,7 +125,7 @@ export const WalletProtocolModal: VFC<{
 
 const ProtocolOption: FC<{ onClick: () => void }> = ({ children, onClick }) => (
   <button
-    className="block w-full space-y-3.5 rounded bg-gray-100 p-6 text-left hover:bg-gray-200 dark:bg-gray-600 dark:hover:bg-gray-500"
+    className="block w-full space-y-4 rounded bg-gray-100 p-6 text-left hover:bg-gray-200 dark:bg-gray-600 dark:hover:bg-gray-500"
     onClick={onClick}
   >
     {children}
