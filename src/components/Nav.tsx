@@ -92,8 +92,8 @@ const Wallet: VFC = () => {
             }
 
             if (newProvider) {
-              setAutoConnect(true);
               setProvider(newProvider);
+              setAutoConnect(true);
               setPreferredWallet(protocol);
             }
           }}

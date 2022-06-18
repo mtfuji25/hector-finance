@@ -1,4 +1,4 @@
-import { FC, Provider, VFC } from "react";
+import { FC, VFC } from "react";
 import { Modal, ModalCloseButton } from "./Modal";
 import { StaticImageData } from "next/image";
 import BitkeepLogo from "public/wallet/bitkeep.svg";
