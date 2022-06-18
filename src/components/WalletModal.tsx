@@ -76,7 +76,7 @@ export const WalletProtocolModal: VFC<{
 }> = ({ onClose, onSelect }) => (
   <Modal onClose={onClose} className="max-w-md bg-white">
     <div className="space-y-5 p-6">
-      <div className="text-lg">Connect a wallet</div>
+      <div className="text-lg">Select protocol</div>
       <div className="space-y-6">
         <ProtocolOption onClick={() => onSelect(ProviderProtocol.Eip1193)}>
           <div>
