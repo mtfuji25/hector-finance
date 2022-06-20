@@ -257,7 +257,7 @@ export default function DashBoard() {
   useEffect(() => {
     if (!deBankData) {
       (async () => {
-        const res = await fetch("https://beta.hector.finance/api/debank");
+        const res = await fetch("https://app.hector.finance/api/debank");
         const results: DeBankData = await res.json();
         setDeBankData(results);
         setProtocolData(results.protocols);
