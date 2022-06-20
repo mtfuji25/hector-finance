@@ -223,7 +223,7 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
       </div>
       <Divider />
       <div>
-        <ExternalNav href="https://hectorbank.com/">
+        <ExternalNav href="https://hectorinstitute.com">
           <BuildingColumnsLight width={16} height={16} />
           Hector Institute
         </ExternalNav>
