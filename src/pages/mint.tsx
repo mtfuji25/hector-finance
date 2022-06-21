@@ -194,7 +194,9 @@ const Buying: VFC<{
       <StaticImg src={tokenImage} alt={tokenName} className="h-6 w-6" />
       <div className="dark:text-gray-200">{tokenName}</div>
       {amount.gt(0) ? (
-        <div className="flex-grow text-right">≈ {amount.toString()}</div>
+        <div className="flex-grow text-right dark:text-gray-200">
+          ≈ {amount.toString()}
+        </div>
       ) : (
         <div className="flex-grow text-right text-gray-400">0.00</div>
       )}

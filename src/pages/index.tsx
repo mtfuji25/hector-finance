@@ -552,7 +552,7 @@ export default function DashBoard() {
       </Tabs>
       {view === "graph" && (
         <>
-          <div className="flex flex-wrap justify-between text-center">
+          <div className="flex flex-wrap items-center justify-between text-center">
             <div className="mb-2 basis-1/3">
               <div className="dark:text-gray-200">Market Cap</div>
               {marketCap && (
@@ -834,7 +834,7 @@ const GlobalInfo: VFC<{
           <React.Fragment key={info.text}>
             <div className="grid justify-items-center space-y-2">
               <div className="text-xl dark:text-gray-200">{info.text}</div>
-              <div className="text-2xl text-orange-400 dark:text-orange-400">
+              <div className="text-xl text-orange-400 dark:text-orange-400 sm:text-2xl">
                 {info.amount}
               </div>
               <info.logo className="w-9 dark:text-gray-200" />
@@ -1002,7 +1002,7 @@ const HecGraphs: FC<{
         <AreaChart data={graphData}>
           <XAxis
             dataKey="timestamp"
-            interval={150}
+            interval={"preserveStartEnd"}
             axisLine={false}
             tickLine={false}
             tickFormatter={(str) =>

@@ -117,21 +117,21 @@ export default function StakePage() {
         <div>
           <div className="dark:text-gray-200">APY</div>
           {stakingAPY && (
-            <div className="text-2xl font-medium text-orange-400">
+            <div className="text-xl font-medium text-orange-400 sm:text-2xl">
               {stakingAPY?.toFixed(0)}%
             </div>
           )}
         </div>
         <div>
           <div className="dark:text-gray-200">Total Deposited</div>
-          <div className="text-2xl font-medium text-orange-400">
+          <div className="text-xl font-medium text-orange-400 sm:text-2xl">
             {stakingTVL}
           </div>
         </div>
         <div>
           <div className="dark:text-gray-200">Current Index</div>
           {currentIndex && (
-            <div className="text-2xl font-medium text-orange-400">
+            <div className="text-xl font-medium text-orange-400 sm:text-2xl">
               {currentIndex?.toFixed(2)}
             </div>
           )}
