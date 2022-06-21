@@ -647,12 +647,14 @@ const LatestTransactions: VFC<{ ftmScanTransactionData: Transaction[] }> = ({
             ftmScanTransactionData.map((transaction, i) => (
               <React.Fragment key={i}>
                 <div className="center flex items-center justify-between py-3">
-                  <div className="font-bold">
+                  <div className="basis-1/3 font-bold">
                     {transaction.investments.transactionDate}
                   </div>
-                  <div className="title">{transaction.title}</div>
+                  <div className="title basis-1/3 text-center">
+                    {transaction.title}
+                  </div>
 
-                  <div className="font-bold text-orange-400">
+                  <div className="basis-1/3 text-center font-bold text-orange-400">
                     {formatCurrency(+transaction.investments.investedAmount, 2)}
                   </div>
                   <a
