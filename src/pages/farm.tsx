@@ -27,8 +27,11 @@ import {
 import Decimal from "decimal.js";
 import { FANTOM } from "src/chain";
 import { TorStats } from "src/contracts/farmAggregator";
+import { Transaction, TransactionModal } from "src/components/Transaction";
 
 const FarmPage: NextPage = () => {
+  const wallet = useWallet(FANTOM);
+  const [tx, setTx] = useState<Transaction>();
   return (
     <main className="w-full space-y-5">
       <Head>
@@ -39,9 +42,20 @@ const FarmPage: NextPage = () => {
         <PageSubheader>Earn passive income by lending to Hector</PageSubheader>
       </div>
       <FarmStats></FarmStats>
-      <Pool />
-      <Farm />
-      <Claim />
+      <Pool onTx={setTx} />
+      <Farm onTx={setTx} />
+      <Claim onTx={setTx} />
+      <div>
+        {wallet.connected && tx && (
+          <TransactionModal
+            tx={tx}
+            wallet={wallet}
+            onClose={() => {
+              setTx(undefined);
+            }}
+          />
+        )}
+      </div>
     </main>
   );
 };
@@ -93,8 +107,7 @@ const FarmStats: VFC = () => {
 // --------------------------------  POOL  ------------------------------------
 // ----------------------------------------------------------------------------
 
-const Pool: VFC = () => {
-  const wallet = useWallet(FANTOM);
+const Pool: VFC<{ onTx: (tx: Transaction) => void }> = ({ onTx }) => {
   const [view, setView] = useState<"deposit" | "withdraw">("deposit");
   return (
     <div className="space-y-4">
@@ -105,11 +118,6 @@ const Pool: VFC = () => {
             selected={view === "deposit"}
             label="Deposit"
             onSelect={() => {
-              // refreshTorBalance();
-              // refreshDaiBalance();
-              // refreshUsdcBalance();
-              // setDaiInput("");
-              // setTorInput("");
               setView("deposit");
             }}
           />
@@ -117,19 +125,14 @@ const Pool: VFC = () => {
             selected={view === "withdraw"}
             label="Withdraw"
             onSelect={() => {
-              // refreshTorBalance();
-              // refreshDaiBalance();
-              // refreshUsdcBalance();
-              // setDaiInput("");
-              // setTorInput("");
               setView("withdraw");
             }}
           />
         </Tabs>
       </div>
 
-      {view === "deposit" && <PoolDeposit wallet={wallet} />}
-      {view === "withdraw" && <PoolWithdraw wallet={wallet} />}
+      {view === "deposit" && <PoolDeposit />}
+      {view === "withdraw" && <PoolWithdraw onTx={onTx} />}
     </div>
   );
 };
@@ -137,7 +140,8 @@ const Pool: VFC = () => {
 const DAI_TOR_USDC_FARM = "0x61B71689684800f73eBb67378fc2e1527fbDC3b3";
 const DAI_TOR_USDC_POOL = "0x24699312CB27C26Cfc669459D670559E5E44EE60";
 
-const PoolDeposit: VFC<{ wallet: Wallet }> = ({ wallet }) => {
+const PoolDeposit: VFC<{}> = ({}) => {
+  const wallet = useWallet(FANTOM);
   const [tor, torInput, setTorInput] = useDecimalInput();
   const [dai, daiInput, setDaiInput] = useDecimalInput();
   const [usdc, usdcInput, setUsdcInput] = useDecimalInput();
@@ -325,30 +329,14 @@ const Modal: FC<{ className?: string }> = ({ children, className }) => (
   </div>
 );
 
-const PoolWithdraw: VFC<{ wallet: Wallet }> = ({ wallet }) => {
+const PoolWithdraw: VFC<{ onTx: (tx: Transaction) => void }> = ({ onTx }) => {
+  const wallet = useWallet(FANTOM);
   const [output, setOutput] = useState<Curve.WithdrawAs>(Curve.WithdrawAs.Tor);
   const [curve, curveInput, setCurveInput] = useDecimalInput();
   const [curveBalance] = useBalance(FANTOM, FANTOM_CURVE, wallet);
 
-  const withdraw = async () => {
-    if (wallet.state !== WalletState.CanWrite) {
-      return;
-    }
-
-    const response = await Curve.removeLiquidity(
-      wallet.provider,
-      wallet.address,
-      DAI_TOR_USDC_POOL,
-      curve,
-      output,
-    );
-    if (response.isOk) {
-      setCurveInput("");
-      // TODO: display success toast
-    } else {
-      // TODO: display error toast
-    }
-  };
+  const canWithdraw =
+    curve.gt(0) && curve.lte(curveBalance) && wallet.connected;
 
   return (
     <>
@@ -414,7 +402,30 @@ const PoolWithdraw: VFC<{ wallet: Wallet }> = ({ wallet }) => {
           </div>
         </Radio>
       </RadioGroup>
-      <Submit label="Withdraw" disabled={curve.lte(0)} onClick={withdraw} />
+      <Submit
+        label="Withdraw"
+        disabled={!canWithdraw}
+        onClick={() => {
+          setCurveInput("");
+          onTx({
+            title: "Withdraw",
+            chain: FANTOM,
+            allowance: {
+              amount: curve,
+              spender: Curve.CURVE,
+              token: FANTOM_CURVE,
+            },
+            send: (wallet) =>
+              Curve.removeLiquidity(
+                wallet.provider,
+                wallet.address,
+                DAI_TOR_USDC_POOL,
+                curve,
+                output,
+              ),
+          });
+        }}
+      />
     </>
   );
 };
@@ -423,8 +434,7 @@ const PoolWithdraw: VFC<{ wallet: Wallet }> = ({ wallet }) => {
 // --------------------------------  FARM  ------------------------------------
 // ----------------------------------------------------------------------------
 
-const Farm: VFC = () => {
-  const wallet = useWallet(FANTOM);
+const Farm: VFC<{ onTx: (tx: Transaction) => void }> = ({ onTx }) => {
   const [view, setView] = useState<"stake" | "unstake">("stake");
   return (
     <div className="space-y-4">
@@ -443,16 +453,17 @@ const Farm: VFC = () => {
           />
         </Tabs>
       </div>
-      {view === "stake" && <Stake wallet={wallet} />}
-      {view === "unstake" && <Unstake wallet={wallet} />}
+      {view === "stake" && <Stake onTx={onTx} />}
+      {view === "unstake" && <Unstake onTx={onTx} />}
     </div>
   );
 };
 
-const Stake: VFC<{ wallet: Wallet }> = ({ wallet }) => {
+const Stake: VFC<{ onTx: (tx: Transaction) => void }> = ({ onTx }) => {
+  const wallet = useWallet(FANTOM);
   const [curve, curveInput, setCurveInput] = useDecimalInput();
   const [curveBalance] = useBalance(FANTOM, FANTOM_CURVE, wallet);
-  const canStake = wallet.state === WalletState.CanWrite && curve.gt(0);
+  const canStake = wallet.connected && curve.gt(0) && curve.lte(curveBalance);
   return (
     <>
       <CoinInput
@@ -465,18 +476,18 @@ const Stake: VFC<{ wallet: Wallet }> = ({ wallet }) => {
         <Submit
           label="Stake"
           onClick={async () => {
-            const response = await Staking.stake(
-              LP_FARM,
-              wallet.provider,
-              wallet.address,
-              curve,
-            );
-            if (response.isOk) {
-              setCurveInput("");
-              // TODO: show success
-            } else {
-              // TODO: show error
-            }
+            onTx({
+              title: "Stake",
+              chain: FANTOM,
+              allowance: {
+                amount: curve,
+                spender: LP_FARM.address,
+                token: FANTOM_CURVE,
+              },
+              send: (wallet) =>
+                Staking.stake(LP_FARM, wallet.provider, wallet.address, curve),
+            });
+            setCurveInput("");
           }}
         />
       )}
@@ -485,10 +496,12 @@ const Stake: VFC<{ wallet: Wallet }> = ({ wallet }) => {
   );
 };
 
-const Unstake: VFC<{ wallet: Wallet }> = ({ wallet }) => {
+const Unstake: VFC<{ onTx: (tx: Transaction) => void }> = ({ onTx }) => {
+  const wallet = useWallet(FANTOM);
   const [curve, curveInput, setCurveInput] = useDecimalInput();
   const [curveBalance] = useBalance(FANTOM, FANTOM_STAKED_CURVE, wallet);
-  const canWithdraw = wallet.state === WalletState.CanWrite && curve.gt(0);
+  const canWithdraw =
+    wallet.connected && curve.gt(0) && curve.lte(curveBalance);
   return (
     <>
       <CoinInput
@@ -501,18 +514,23 @@ const Unstake: VFC<{ wallet: Wallet }> = ({ wallet }) => {
         <Submit
           label="Unstake"
           onClick={async () => {
-            const response = await Staking.withdraw(
-              LP_FARM,
-              wallet.provider,
-              wallet.address,
-              curve,
-            );
-            if (response.isOk) {
-              setCurveInput("");
-              // TODO: show success
-            } else {
-              // TODO: show error
-            }
+            onTx({
+              title: "Stake",
+              chain: FANTOM,
+              allowance: {
+                amount: curve,
+                spender: LP_FARM.address,
+                token: FANTOM_STAKED_CURVE,
+              },
+              send: (wallet) =>
+                Staking.withdraw(
+                  LP_FARM,
+                  wallet.provider,
+                  wallet.address,
+                  curve,
+                ),
+            });
+            setCurveInput("");
           }}
         />
       )}
@@ -525,7 +543,7 @@ const Unstake: VFC<{ wallet: Wallet }> = ({ wallet }) => {
 // -------------------------------  CLAIM  ------------------------------------
 // ----------------------------------------------------------------------------
 
-const Claim: VFC = () => {
+const Claim: VFC<{ onTx: (tx: Transaction) => void }> = ({ onTx }) => {
   const wallet = useWallet(FANTOM);
   const [earned, setEarned] = useState<Decimal>(new Decimal(0));
   useEffect(() => {
@@ -552,7 +570,7 @@ const Claim: VFC = () => {
     };
   }, [wallet]);
 
-  const canClaim = earned.gt(0.1) && wallet.state === WalletState.CanWrite;
+  const canClaim = earned.gt(0.1) && wallet.connected;
 
   return (
     <div className="space-y-4">
@@ -574,7 +592,12 @@ const Claim: VFC = () => {
         <Submit
           label="Claim"
           onClick={async () => {
-            await Staking.getReward(LP_FARM, wallet.provider, wallet.address);
+            onTx({
+              chain: FANTOM,
+              title: "Claim staking rewards",
+              send: (wallet) =>
+                Staking.getReward(LP_FARM, wallet.provider, wallet.address),
+            });
           }}
         />
       )}

@@ -119,9 +119,11 @@ const MintPage: NextPage = () => {
               setTx({
                 title: "Mint",
                 chain: FANTOM,
-                token: FANTOM_DAI,
-                spender: FANTOM_ADDRESS.TOR_MINTER,
-                amount: dai,
+                allowance: {
+                  token: FANTOM_DAI,
+                  spender: FANTOM_ADDRESS.TOR_MINTER,
+                  amount: dai,
+                },
                 send: (wallet) =>
                   Minter.mintWithDai(wallet.provider, wallet.address, dai),
               });
@@ -153,9 +155,11 @@ const MintPage: NextPage = () => {
               setTx({
                 title: "Redeem",
                 chain: FANTOM,
-                token: FANTOM_TOR,
-                spender: FANTOM_ADDRESS.TOR_MINTER,
-                amount: tor,
+                allowance: {
+                  token: FANTOM_TOR,
+                  spender: FANTOM_ADDRESS.TOR_MINTER,
+                  amount: tor,
+                },
                 send: (wallet) =>
                   Minter.redeemToDai(wallet.provider, wallet.address, tor),
               });

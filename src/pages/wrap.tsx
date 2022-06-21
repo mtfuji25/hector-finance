@@ -171,9 +171,11 @@ export default function WrapPage() {
                 setTx({
                   title: "Wrap",
                   chain: FANTOM,
-                  token: FANTOM_sHEC,
-                  spender: FANTOM_wsHEC.address,
-                  amount: sHec,
+                  allowance: {
+                    token: FANTOM_sHEC,
+                    spender: FANTOM_wsHEC.address,
+                    amount: sHec,
+                  },
                   send: (wallet) =>
                     Staking.wrap(wallet.provider, wallet.address, sHec),
                 })
@@ -188,9 +190,11 @@ export default function WrapPage() {
                 setTx({
                   title: "Unwrap",
                   chain: FANTOM,
-                  token: FANTOM_wsHEC,
-                  spender: FANTOM_wsHEC.address,
-                  amount: wsHec,
+                  allowance: {
+                    token: FANTOM_wsHEC,
+                    spender: FANTOM_wsHEC.address,
+                    amount: wsHec,
+                  },
                   send: (wallet) =>
                     Staking.unwrap(wallet.provider, wallet.address, wsHec),
                 })

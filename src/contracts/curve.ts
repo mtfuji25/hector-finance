@@ -20,7 +20,7 @@ import {
 } from "src/provider";
 import { Result, ok } from "src/util";
 
-const CURVE = "0x78D51EB71a62c081550EfcC0a9F9Ea94B2Ef081c";
+export const CURVE = "0x78D51EB71a62c081550EfcC0a9F9Ea94B2Ef081c";
 
 export async function addLiquidity(
   provider: WalletProvider,

@@ -219,9 +219,11 @@ export default function StakePage() {
                 setTx({
                   title: "Stake",
                   chain: FANTOM,
-                  amount: hec,
-                  spender: FANTOM_ADDRESS.STAKING_HELPER,
-                  token: FANTOM_HECTOR,
+                  allowance: {
+                    amount: hec,
+                    spender: FANTOM_ADDRESS.STAKING_HELPER,
+                    token: FANTOM_HECTOR,
+                  },
                   send: (wallet) =>
                     Staking.stake(wallet.provider, wallet.address, hec),
                 });
@@ -236,9 +238,11 @@ export default function StakePage() {
                 setTx({
                   title: "Unstake",
                   chain: FANTOM,
-                  amount: sHec,
-                  spender: FANTOM_ADDRESS.STAKING,
-                  token: FANTOM_sHEC,
+                  allowance: {
+                    amount: sHec,
+                    spender: FANTOM_ADDRESS.STAKING,
+                    token: FANTOM_sHEC,
+                  },
                   send: (wallet) =>
                     Staking.unstake(wallet.provider, wallet.address, sHec),
                 });

@@ -14,9 +14,11 @@ import * as Erc20 from "src/contracts/erc20";
 export type Transaction = {
   title: string;
   chain: Chain;
-  amount: Decimal;
-  spender: string;
-  token: Erc20.Erc20Token;
+  allowance?: {
+    amount: Decimal;
+    spender: string;
+    token: Erc20.Erc20Token;
+  };
   send: (wallet: WriteWallet) => Promise<Result<unknown, ProviderRpcError>>;
 };
 
@@ -56,6 +58,11 @@ export const TransactionModal: VFC<{
   useEffect(() => {
     setAllowanceTask(TaskState.Unstarted);
     return asyncEffect(async (abort) => {
+      if (!tx.allowance) {
+        setAllowanceTask(TaskState.Complete);
+        return;
+      }
+
       if (wallet.state !== WalletState.CanWrite) {
         return;
       }
@@ -63,9 +70,9 @@ export const TransactionModal: VFC<{
       setAllowanceTask(TaskState.Working);
       const allowance = await requestAllowance(
         tx.chain,
-        tx.token,
-        tx.spender,
-        tx.amount,
+        tx.allowance.token,
+        tx.allowance.spender,
+        tx.allowance.amount,
         wallet,
       );
 
@@ -84,7 +91,7 @@ export const TransactionModal: VFC<{
           break;
       }
     });
-  }, [wallet, tx]);
+  }, [wallet, tx, tx.allowance]);
 
   const [transactionTask, setTransactionTask] = useState(TaskState.Unstarted);
   useEffect(() => {
