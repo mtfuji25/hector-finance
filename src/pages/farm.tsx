@@ -500,8 +500,6 @@ const Unstake: VFC<{ onTx: (tx: Transaction) => void }> = ({ onTx }) => {
   const wallet = useWallet(FANTOM);
   const [curve, curveInput, setCurveInput] = useDecimalInput();
   const [curveBalance] = useBalance(FANTOM, FANTOM_STAKED_CURVE, wallet);
-  console.log(curve.toString());
-  console.log(curveBalance.toString());
   const canWithdraw =
     wallet.connected && curve.gt(0) && curve.lte(curveBalance);
   return (
