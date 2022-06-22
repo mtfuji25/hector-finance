@@ -522,7 +522,7 @@ const Unstake: VFC<{ onTx: (tx: Transaction) => void }> = ({ onTx }) => {
               allowance: {
                 amount: curve,
                 spender: LP_FARM.address,
-                token: FANTOM_STAKED_CURVE,
+                token: FANTOM_CURVE,
               },
               send: (wallet) =>
                 Staking.withdraw(
