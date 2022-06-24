@@ -7,7 +7,7 @@ import {
   token256,
 } from "src/abi";
 import { getParameter, ok } from "src/util";
-import { FANTOM_ADDRESS, FANTOM_HECTOR } from "src/constants";
+import { FANTOM_ADDRESS, FANTOM_HEC } from "src/constants";
 import {
   call,
   ProviderRpcError,
@@ -144,7 +144,7 @@ export async function stake(
   const result = await sendTransaction(provider, {
     from: owner,
     to: FANTOM_ADDRESS.STAKING_HELPER,
-    data: "0x" + method + token256(FANTOM_HECTOR, hec) + hex256(owner),
+    data: "0x" + method + token256(FANTOM_HEC, hec) + hex256(owner),
   });
   return result;
 }
@@ -175,7 +175,7 @@ export async function unstake(
   const result = await sendTransaction(provider, {
     from: owner,
     to: FANTOM_ADDRESS.STAKING,
-    data: "0x" + method + token256(FANTOM_HECTOR, sHec) + hex256(owner),
+    data: "0x" + method + token256(FANTOM_HEC, sHec) + hex256(owner),
   });
   return result;
 }

@@ -1,19 +1,19 @@
 import Decimal from "decimal.js";
 import Head from "next/head";
 import { useEffect, useState } from "react";
+import { FANTOM } from "src/chain";
 import { CoinInput } from "src/components/CoinInput";
-import { FANTOM_HECTOR, FANTOM_sHEC, FANTOM_wsHEC } from "src/constants";
+import { PageHeader, PageSubheader } from "src/components/Header";
+import { Submit } from "src/components/Submit";
+import { Tab, Tabs } from "src/components/Tab";
+import { Transaction, TransactionModal } from "src/components/Transaction";
+import { FANTOM_HEC, FANTOM_sHEC, FANTOM_wsHEC } from "src/constants";
 import { getStakingIndex } from "src/contracts/stakingContract";
 import { getMarketPrice } from "src/contracts/uniswapV2";
+import * as Staking from "src/contracts/wrapStakingContract";
 import { useBalance } from "src/hooks/balance";
 import { asyncEffect, useDecimalInput } from "src/util";
 import { useWallet } from "src/wallet";
-import { Submit } from "src/components/Submit";
-import { PageHeader, PageSubheader } from "src/components/Header";
-import { Tab, Tabs } from "src/components/Tab";
-import { FANTOM } from "src/chain";
-import * as Staking from "src/contracts/wrapStakingContract";
-import { Transaction, TransactionModal } from "src/components/Transaction";
 
 export default function WrapPage() {
   const wallet = useWallet(FANTOM);
@@ -48,7 +48,7 @@ export default function WrapPage() {
         setsHecPrice(price.value.div(FANTOM_sHEC.wei));
       }
       if (index.isOk) {
-        setCurrentIndex(new Decimal(index.value).div(FANTOM_HECTOR.wei));
+        setCurrentIndex(new Decimal(index.value).div(FANTOM_HEC.wei));
       }
     });
   }, []);

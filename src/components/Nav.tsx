@@ -8,6 +8,7 @@ import Bars from "src/icons/bars.svgr";
 import BookLight from "src/icons/book-light.svgr";
 import BoxBallotLight from "src/icons/box-ballot-light.svgr";
 import BoxDollarLight from "src/icons/box-dollar-light.svgr";
+import BridgeLight from "src/icons/bridge-light.svgr";
 import BuildingColumnsLight from "src/icons/building-columns-light.svgr";
 import Discord from "src/icons/discord-brands.svgr";
 import Github from "src/icons/github-brands.svgr";
@@ -206,6 +207,10 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
         <InternalNav href="/exchange">
           <ScaleBalancedLight width={16} height={16} />
           DEX
+        </InternalNav>
+        <InternalNav href="/bridge">
+          <BridgeLight width={16} height={16} />
+          Bridge
         </InternalNav>
         <InternalNav href="/farm">
           <SeedlingLight width={16} height={16} />

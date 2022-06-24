@@ -1,24 +1,8 @@
+import Decimal from "decimal.js";
+import RubicSDK, * as Rubic from "hector-rubic-sdk";
 import { NextPage } from "next";
 import Head from "next/head";
 import React, { FC, useEffect, useState, VFC } from "react";
-import { PageHeader, PageSubheader } from "src/components/Header";
-import { MultiCoinInput, MultiCoinOutput } from "src/components/MultiCoin";
-import RubicSDK, * as Rubic from "hector-rubic-sdk";
-import { classes, sleep, useDecimalInput } from "src/util";
-import { useBalance } from "src/hooks/balance";
-import { FANTOM_HECTOR, FANTOM_USDC } from "src/constants";
-import { ConnectedWallet, useWallet, Wallet, WalletState } from "src/wallet";
-import { Erc20Token } from "src/contracts/erc20";
-import { Erc20TokenResult } from "src/pages/api/tokens";
-import { useDebounce } from "src/hooks/debounce";
-import BigSpinner from "src/icons/spinner-big.svgr";
-import SearchIcon from "src/icons/search.svgr";
-import Circle from "src/icons/circle.svgr";
-import SmallSpinner from "src/icons/spinner-small.svgr";
-import CircleCheck from "src/icons/circle-check-solid.svgr";
-import CircleExclamation from "src/icons/circle-exclamation.svgr";
-import CircleArrowDown from "src/icons/circle-arrow-down.svgr";
-import Chevron from "src/icons/chevron.svgr";
 import {
   AVALANCHE,
   BINANCE,
@@ -29,13 +13,29 @@ import {
   MOONRIVER,
   POLYGON,
 } from "src/chain";
-import { StaticImg } from "src/components/StaticImg";
-import Decimal from "decimal.js";
-import { Submit } from "src/components/Submit";
+import { PageHeader, PageSubheader } from "src/components/Header";
 import { Modal, ModalCloseButton } from "src/components/Modal";
+import { MultiCoinInput, MultiCoinOutput } from "src/components/MultiCoin";
+import { StaticImg } from "src/components/StaticImg";
+import { Submit } from "src/components/Submit";
+import { FANTOM_HEC, FANTOM_USDC } from "src/constants";
+import { Erc20Token } from "src/contracts/erc20";
+import { useBalance } from "src/hooks/balance";
+import { useDebounce } from "src/hooks/debounce";
+import Chevron from "src/icons/chevron.svgr";
+import CircleArrowDown from "src/icons/circle-arrow-down.svgr";
+import CircleCheck from "src/icons/circle-check-solid.svgr";
+import CircleExclamation from "src/icons/circle-exclamation.svgr";
+import Circle from "src/icons/circle.svgr";
+import SearchIcon from "src/icons/search.svgr";
+import BigSpinner from "src/icons/spinner-big.svgr";
+import SmallSpinner from "src/icons/spinner-small.svgr";
+import { Erc20TokenResult } from "src/pages/api/tokens";
+import { classes, sleep, useDecimalInput } from "src/util";
+import { ConnectedWallet, useWallet, Wallet, WalletState } from "src/wallet";
 
 const ExchangePage: NextPage = () => {
-  const [sendToken, setSendToken] = useState(FANTOM_HECTOR);
+  const [sendToken, setSendToken] = useState(FANTOM_HEC);
   const [receiveToken, setReceiveToken] = useState(FANTOM_USDC);
 
   const [sendChain, setSendChain] = useState(FANTOM);

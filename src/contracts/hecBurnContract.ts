@@ -1,10 +1,9 @@
-import { Interface, InterfaceType, methodId, StateMutability } from "src/abi";
-import { ok } from "src/util";
-import { FANTOM_ADDRESS, FANTOM_HECTOR } from "src/constants";
-import { call, ProviderRpcError } from "src/provider";
-import { Result } from "src/util";
 import { Decimal } from "decimal.js";
+import { Interface, InterfaceType, methodId, StateMutability } from "src/abi";
 import { Chain } from "src/chain";
+import { FANTOM_ADDRESS, FANTOM_HEC } from "src/constants";
+import { call, ProviderRpcError } from "src/provider";
+import { ok, Result } from "src/util";
 
 export async function getHecBurned(
   chain: Chain,
@@ -31,9 +30,7 @@ export async function getHecBurned(
     return ok(new Decimal(res1.value));
   }
   return ok(
-    new Decimal(res1.value)
-      .plus(new Decimal(res2.value))
-      .div(FANTOM_HECTOR.wei),
+    new Decimal(res1.value).plus(new Decimal(res2.value)).div(FANTOM_HEC.wei),
   );
 }
 

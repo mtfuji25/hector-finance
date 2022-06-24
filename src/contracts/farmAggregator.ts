@@ -7,19 +7,9 @@ import {
   StateMutability,
 } from "src/abi";
 import { Chain } from "src/chain";
-import {
-  FANTOM_ADDRESS,
-  FANTOM_HECTOR,
-  FANTOM_TOR,
-  FANTOM_USDC,
-} from "src/constants";
-import {
-  call,
-  ProviderRpcError,
-  sendTransaction,
-  WalletProvider,
-} from "src/provider";
-import { Result, ok, getParameter } from "src/util";
+import { FANTOM_ADDRESS, FANTOM_TOR, FANTOM_USDC } from "src/constants";
+import { call, ProviderRpcError } from "src/provider";
+import { getParameter, ok, Result } from "src/util";
 
 const VOID_ADDRESS = "0x0000000000000000000000000000000000000000";
 

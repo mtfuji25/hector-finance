@@ -1,12 +1,13 @@
-import { Erc20Token } from "./contracts/erc20";
-import { Farm } from "./contracts/staking";
+import Decimal from "decimal.js";
+import CurveLogo from "public/icons/curve.webp";
 import DaiLogo from "public/icons/dai.svg";
 import HecLogo from "public/icons/hector.svg";
 import TorLogo from "public/icons/tor.svg";
-import CurveLogo from "public/icons/curve.webp";
 import UsdcLogo from "public/icons/usdc.svg";
 import WftmLogo from "public/icons/wftm.svg";
-import Decimal from "decimal.js";
+import { AVALANCHE, BINANCE, ETHEREUM, FANTOM } from "./chain";
+import { Erc20Token } from "./contracts/erc20";
+import { Farm } from "./contracts/staking";
 
 export const THE_GRAPH_URL =
   "https://api.thegraph.com/subgraphs/name/hectordao-hec/hector-dao";
@@ -146,10 +147,6 @@ export const BLOCK_RATE_SECONDS = 1;
 
 export const TOKEN_DECIMALS = 9;
 
-export const FANTOM_NETWORK_ID: number = 0xfa;
-
-export const DEFAULT_NETWORK = FANTOM_NETWORK_ID;
-
 export const FANTOM_ADDRESS = {
   FANTOM_VALIDATOR: "0x35796Ce4Ed757075D346c1bc374D67628fadcbB1",
   SECOND_FANTOM_VALIDATOR: "0x9c2036151781661D08184163Cbb89dFD3b921075",
@@ -241,7 +238,7 @@ export const FANTOM_DAI: Erc20Token = {
   symbol: "DAI",
   logo: DaiLogo,
   address: FANTOM_ADDRESS.DAI,
-  chain: 0xfa,
+  chain: FANTOM.id,
   decimals: 18,
   wei: new Decimal(10 ** 18),
 };
@@ -251,7 +248,7 @@ export const FANTOM_USDC: Erc20Token = {
   symbol: "USDC",
   logo: UsdcLogo,
   address: FANTOM_ADDRESS.USDC,
-  chain: 0xfa,
+  chain: FANTOM.id,
   decimals: 6,
   wei: new Decimal(10 ** 6),
 };
@@ -261,7 +258,7 @@ export const FANTOM_TOR: Erc20Token = {
   symbol: "TOR",
   logo: TorLogo,
   address: FANTOM_ADDRESS.TOR,
-  chain: 0xfa,
+  chain: FANTOM.id,
   decimals: 18,
   wei: new Decimal(10 ** 18),
 };
@@ -271,7 +268,7 @@ export const FANTOM_WFTM: Erc20Token = {
   symbol: "wFTM",
   logo: WftmLogo,
   address: FANTOM_ADDRESS.WFTM,
-  chain: 0xfa,
+  chain: FANTOM.id,
   decimals: 18,
   wei: new Decimal(10 ** 18),
 };
@@ -281,7 +278,7 @@ export const FANTOM_CURVE: Erc20Token = {
   symbol: "crvLP",
   logo: CurveLogo,
   address: FANTOM_ADDRESS.DAI_TOR_USDC_POOL,
-  chain: 0xfa,
+  chain: FANTOM.id,
   decimals: 18,
   wei: new Decimal(10 ** 18),
 };
@@ -291,17 +288,17 @@ export const FANTOM_STAKED_CURVE: Erc20Token = {
   symbol: "crvLP",
   logo: CurveLogo,
   address: FANTOM_ADDRESS.DAI_TOR_USDC_FARM,
-  chain: 0xfa,
+  chain: FANTOM.id,
   decimals: 18,
   wei: new Decimal(10 ** 18),
 };
 
-export const FANTOM_HECTOR: Erc20Token = {
+export const FANTOM_HEC: Erc20Token = {
   name: "Hector Finance",
   symbol: "HEC",
   logo: HecLogo,
   address: FANTOM_ADDRESS.HEC,
-  chain: 0xfa,
+  chain: FANTOM.id,
   decimals: 9,
   wei: new Decimal(10 ** 9),
 };
@@ -311,7 +308,7 @@ export const FANTOM_sHEC: Erc20Token = {
   symbol: "sHEC",
   logo: HecLogo,
   address: FANTOM_ADDRESS.SHEC,
-  chain: 0xfa,
+  chain: FANTOM.id,
   decimals: 9,
   wei: new Decimal(10 ** 9),
 };
@@ -321,7 +318,7 @@ export const FANTOM_wsHEC: Erc20Token = {
   symbol: "wsHEC",
   logo: HecLogo,
   address: FANTOM_ADDRESS.WSHEC,
-  chain: 0xfa,
+  chain: FANTOM.id,
   decimals: 18,
   wei: new Decimal(10 ** 18),
 };
@@ -330,4 +327,64 @@ export const LP_FARM: Farm = {
   address: FANTOM_ADDRESS.DAI_TOR_USDC_FARM,
   stake: FANTOM_CURVE,
   reward: FANTOM_WFTM,
+};
+
+export const ETHEREUM_HEC: Erc20Token = {
+  name: "Hector Finance",
+  symbol: "HEC",
+  logo: HecLogo,
+  address: "0x29b3d220f0f1E37b342Cf7c48c1164BF5bf79eFa",
+  chain: ETHEREUM.id,
+  decimals: 9,
+  wei: new Decimal(10 ** 9),
+};
+
+export const BINANCE_HEC: Erc20Token = {
+  name: "Hector Finance",
+  symbol: "HEC",
+  logo: HecLogo,
+  address: "0x638EEBe886B0e9e7C6929E69490064a6C94d204d",
+  chain: BINANCE.id,
+  decimals: 9,
+  wei: new Decimal(10 ** 9),
+};
+
+export const AVALANCHE_HEC: Erc20Token = {
+  name: "Hector Finance",
+  symbol: "HEC",
+  logo: HecLogo,
+  address: "0x0149E2FA4104666f6af136f731757A04df5C8A68",
+  chain: AVALANCHE.id,
+  decimals: 9,
+  wei: new Decimal(10 ** 9),
+};
+
+export const ETHERUEM_TOR: Erc20Token = {
+  name: "Tor",
+  symbol: "TOR",
+  logo: TorLogo,
+  address: "0x6b37374fe7980ae33fc87b0d66a490ec6903e87a",
+  chain: ETHEREUM.id,
+  decimals: 18,
+  wei: new Decimal(10 ** 18),
+};
+
+export const BINANCE_TOR: Erc20Token = {
+  name: "Tor",
+  symbol: "TOR",
+  logo: TorLogo,
+  address: "0x1d6cbdc6b29c6afbae65444a1f65ba9252b8ca83",
+  chain: BINANCE.id,
+  decimals: 18,
+  wei: new Decimal(10 ** 18),
+};
+
+export const AVALANCHE_TOR: Erc20Token = {
+  name: "Tor",
+  symbol: "TOR",
+  logo: TorLogo,
+  address: "0x790772d8f4115b608340a7aB25258fCa8da1ca2e",
+  chain: AVALANCHE.id,
+  decimals: 18,
+  wei: new Decimal(10 ** 18),
 };

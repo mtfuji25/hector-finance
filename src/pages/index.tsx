@@ -16,7 +16,7 @@ import {
   ETH_GRAPH_URL,
   FANTOM_ADDRESS,
   FANTOM_DAI,
-  FANTOM_HECTOR,
+  FANTOM_HEC,
   FANTOM_USDC,
   GRAPH_DATA,
   ProtocolMetrics,
@@ -305,12 +305,12 @@ export default function DashBoard() {
         getGraphData,
         getMarketPrice(FANTOM),
         getHecBurned(FANTOM),
-        getTotalSupply(FANTOM, FANTOM_HECTOR),
+        getTotalSupply(FANTOM, FANTOM_HEC),
         getEthData,
         getStakingIndex(FANTOM),
       ]);
       if (index.isOk) {
-        setCurrentIndex(new Decimal(index.value).div(FANTOM_HECTOR.wei));
+        setCurrentIndex(new Decimal(index.value).div(FANTOM_HEC.wei));
       }
 
       if (totalSupply.isOk) {
@@ -374,9 +374,9 @@ export default function DashBoard() {
         setGraphData(joinedGraphData);
         setCircSupply(circSupply);
         setMarketCap(
-          marketPrice.value.times(circSupply).div(FANTOM_HECTOR.wei),
+          marketPrice.value.times(circSupply).div(FANTOM_HEC.wei),
         );
-        setMarketPrice(marketPrice.value.div(FANTOM_HECTOR.wei));
+        setMarketPrice(marketPrice.value.div(FANTOM_HEC.wei));
       }
     };
     loadDashboardInfo();

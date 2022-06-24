@@ -1,23 +1,23 @@
 import Decimal from "decimal.js";
 import Head from "next/head";
 import { useEffect, useState } from "react";
+import { FANTOM } from "src/chain";
+import { CoinInput } from "src/components/CoinInput";
+import { PageHeader } from "src/components/Header";
 import RebaseTimer from "src/components/RebaseTimer";
+import { Submit } from "src/components/Submit";
+import { Tab, Tabs } from "src/components/Tab";
+import { Transaction, TransactionModal } from "src/components/Transaction";
 import {
   FANTOM_ADDRESS,
-  FANTOM_HECTOR,
+  FANTOM_HEC,
   FANTOM_sHEC,
   THE_GRAPH_URL,
 } from "src/constants";
 import * as Staking from "src/contracts/stakingContract";
+import { useBalance } from "src/hooks/balance";
 import { formatCurrency, useDecimalInput } from "src/util";
 import { useWallet } from "src/wallet";
-import { CoinInput } from "src/components/CoinInput";
-import { Submit } from "src/components/Submit";
-import { useBalance } from "src/hooks/balance";
-import { PageHeader } from "src/components/Header";
-import { Tab, Tabs } from "src/components/Tab";
-import { FANTOM } from "src/chain";
-import { Transaction, TransactionModal } from "src/components/Transaction";
 
 export default function StakePage() {
   const wallet = useWallet(FANTOM);
@@ -29,7 +29,7 @@ export default function StakePage() {
   const [currentIndex, setCurrentIndex] = useState<Decimal>();
   const [hecBalance, refreshHecBalance] = useBalance(
     FANTOM,
-    FANTOM_HECTOR,
+    FANTOM_HEC,
     wallet,
   );
   const [sHecBalance, refreshsHecBalance] = useBalance(
@@ -77,7 +77,7 @@ export default function StakePage() {
       });
       const index = await Staking.getStakingIndex(FANTOM);
       if (index.isOk) {
-        setCurrentIndex(new Decimal(index.value).div(FANTOM_HECTOR.wei));
+        setCurrentIndex(new Decimal(index.value).div(FANTOM_HEC.wei));
       }
     };
     getStakingData();
@@ -163,7 +163,7 @@ export default function StakePage() {
       <div>
         {hecBalance && view === "stake" && (
           <CoinInput
-            token={FANTOM_HECTOR}
+            token={FANTOM_HEC}
             amount={hecInput}
             onChange={setHecInput}
             balance={hecBalance}
@@ -222,7 +222,7 @@ export default function StakePage() {
                   allowance: {
                     amount: hec,
                     spender: FANTOM_ADDRESS.STAKING_HELPER,
-                    token: FANTOM_HECTOR,
+                    token: FANTOM_HEC,
                   },
                   send: (wallet) =>
                     Staking.stake(wallet.provider, wallet.address, hec),
