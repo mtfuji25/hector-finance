@@ -1,5 +1,5 @@
 import Decimal from "decimal.js";
-import RubicSDK, * as Rubic from "hector-rubic-sdk";
+import RubicSDK, * as Rubic from "rubic-sdk";
 import { NextPage } from "next";
 import Head from "next/head";
 import React, { FC, useEffect, useState, VFC } from "react";
@@ -728,7 +728,7 @@ function useRubicTrade(
             setTrade({ type: "Error", message: "No trade available." });
           }
         } else {
-          const crossTrade = await rubic.crossChain.calculateTrade(
+          const crossTrades = await rubic.crossChain.calculateTrade(
             {
               address: sendToken.address,
               blockchain: RUBIC_CHAIN_BY_ID.get(sendChain.id)!,
@@ -742,23 +742,38 @@ function useRubicTrade(
           if (abort) {
             return;
           }
-          if (crossTrade.maxAmountError) {
-            setTrade({
-              type: "Error",
-              message: `Maximum sell amount is ${crossTrade.maxAmountError.toString()} ${
-                sendToken.symbol
-              }.`,
-            });
-          } else if (crossTrade.minAmountError) {
-            setTrade({
-              type: "Error",
-              message: `Minimum sell amount is ${crossTrade.minAmountError.toString()} ${
-                sendToken.symbol
-              }.`,
-            });
-          } else if (crossTrade.trade) {
-            setTrade({ type: "Bridge", trade: crossTrade.trade });
+          crossTrades.sort((a, b) => {
+            if (!a.trade) {
+              return +1;
+            }
+            if (!b.trade) {
+              return -1;
+            }
+            if (a.trade.to.tokenAmount.gt(b.trade.to.tokenAmount)) {
+              return -1;
+            } else if (a.trade.to.tokenAmount.lt(b.trade.to.tokenAmount)) {
+              return +1;
+            } else {
+              return 0;
+            }
+          });
+          const bestCrossTrade = crossTrades[0];
+          if (!bestCrossTrade) {
+            setTrade({ type: "Error", message: "No trade available." });
+            return;
           }
+          if (!bestCrossTrade.trade) {
+            if (bestCrossTrade.error) {
+              setTrade({
+                type: "Error",
+                message: bestCrossTrade.error.message,
+              });
+            } else {
+              setTrade({ type: "Error", message: "Error finding a trade." });
+            }
+            return;
+          }
+          setTrade({ type: "Bridge", trade: bestCrossTrade.trade });
         }
       } catch (e) {
         if (abort) {
@@ -770,25 +785,10 @@ function useRubicTrade(
             message:
               "Not enough liquidity. Either try again later, or lower your sell amount.",
           });
-        } else if (e instanceof Rubic.CrossChainMinAmountError) {
-          setTrade({
-            type: "Error",
-            message: `Minimum sell amount is ${e.min.toString()} ${
-              sendToken.symbol
-            }.`,
-          });
-        } else if (e instanceof Rubic.CrossChainMaxAmountError) {
-          setTrade({
-            type: "Error",
-            message: `Maximum sell amount is ${e.max.toString()} ${
-              sendToken.symbol
-            }.`,
-          });
         } else {
           setTrade({
             type: "Error",
-            message:
-              "Unknown error occured. Please report this to the Hector team, thank you.",
+            message: "Unknown error occured. Report this to the Hector team.",
           });
         }
       }

@@ -12,11 +12,11 @@
     "cors": "^2.8.5",
     "decimal.js": "10.3.1",
     "hash-wasm": "4.9.0",
-    "hector-rubic-sdk": "^1.0.16",
     "next": "^12.1.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "recharts": "^2.1.9",
+    "rubic-sdk": "^2.1.0",
     "zod": "3.13.4"
   },
   "devDependencies": {
