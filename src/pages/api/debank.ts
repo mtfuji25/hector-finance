@@ -14,6 +14,7 @@ const TREASURY_WALLET = "0xcb54ea94191b280c296e6ff0e37c7e76ad42dc6a";
 const WALLET_2 = "0x677d6ec74fa352d4ef9b1886f6155384acd70d90";
 const WALLET_3 = "0x3cdf52cc28d21c5b7b91d7065fd6dfe6d426fcc5";
 const WALLET_4 = "0x8a43e670619973944cb573bb23688c24cc0b5131";
+const WALLET_5 = "0x078E3977b30955f4Af9AA1D9DeC4ceB660c36e0c";
 const FTM_VALIDATOR_1 = "0xBE4b73f5Caff476Ed0Cdb4C043236fce81f4dC6C";
 const FTM_VALIDATOR_2 = "0x35796Ce4Ed757075D346c1bc374D67628fadcbB1";
 
@@ -108,6 +109,24 @@ async function getChainTotals(): Promise<ChainData[]> {
       },
     },
   ).then((res) => res.json());
+  const wallet5TokenAmounts = await fetch(
+    `https://pro-openapi.debank.com/v1/user/token_list?id=${WALLET_5}&chain_id=avax&is_all=false&has_balance=true`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        "AccessKey": ACCESS_KEY,
+      },
+    },
+  ).then((res) => res.json());
+  const wallet5ProtocolList = await fetch(
+    `https://pro-openapi.debank.com/v1/user/complex_protocol_list?id=${WALLET_5}&chain_id=avax`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        "AccessKey": ACCESS_KEY,
+      },
+    },
+  ).then((res) => res.json());
   const ftmValidator1 = await fetch(
     `https://pro-openapi.debank.com/v1/user/complex_protocol_list?id=${FTM_VALIDATOR_1}&chain_id=ftm`,
     {
@@ -156,6 +175,12 @@ async function getChainTotals(): Promise<ChainData[]> {
       protocols: wallet4ProtocolList,
       source: WALLET_4,
       chain: "ftm",
+    },
+    {
+      wallet: wallet5TokenAmounts,
+      protocols: wallet5ProtocolList,
+      source: WALLET_5,
+      chain: "avax",
     },
     { protocols: ftmValidator1, source: FTM_VALIDATOR_1, chain: "ftm" },
     { protocols: ftmValidator2, source: FTM_VALIDATOR_2, chain: "ftm" },
