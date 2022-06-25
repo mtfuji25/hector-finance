@@ -14,6 +14,8 @@ import * as Staking from "src/contracts/wrapStakingContract";
 import { useBalance } from "src/hooks/balance";
 import { asyncEffect, useDecimalInput } from "src/util";
 import { useWallet } from "src/wallet";
+import Link from "next/link";
+import { Notice } from "src/components/Notice";
 
 export default function WrapPage() {
   const wallet = useWallet(FANTOM);
@@ -205,6 +207,15 @@ export default function WrapPage() {
         </>
       )}
       {!wallet.connected && <Submit label="Connect wallet" />}
+
+      <Notice>
+        Wrapping is only available on Fantom. If you have HEC on another chain,
+        you can{" "}
+        <Link href="/bridge">
+          <a className="underline">bridge</a>
+        </Link>{" "}
+        it to Fantom.
+      </Notice>
 
       {tx && wallet.connected && (
         <TransactionModal

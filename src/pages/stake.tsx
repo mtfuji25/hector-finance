@@ -1,9 +1,11 @@
 import Decimal from "decimal.js";
 import Head from "next/head";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FANTOM } from "src/chain";
 import { CoinInput } from "src/components/CoinInput";
 import { PageHeader } from "src/components/Header";
+import { Notice } from "src/components/Notice";
 import RebaseTimer from "src/components/RebaseTimer";
 import { Submit } from "src/components/Submit";
 import { Tab, Tabs } from "src/components/Tab";
@@ -253,15 +255,25 @@ export default function StakePage() {
         </>
       )}
       {!wallet.connected && <Submit label="Connect wallet" disabled />}
-      <div className="mt-5 text-center dark:text-gray-200">
+
+      <Notice>
+        Wrapping is only available on Fantom. If you have HEC on another chain,
+        you can{" "}
+        <Link href="/bridge">
+          <a className="underline">bridge</a>
+        </Link>{" "}
+        it to Fantom.
+      </Notice>
+
+      <Notice>
         Planning to sell more than 15k $HEC? Making an OTC deal with the team
         could save you a huge amount of losses! Please open a ticket on our
-        Discord Server if you want to talk about an OTC deal with the team:
-        <br />
+        Discord Server if you want to talk about an OTC deal with the team:{" "}
         <a className="text-blue-500 underline" href="https://discord.gg/hector">
           https://discord.gg/hector
         </a>
-      </div>
+      </Notice>
+
       {tx && wallet.connected && (
         <TransactionModal
           wallet={wallet}
