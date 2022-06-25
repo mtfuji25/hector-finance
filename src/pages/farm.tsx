@@ -23,6 +23,7 @@ import {
   FANTOM_CURVE,
   FANTOM_STAKED_CURVE,
   LP_FARM,
+  FANTOM_ADDRESS,
 } from "src/constants";
 import Decimal from "decimal.js";
 import { FANTOM } from "src/chain";
@@ -154,19 +155,19 @@ const PoolDeposit: VFC<{}> = ({}) => {
     FANTOM,
     FANTOM_DAI,
     wallet,
-    DAI_TOR_USDC_FARM,
+    FANTOM_ADDRESS.CURVE_FI,
   );
   const torAllowance = useAllowance(
     FANTOM,
     FANTOM_TOR,
     wallet,
-    DAI_TOR_USDC_FARM,
+    FANTOM_ADDRESS.CURVE_FI,
   );
   const usdcAllowance = useAllowance(
     FANTOM,
     FANTOM_USDC,
     wallet,
-    DAI_TOR_USDC_FARM,
+    FANTOM_ADDRESS.CURVE_FI,
   );
 
   const [allowanceModal, showAllowanceModal] = useState(false);
