@@ -257,7 +257,7 @@ export default function StakePage() {
       {!wallet.connected && <Submit label="Connect wallet" disabled />}
 
       <Notice>
-        Wrapping is only available on Fantom. If you have HEC on another chain,
+        Staking is only available on Fantom. If you have HEC on another chain,
         you can{" "}
         <Link href="/bridge">
           <a className="underline">bridge</a>
