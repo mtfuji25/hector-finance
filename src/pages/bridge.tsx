@@ -4,6 +4,7 @@ import Head from "next/head";
 import React, { useEffect, useState, VFC } from "react";
 import { CoinInput } from "src/components/CoinInput";
 import { PageHeader, PageSubheader } from "src/components/Header";
+import { Notice } from "src/components/Notice";
 import { Radio, RadioGroup } from "src/components/Radio";
 import { StaticImg } from "src/components/StaticImg";
 import { Submit } from "src/components/Submit";
@@ -24,6 +25,8 @@ type BridgePair = {
   to: Anyswap.AnyswapPair;
   uuid: string;
 };
+
+const ANYSWAP_FEE = new Decimal(0.1);
 
 const BRIDGES: BridgePair[] = [
   {
@@ -133,44 +136,17 @@ const BridgePage: NextPage = () => {
 
       <Swap bridge={bridge} />
 
-      <div className="text-gray-600 dark:bg-gray-700 dark:text-gray-200">
-        <div>Bridge usage:</div>
-        <ul className="ml-5 list-outside list-disc">
-          <li>
-            0.1% fee
-            <ul className="ml-5 list-outside list-disc">
-              <li>
-                Minimum fee: {bridge.minFee.toString()}{" "}
-                {bridge.from.token.symbol}{" "}
-              </li>
-              <li>
-                Maximum fee: {bridge.maxFee.toString()}{" "}
-                {bridge.from.token.symbol}
-              </li>
-            </ul>
-          </li>
-          <li>
-            Minimum bridge: {bridge.minBridge.toString()}{" "}
-            {bridge.from.token.symbol}
-          </li>
-          <li>
-            Maximum bridge: {bridge.maxBridge.toString()}{" "}
-            {bridge.from.token.symbol}
-          </li>
-          <li>Transactions complete in 3 to 30 minutes</li>
-          <li>
-            If there&apos;s not enough liquidity, you will receive{" "}
-            <a
-              className="underline"
-              target="_blank"
-              rel="noreferrer"
-              href={`${bridge.to.chain.explorers[0]}/token/${bridge.to.anyswap.address}`}
-            >
-              {bridge.to.anyswap.symbol} on {bridge.to.chain.longName}
-            </a>
-          </li>
-        </ul>
-      </div>
+      <Notice>
+        If there&apos;s not enough liquidity, you will receive{" "}
+        <a
+          className="underline"
+          target="_blank"
+          rel="noreferrer"
+          href={`${bridge.to.chain.explorers[0]}/token/${bridge.to.anyswap.address}`}
+        >
+          {bridge.to.anyswap.symbol} on {bridge.to.chain.longName}
+        </a>
+      </Notice>
     </main>
   );
 };
@@ -185,6 +161,17 @@ const Swap: VFC<{ bridge: BridgePair }> = ({ bridge }) => {
   useEffect(() => {
     setOutInput("");
   }, [setOutInput, bridge.uuid]);
+  let fee = out.mul(ANYSWAP_FEE);
+  if (fee.lt(bridge.minFee)) {
+    fee = bridge.minFee;
+  }
+  if (fee.gt(bridge.maxFee)) {
+    fee = bridge.maxFee;
+  }
+
+  const isBadTransaction =
+    out.lt(bridge.minBridge) || out.gt(bridge.maxBridge) || out.gt(outBalance);
+
   return (
     <>
       <CoinInput
@@ -194,13 +181,50 @@ const Swap: VFC<{ bridge: BridgePair }> = ({ bridge }) => {
         balance={outBalance}
         onChange={setOutInput}
       />
+      <div className="space-y-1.5">
+        <div className="flex">
+          <div>Min amount:</div>
+          <div className="flex-grow" />
+          <div>
+            {bridge.minBridge.toString()} {bridge.from.token.symbol}
+          </div>
+        </div>
+        <div className="flex">
+          <div>Max amount:</div>
+          <div className="flex-grow" />
+          <div>
+            {bridge.maxBridge.toString()} {bridge.from.token.symbol}
+          </div>
+        </div>
+        <div className="flex">
+          <div>Transaction time:</div>
+          <div className="flex-grow" />
+          <div>3-30 mins</div>
+        </div>
+        <div className="flex">
+          <div>Bridge fee (0.1%):</div>
+          <div className="flex-grow" />
+          {!isBadTransaction && (
+            <div>
+              {fee.toString()} {bridge.to.token.symbol}
+            </div>
+          )}
+          {isBadTransaction && <div>~</div>}
+        </div>
+        <div className="flex">
+          <div>Minimum received on {bridge.to.chain.shortName}:</div>
+          <div className="flex-grow" />
+          {!isBadTransaction && (
+            <div>
+              {out.minus(fee).toString()} {bridge.to.token.symbol}
+            </div>
+          )}
+          {isBadTransaction && <div>~</div>}
+        </div>
+      </div>
       <Submit
         label={`Bridge to ${to.chain.shortName}`}
-        disabled={
-          out.lt(bridge.minBridge) ||
-          out.gt(bridge.maxBridge) ||
-          out.gt(outBalance)
-        }
+        disabled={isBadTransaction}
         onClick={() => {
           setTx({
             allowance: {
