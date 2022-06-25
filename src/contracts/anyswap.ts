@@ -19,7 +19,7 @@ import {
   FANTOM_TOR,
 } from "src/constants";
 import { ProviderRpcError, sendTransaction } from "src/provider";
-import { Result, ok } from "src/util";
+import { Result } from "src/util";
 import { WriteWallet } from "src/wallet";
 import { Erc20Token } from "./erc20";
 

@@ -73,10 +73,10 @@ const BridgePage: NextPage = () => {
       </Head>
       <div>
         <PageHeader>Bridge</PageHeader>
-        <PageSubheader>Send tokens to different chains for cheap</PageSubheader>
+        <PageSubheader>Swap tokens between chains</PageSubheader>
       </div>
 
-      <RadioGroup>
+      <RadioGroup label="Source and destination">
         {BRIDGES.map((b) => {
           const isSelected = b.uuid === bridge.uuid;
           return (
@@ -133,11 +133,11 @@ const BridgePage: NextPage = () => {
 
       <Swap bridge={bridge} />
 
-      <div className="rounded-md bg-gray-100 py-5 px-7 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
+      <div className="text-gray-600 dark:bg-gray-700 dark:text-gray-200">
         <div>About bridging:</div>
         <ul className="ml-5 list-outside list-disc">
           <li>
-            0.1% fee,
+            0.1% fee
             <ul className="ml-5 list-outside list-disc">
               <li>
                 Minimum fee: {bridge.minFee.toString()}{" "}
@@ -157,7 +157,7 @@ const BridgePage: NextPage = () => {
             Maximum bridge: {bridge.maxBridge.toString()}{" "}
             {bridge.from.token.symbol}
           </li>
-          <li>Bridge completes in 3 to 30 minutes</li>
+          <li>Transactions complete in 3 to 30 minutes</li>
           <li>
             If there&apos;s not enough liquidity, you will receive{" "}
             <a
@@ -188,6 +188,7 @@ const Swap: VFC<{ bridge: BridgePair }> = ({ bridge }) => {
   return (
     <>
       <CoinInput
+        label="Bridge amount"
         token={from.token}
         amount={outInput}
         balance={outBalance}
