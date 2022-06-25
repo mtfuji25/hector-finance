@@ -134,7 +134,7 @@ const BridgePage: NextPage = () => {
       <Swap bridge={bridge} />
 
       <div className="text-gray-600 dark:bg-gray-700 dark:text-gray-200">
-        <div>About bridging:</div>
+        <div>Bridge usage:</div>
         <ul className="ml-5 list-outside list-disc">
           <li>
             0.1% fee
