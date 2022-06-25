@@ -7,8 +7,17 @@ import {
   StateMutability,
   token256,
 } from "src/abi";
-import { Chain } from "src/chain";
-import { BINANCE_HEC, FANTOM_HEC } from "src/constants";
+import { BINANCE, Chain, FANTOM } from "src/chain";
+import {
+  BINANCE_ANYSWAP_HEC,
+  BINANCE_ANYSWAP_TOR,
+  BINANCE_HEC,
+  BINANCE_TOR,
+  FANTOM_ANYSWAP_HEC,
+  FANTOM_ANYSWAP_TOR,
+  FANTOM_HEC,
+  FANTOM_TOR,
+} from "src/constants";
 import { ProviderRpcError, sendTransaction } from "src/provider";
 import { Result, ok } from "src/util";
 import { WriteWallet } from "src/wallet";
@@ -29,38 +38,59 @@ export const BINANCE_ROUTER = new AnyswapRouter(
   "0xabd380327fe66724ffda91a87c772fb8d00be488",
 );
 
-export type AnyswapToken = { address: string; token: Erc20Token };
-
-export const FANTOM_ANY_HEC: AnyswapToken = {
-  address: "0x8564bA78F88B744FcC6F9407B9AF503Ad35adAFC",
-  token: FANTOM_HEC,
+export type AnyswapPair = {
+  chain: Chain;
+  router: AnyswapRouter;
+  anyswap: Erc20Token;
+  token: Erc20Token;
 };
 
-export const BINANCE_ANY_HEC: AnyswapToken = {
-  address: "0xe98803E5cE78Cf8AAD43267d9852A4057423Cb1d",
+export const ANYSWAP_FANTOM_HEC: AnyswapPair = {
+  token: FANTOM_HEC,
+  anyswap: FANTOM_ANYSWAP_HEC,
+  chain: FANTOM,
+  router: FANTOM_ROUTER,
+};
+
+export const ANYSWAP_BINANCE_HEC: AnyswapPair = {
   token: BINANCE_HEC,
+  anyswap: BINANCE_ANYSWAP_HEC,
+  chain: BINANCE,
+  router: BINANCE_ROUTER,
+};
+
+export const ANYSWAP_FANTOM_TOR: AnyswapPair = {
+  token: FANTOM_TOR,
+  anyswap: FANTOM_ANYSWAP_TOR,
+  chain: FANTOM,
+  router: FANTOM_ROUTER,
+};
+
+export const ANYSWAP_BINANCE_TOR: AnyswapPair = {
+  token: BINANCE_TOR,
+  anyswap: BINANCE_ANYSWAP_TOR,
+  chain: BINANCE,
+  router: BINANCE_ROUTER,
 };
 
 export async function swapOut(
   wallet: WriteWallet,
-  router: AnyswapRouter,
-  token: AnyswapToken,
+  from: AnyswapPair,
+  to: AnyswapPair,
   amount: Decimal,
-  toChain: Chain,
 ): Promise<Result<string, ProviderRpcError>> {
   const method = await methodId(SWAP_ABI);
-  const result = await sendTransaction(wallet.provider, {
+  return sendTransaction(wallet.provider, {
     from: wallet.address,
-    to: router.address,
+    to: from.router.address,
     data:
       "0x" +
       method +
-      hex256(token.address) +
+      hex256(from.anyswap.address) +
       hex256(wallet.address) +
-      token256(token.token, amount) +
-      hex256("0x" + toChain.id.toString(16)),
+      token256(from.token, amount) +
+      hex256("0x" + to.chain.id.toString(16)),
   });
-  return result;
 }
 
 const SWAP_ABI: Interface = {

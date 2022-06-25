@@ -12,7 +12,7 @@ export type Chain = {
   longName: string;
   color: string;
   rpc: [string, ...string[]];
-  explorers: string[];
+  explorers: [string, ...string[]];
   logo: StaticImageData;
   /**
    * This is a rough estimate of the chain's block time in milliseconds.
@@ -39,7 +39,7 @@ export const AVALANCHE: Chain = {
   longName: "Avalanche C-Chain",
   color: "#E84142",
   rpc: ["https://api.avax.network/ext/bc/C/rpc"],
-  explorers: ["https://snowtrace.io/"],
+  explorers: ["https://snowtrace.io"],
   token: {
     name: "Avalanche",
     symbol: "AVAX",
@@ -60,7 +60,7 @@ export const BINANCE: Chain = {
     "https://bsc-dataseed1.binance.org",
     "https://bsc-dataseed1.defibit.io/",
   ],
-  explorers: ["https://bscscan.com/"],
+  explorers: ["https://bscscan.com"],
   token: {
     name: "BNB",
     symbol: "BNB",
@@ -78,7 +78,7 @@ export const ETHEREUM: Chain = {
   longName: "Ethereum",
   color: "#627EEA",
   rpc: ["https://cloudflare-eth.com", "https://main-rpc.linkpool.io"],
-  explorers: ["https://etherscan.io/"],
+  explorers: ["https://etherscan.io"],
   token: {
     name: "Ethereum",
     symbol: "ETH",
@@ -96,7 +96,7 @@ export const FANTOM: Chain = {
   longName: "Fantom Opera",
   color: "#1969FF",
   rpc: ["https://rpc.ftm.tools/"],
-  explorers: ["https://ftmscan.com/"],
+  explorers: ["https://ftmscan.com"],
   token: {
     name: "Fantom",
     symbol: "FTM",
@@ -117,7 +117,7 @@ export const MOONRIVER: Chain = {
     "https://rpc.moonriver.moonbeam.network",
     "https://moonriver.api.onfinality.io/public",
   ],
-  explorers: ["https://moonriver.moonscan.io/"],
+  explorers: ["https://moonriver.moonscan.io"],
   token: {
     name: "Moonriver",
     logo: "https://assets.coingecko.com/coins/images/17984/small/9285.png?1630028620",
@@ -135,7 +135,7 @@ export const POLYGON: Chain = {
   longName: "Polygon",
   color: "#8247E5",
   rpc: ["https://polygon-rpc.com/", "https://rpc-mainnet.matic.network"],
-  explorers: ["https://polygonscan.com/"],
+  explorers: ["https://polygonscan.com"],
   token: {
     name: "Polygon",
     logo: "https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png?1624446912",

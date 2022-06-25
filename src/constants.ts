@@ -303,6 +303,26 @@ export const FANTOM_HEC: Erc20Token = {
   wei: new Decimal(10 ** 9),
 };
 
+export const FANTOM_ANYSWAP_HEC: Erc20Token = {
+  name: "Anyswap Hector Finance",
+  symbol: "anyHEC",
+  logo: HecLogo,
+  address: "0x8564bA78F88B744FcC6F9407B9AF503Ad35adAFC",
+  chain: FANTOM.id,
+  decimals: 9,
+  wei: new Decimal(10 ** 9),
+};
+
+export const FANTOM_ANYSWAP_TOR: Erc20Token = {
+  name: "Anyswap Tor",
+  symbol: "anyTOR",
+  logo: TorLogo,
+  address: "0xfF7B22053219eDf569499A3794829FB71D6F8821",
+  chain: FANTOM.id,
+  decimals: 18,
+  wei: new Decimal(10 ** 18),
+};
+
 export const FANTOM_sHEC: Erc20Token = {
   name: "Staked Hector",
   symbol: "sHEC",
@@ -347,6 +367,26 @@ export const BINANCE_HEC: Erc20Token = {
   chain: BINANCE.id,
   decimals: 9,
   wei: new Decimal(10 ** 9),
+};
+
+export const BINANCE_ANYSWAP_HEC: Erc20Token = {
+  name: "Anyswap Hector Finance",
+  symbol: "anyHEC",
+  logo: HecLogo,
+  address: "0xe98803E5cE78Cf8AAD43267d9852A4057423Cb1d",
+  chain: BINANCE.id,
+  decimals: 9,
+  wei: new Decimal(10 ** 9),
+};
+
+export const BINANCE_ANYSWAP_TOR: Erc20Token = {
+  name: "Anyswap Tor",
+  symbol: "anyTOR",
+  logo: TorLogo,
+  address: "0x80D209227Cf0A64E1FcbE62c7a80B8E691F0Ef4d",
+  chain: BINANCE.id,
+  decimals: 18,
+  wei: new Decimal(10 ** 18),
 };
 
 export const AVALANCHE_HEC: Erc20Token = {
