@@ -137,7 +137,7 @@ const BridgePage: NextPage = () => {
       <Swap bridge={bridge} />
 
       <Notice>
-        If there&apos;s not enough liquidity, you will receive{" "}
+        If liquidity is too low, you will receive{" "}
         <a
           className="underline"
           target="_blank"
