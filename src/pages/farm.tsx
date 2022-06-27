@@ -252,8 +252,8 @@ const AllowanceModal: VFC<{
     (allowance) => allowance.type === "HasAllowance",
   );
   return (
-    <Modal className="space-y-5 p-6">
-      <div className="flex items-center text-xl font-medium">
+    <Modal className="space-y-5 p-6 dark:bg-gray-700">
+      <div className="flex items-center text-xl font-medium ">
         <div>Token allowance</div>
         <div className="flex-grow" />
         <button
@@ -269,7 +269,7 @@ const AllowanceModal: VFC<{
         allowances will cost you a small fee and only needs to be done once per
         token-contract pair.
       </div>
-      <div className="space-y-3 rounded bg-gray-100 p-3 pl-4">
+      <div className="space-y-3 rounded bg-gray-100 p-3 pl-4 dark:bg-gray-600">
         {allowances.map((allowance) => (
           <GrantButton key={allowance.token.address} allowance={allowance} />
         ))}
@@ -296,9 +296,9 @@ export const GrantButton: FC<{
     <div className="flex-grow" />
     <button
       className={classes(
-        "flex items-center justify-center gap-2 rounded-sm py-2 font-medium",
+        "flex items-center justify-center gap-2 rounded-sm py-2 font-medium dark:text-gray-200",
         allowance.type === "HasAllowance"
-          ? "cursor-not-allowed bg-gray-300 px-5 text-white"
+          ? "cursor-not-allowed bg-gray-300 px-5 text-white dark:bg-orange-500"
           : "cursor-pointer bg-orange-500 px-7 text-white",
       )}
       onClick={() => {
@@ -310,7 +310,7 @@ export const GrantButton: FC<{
     >
       {allowance.type === "HasAllowance" ? (
         <>
-          <CheckIcon className="h-4 w-4 object-contain" />
+          <CheckIcon className="h-4 w-4 object-contain " />
           Granted
         </>
       ) : (
