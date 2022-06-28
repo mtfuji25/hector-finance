@@ -18,7 +18,7 @@ import { Modal, ModalCloseButton } from "src/components/Modal";
 import { MultiCoinInput, MultiCoinOutput } from "src/components/MultiCoin";
 import { StaticImg } from "src/components/StaticImg";
 import { Submit } from "src/components/Submit";
-import { FANTOM_HEC, FANTOM_USDC } from "src/constants";
+import { FANTOM_HEC, FANTOM_TOR, FANTOM_USDC } from "src/constants";
 import { Erc20Token } from "src/contracts/erc20";
 import { useBalance } from "src/hooks/balance";
 import { useDebounce } from "src/hooks/debounce";
@@ -703,7 +703,7 @@ function useRubicTrade(
         if (sendChain.id === receiveChain.id) {
           const blockchain = RUBIC_CHAIN_BY_ID.get(sendChain.id);
           assertExists(blockchain);
-          const instantTrades = await rubic.instantTrades.calculateTrade(
+          let instantTrades = await rubic.instantTrades.calculateTrade(
             {
               blockchain,
               address: sendToken.address,
@@ -714,6 +714,19 @@ function useRubicTrade(
           if (abort) {
             return;
           }
+
+          // Remove providers for certain tokens that are known to have low liquidity.
+          if (
+            sendToken.address === FANTOM_TOR.address ||
+            sendToken.address === FANTOM_HEC.address ||
+            receiveToken.address === FANTOM_TOR.address ||
+            receiveToken.address == FANTOM_HEC.address
+          ) {
+            instantTrades = instantTrades.filter(
+              (trade) => trade.type !== Rubic.TRADE_TYPE.SPIRIT_SWAP,
+            );
+          }
+
           instantTrades.sort((a, b) => {
             if (a.to.tokenAmount.gt(b.to.tokenAmount)) {
               return -1;
