@@ -31,7 +31,7 @@ import SearchIcon from "src/icons/search.svgr";
 import BigSpinner from "src/icons/spinner-big.svgr";
 import SmallSpinner from "src/icons/spinner-small.svgr";
 import { Erc20TokenResult } from "src/pages/api/tokens";
-import { classes, sleep, useDecimalInput } from "src/util";
+import { assertExists, classes, sleep, useDecimalInput } from "src/util";
 import { ConnectedWallet, useWallet, Wallet, WalletState } from "src/wallet";
 
 const ExchangePage: NextPage = () => {
@@ -260,7 +260,7 @@ const ConfirmationModal: FC<{
     (async () => {
       try {
         await confirmation.trade.swap();
-      } catch (e) {}
+      } catch {}
       if (abort) {
         return;
       }
@@ -691,7 +691,7 @@ function useRubicTrade(
         return;
       }
 
-      const RUBIC_CHAIN_BY_ID = new Map([
+      const RUBIC_CHAIN_BY_ID: Map<number, Rubic.BlockchainName> = new Map([
         [FANTOM.id, Rubic.BLOCKCHAIN_NAME.FANTOM],
         [MOONRIVER.id, Rubic.BLOCKCHAIN_NAME.MOONRIVER],
         [POLYGON.id, Rubic.BLOCKCHAIN_NAME.POLYGON],
@@ -701,9 +701,11 @@ function useRubicTrade(
       ]);
       try {
         if (sendChain.id === receiveChain.id) {
+          const blockchain = RUBIC_CHAIN_BY_ID.get(sendChain.id);
+          assertExists(blockchain);
           const instantTrades = await rubic.instantTrades.calculateTrade(
             {
-              blockchain: RUBIC_CHAIN_BY_ID.get(sendChain.id)!,
+              blockchain,
               address: sendToken.address,
             },
             send.toString(),
@@ -728,15 +730,19 @@ function useRubicTrade(
             setTrade({ type: "Error", message: "No trade available." });
           }
         } else {
+          const sendBlockchain = RUBIC_CHAIN_BY_ID.get(sendChain.id);
+          const receiveBlockchain = RUBIC_CHAIN_BY_ID.get(receiveChain.id);
+          assertExists(sendBlockchain);
+          assertExists(receiveBlockchain);
           const crossTrades = await rubic.crossChain.calculateTrade(
             {
               address: sendToken.address,
-              blockchain: RUBIC_CHAIN_BY_ID.get(sendChain.id)!,
+              blockchain: sendBlockchain,
             },
             send.toString(),
             {
               address: receiveToken.address,
-              blockchain: RUBIC_CHAIN_BY_ID.get(receiveChain.id)!,
+              blockchain: receiveBlockchain,
             },
           );
           if (abort) {
