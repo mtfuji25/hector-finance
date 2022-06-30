@@ -781,18 +781,18 @@ function useRubicTrade(
             setTrade({ type: "Error", message: "No trade available." });
             return;
           }
-          if (!bestCrossTrade.trade) {
-            if (bestCrossTrade.error) {
-              setTrade({
-                type: "Error",
-                message: bestCrossTrade.error.message,
-              });
-            } else {
-              setTrade({ type: "Error", message: "Error finding a trade." });
-            }
+          if (bestCrossTrade.error) {
+            setTrade({
+              type: "Error",
+              message: bestCrossTrade.error.message,
+            });
             return;
           }
-          setTrade({ type: "Bridge", trade: bestCrossTrade.trade });
+          if (bestCrossTrade.trade) {
+            setTrade({ type: "Bridge", trade: bestCrossTrade.trade });
+          } else {
+            setTrade({ type: "Error", message: "Error finding a trade." });
+          }
         }
       } catch (e) {
         if (abort) {
