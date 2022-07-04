@@ -1,11 +1,70 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { ChainData, CoinInfo, DeBankData, ProtocolList } from "..";
+import {
+  ChainData,
+  CoinInfo,
+  DeBankData,
+  DebankWallet,
+  ProtocolList,
+} from "..";
 import Cors from "cors";
 import Decimal from "decimal.js";
+
+interface Platforms {
+  vechain: string;
+}
+
+interface Image {
+  thumb: string;
+  small: string;
+  large: string;
+}
+
+interface CurrentPrice {
+  usd: number;
+}
+
+interface MarketData {
+  current_price: CurrentPrice;
+  total_supply: number;
+  max_supply: number;
+  circulating_supply: number;
+  last_updated: Date;
+}
+
+interface CoinGeckoInfo {
+  id: string;
+  symbol: string;
+  name: string;
+  asset_platform_id: string;
+  platforms: Platforms;
+  image: Image;
+  market_cap_rank: number;
+  coingecko_rank: number;
+  market_data: MarketData;
+  last_updated: Date;
+}
+
+interface ManualCoinInfo {
+  data: CoinGeckoInfo;
+  amount: number;
+}
+
 // Initializing the cors middleware
 const cors = Cors({
   methods: ["GET", "HEAD"],
 });
+
+function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: any) {
+  return new Promise((resolve, reject) => {
+    fn(req, res, (result: any) => {
+      if (result instanceof Error) {
+        return reject(result);
+      }
+
+      return resolve(result);
+    });
+  });
+}
 
 const ACCESS_KEY = "c0d8553d17ccd2c54ddf36e8fe863a0bca47a2b9";
 
@@ -192,18 +251,6 @@ setInterval(async () => {
   data = await getChainTotals();
 }, 43200000);
 
-function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: any) {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result: any) => {
-      if (result instanceof Error) {
-        return reject(result);
-      }
-
-      return resolve(result);
-    });
-  });
-}
-
 function getTreasuryInfo(data: ChainData[]): DeBankData {
   let treasuryVal = 0;
   let walletAssets: CoinInfo[] = [];
@@ -284,6 +331,23 @@ function getTreasuryInfo(data: ChainData[]): DeBankData {
   return { treasuryVal, walletAssets, protocols };
 }
 
+async function getManualCoinInfo(): Promise<ManualCoinInfo[]> {
+  const getVechainInfo: CoinGeckoInfo = await fetch(
+    "https://api.coingecko.com/api/v3/coins/vechain?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false",
+  ).then((res) => res.json());
+  const getElrondInfo: CoinGeckoInfo = await fetch(
+    "https://api.coingecko.com/api/v3/coins/elrond-erd-2?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false",
+  ).then((res) => res.json());
+  const getNearInfo: CoinGeckoInfo = await fetch(
+    "https://api.coingecko.com/api/v3/coins/near?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false",
+  ).then((res) => res.json());
+  return Promise.all([
+    { data: getVechainInfo, amount: 39337761 },
+    { data: getElrondInfo, amount: 18881 },
+    { data: getNearInfo, amount: 59566 },
+  ]);
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -291,8 +355,36 @@ export default async function handler(
   // Run the middleware
   await runMiddleware(req, res, cors);
   if (!data) {
+    const manualCoins = await getManualCoinInfo();
+
     await getChainTotals()
-      .then((repsonse) => (data = repsonse))
+      .then((repsonse) => {
+        const coins = manualCoins.map(
+          (coin) =>
+            ({
+              protocols: [],
+              source: "",
+              chain: "",
+              wallet: [
+                {
+                  id: coin.data.id,
+                  chain: "ftm",
+                  name: coin.data.name,
+                  symbol: coin.data.symbol,
+                  display_symbol: coin.data.symbol,
+                  optimized_symbol: coin.data.symbol,
+                  decimals: 0,
+                  logo_url: coin.data.image.small,
+                  protocol_id: coin.data.id,
+                  price: coin.data.market_data.current_price.usd,
+                  amount: coin.amount,
+                  raw_amount: coin.amount,
+                },
+              ],
+            } as ChainData),
+        );
+        data = [...repsonse, ...coins];
+      })
       .catch(() => res.status(404).end());
   }
   if (data) {

@@ -110,7 +110,7 @@ export interface ChainData {
   chain: string;
 }
 
-interface DebankWallet {
+export interface DebankWallet {
   id: string;
   chain: string;
   name: string;
@@ -121,13 +121,13 @@ interface DebankWallet {
   logo_url: string;
   protocol_id: string;
   price: number;
-  is_verified: boolean;
-  is_core: boolean;
-  is_wallet: boolean;
-  time_at: number;
+  is_verified?: boolean;
+  is_core?: boolean;
+  is_wallet?: boolean;
+  time_at?: number;
   amount: number;
   raw_amount: number;
-  raw_amount_hex_str: string;
+  raw_amount_hex_str?: string;
 }
 
 interface Stats {
@@ -373,9 +373,7 @@ export default function DashBoard() {
         });
         setGraphData(joinedGraphData);
         setCircSupply(circSupply);
-        setMarketCap(
-          marketPrice.value.times(circSupply).div(FANTOM_HEC.wei),
-        );
+        setMarketCap(marketPrice.value.times(circSupply).div(FANTOM_HEC.wei));
         setMarketPrice(marketPrice.value.div(FANTOM_HEC.wei));
       }
     };
