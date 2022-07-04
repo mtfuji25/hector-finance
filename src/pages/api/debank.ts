@@ -341,10 +341,31 @@ async function getManualCoinInfo(): Promise<ManualCoinInfo[]> {
   const getNearInfo: CoinGeckoInfo = await fetch(
     "https://api.coingecko.com/api/v3/coins/near?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false",
   ).then((res) => res.json());
+  const getHarmonyInfo: CoinGeckoInfo = await fetch(
+    "https://api.coingecko.com/api/v3/coins/harmony?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false",
+  ).then((res) => res.json());
+
+  const getHederaInfo: CoinGeckoInfo = await fetch(
+    "https://api.coingecko.com/api/v3/coins/hedera-hashgraph?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false",
+  ).then((res) => res.json());
+  const getAlgoInfo: CoinGeckoInfo = await fetch(
+    "https://api.coingecko.com/api/v3/coins/algorand?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false",
+  ).then((res) => res.json());
+  const getStellarInfo: CoinGeckoInfo = await fetch(
+    "https://api.coingecko.com/api/v3/coins/stellar?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false",
+  ).then((res) => res.json());
+  const getAVAInfo: CoinGeckoInfo = await fetch(
+    "https://api.coingecko.com/api/v3/coins/concierge-io?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false",
+  ).then((res) => res.json());
   return Promise.all([
     { data: getVechainInfo, amount: 39337761 },
     { data: getElrondInfo, amount: 18881 },
     { data: getNearInfo, amount: 59566 },
+    { data: getHarmonyInfo, amount: 12579378 },
+    { data: getHederaInfo, amount: 2878325 },
+    { data: getAlgoInfo, amount: 243468 },
+    { data: getStellarInfo, amount: 1727598 },
+    { data: getAVAInfo, amount: 137334 },
   ]);
 }
 
