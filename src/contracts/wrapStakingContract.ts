@@ -3,7 +3,7 @@ import {
   sendTransaction,
   TransactionAddress,
   WalletProvider,
-} from "src/provider";
+} from "src/providerEip1193";
 import { Result } from "src/util";
 import { Decimal } from "decimal.js";
 import {

@@ -18,7 +18,7 @@ import {
   FANTOM_HEC,
   FANTOM_TOR,
 } from "src/constants";
-import { ProviderRpcError, sendTransaction } from "src/provider";
+import { ProviderRpcError, sendTransaction } from "src/providerEip1193";
 import { Result } from "src/util";
 import { WriteWallet } from "src/wallet";
 import { Erc20Token } from "./erc20";

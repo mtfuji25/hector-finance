@@ -24,10 +24,10 @@ import Tor from "src/icons/tor.svgr";
 import Twitter from "src/icons/twitter-brands.svgr";
 import WalletRegular from "src/icons/wallet-regular.svgr";
 import WatermelonLight from "src/icons/watermelon-slice-light.svgr";
-import { getProvider, WalletProvider } from "src/provider";
 import { classes, ellipsisBetween } from "src/util";
 import { useWallet, WalletState } from "src/wallet";
-import * as WalletConnect from "src/walletconnect";
+import * as Eip1193 from "src/providerEip1193";
+import * as WalletConnect from "src/providerWalletConnect";
 import { ProviderProtocol, setPreferredWallet, useProvider } from "./Provider";
 import { StaticImg } from "./StaticImg";
 import { WalletProtocolModal } from "./WalletModal";
@@ -82,10 +82,10 @@ const Wallet: VFC = () => {
           onSelect={async (protocol) => {
             showWalletModal(false);
 
-            let newProvider: WalletProvider | undefined;
+            let newProvider: Eip1193.WalletProvider | undefined;
             switch (protocol) {
               case ProviderProtocol.Eip1193:
-                newProvider = await getProvider();
+                newProvider = await Eip1193.getProvider();
                 break;
               case ProviderProtocol.WalletConnect:
                 newProvider = await WalletConnect.getProvider();

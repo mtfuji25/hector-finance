@@ -6,7 +6,7 @@ import {
   ProviderRpcError,
   WalletConnectErrorCode,
   WalletProvider,
-} from "./provider";
+} from "./providerEip1193";
 import { hexString } from "./util";
 
 enum WalletConnectEvent {

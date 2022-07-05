@@ -4,7 +4,7 @@ import { asyncEffect, sleep } from "src/util";
 import { ConnectedWallet, Wallet } from "src/wallet";
 import * as Erc20 from "src/contracts/erc20";
 import { Erc20Token } from "src/contracts/erc20";
-import { getBalance } from "src/provider";
+import { getBalance } from "src/providerEip1193";
 import { Chain } from "src/chain";
 
 /**

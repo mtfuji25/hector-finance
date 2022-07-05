@@ -2,7 +2,7 @@ import Decimal from "decimal.js";
 import { Interface, InterfaceType, methodId, StateMutability } from "src/abi";
 import { Chain } from "src/chain";
 import { FANTOM_ADDRESS } from "src/constants";
-import { call, ProviderRpcError } from "src/provider";
+import { call, ProviderRpcError } from "src/providerEip1193";
 import { Result, ok, getParameter } from "src/util";
 
 export async function getMarketPrice(

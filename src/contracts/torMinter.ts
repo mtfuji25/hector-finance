@@ -14,7 +14,7 @@ import {
   sendTransaction,
   TransactionAddress,
   WalletProvider,
-} from "src/provider";
+} from "src/providerEip1193";
 import { ok, Result } from "src/util";
 
 export const TOR_MINTER_ADDRESS = "0x9b0c6FfA7d0Ec29EAb516d3F2dC809eE43DD60ca";

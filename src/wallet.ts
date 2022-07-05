@@ -14,7 +14,7 @@ import {
   getAccountsPermission,
   ProviderRpcError,
   WalletProvider,
-} from "./provider";
+} from "./providerEip1193";
 import { hexString, Result } from "./util";
 
 export function useWallet(txChain?: Chain): Wallet {

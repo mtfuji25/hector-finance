@@ -17,7 +17,7 @@ import {
   ProviderRpcError,
   sendTransaction,
   WalletProvider,
-} from "src/provider";
+} from "src/providerEip1193";
 import { Result, ok } from "src/util";
 
 export const CURVE = "0x78D51EB71a62c081550EfcC0a9F9Ea94B2Ef081c";

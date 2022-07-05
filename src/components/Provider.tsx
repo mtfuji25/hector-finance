@@ -6,14 +6,9 @@ import {
   useMemo,
   useContext,
 } from "react";
-import {
-  getAccount,
-  getChain,
-  getProvider,
-  WalletProvider,
-} from "src/provider";
+import * as Eip1193 from "src/providerEip1193";
 import { assertNever } from "src/util";
-import * as WalletConnect from "src/walletconnect";
+import * as WalletConnect from "src/providerWalletConnect";
 
 /** A React Provider of an Ethereum Wallet Provider. Weird name, but it makes sense.
  *
@@ -21,7 +16,7 @@ import * as WalletConnect from "src/walletconnect";
  * so that any changes to the provider reflect across the entire application.
  */
 export const ProviderProvider: FC = ({ children }) => {
-  const [provider, setProvider] = useState<WalletProvider>();
+  const [provider, setProvider] = useState<Eip1193.WalletProvider>();
   const [address, setAddress] = useState<string>();
   const [chain, setChain] = useState<number>();
 
@@ -32,14 +27,14 @@ export const ProviderProvider: FC = ({ children }) => {
       return;
     }
 
-    getAccount(provider).then((result) => {
+    Eip1193.getAccount(provider).then((result) => {
       if (!result.isOk) {
         return;
       }
       setAddress(result.value[0]);
     });
 
-    getChain(provider).then((result) => {
+    Eip1193.getChain(provider).then((result) => {
       if (!result.isOk) {
         return;
       }
@@ -67,10 +62,10 @@ export const ProviderProvider: FC = ({ children }) => {
       const preferredProtocol = getPreferredProtocol();
       switch (preferredProtocol) {
         case ProviderProtocol.Eip1193:
-          getProvider().then(setProvider);
+          Eip1193.getProvider().then(setProvider);
           break;
         case undefined:
-          getProvider().then(setProvider);
+          Eip1193.getProvider().then(setProvider);
           break;
         case ProviderProtocol.WalletConnect:
           WalletConnect.getProvider().then(setProvider);
@@ -95,10 +90,10 @@ export const ProviderProvider: FC = ({ children }) => {
 };
 
 type ProviderContextProps = {
-  provider?: WalletProvider;
+  provider?: Eip1193.WalletProvider;
   address?: string;
   chain?: number;
-  setProvider: (provider: WalletProvider) => void;
+  setProvider: (provider: Eip1193.WalletProvider) => void;
 };
 
 const ProviderContext = createContext<ProviderContextProps | undefined>(

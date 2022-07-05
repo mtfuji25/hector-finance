@@ -15,7 +15,7 @@ import {
   sendTransaction,
   TokenAddress,
   WalletProvider,
-} from "src/provider";
+} from "src/providerEip1193";
 import { ok, Result } from "src/util";
 
 export interface Erc20Token {

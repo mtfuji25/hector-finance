@@ -13,7 +13,7 @@ import {
   ProviderRpcError,
   sendTransaction,
   WalletProvider,
-} from "src/provider";
+} from "src/providerEip1193";
 import { Result, ok } from "src/util";
 import { Erc20Token } from "./erc20";
 

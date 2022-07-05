@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FANTOM } from "src/chain";
 import { BLOCK_RATE_SECONDS } from "src/constants";
 import { getEpochInfo } from "src/contracts/stakingContract";
-import { getBlockNumber } from "src/provider";
+import { getBlockNumber } from "src/providerEip1193";
 import { prettifySeconds } from "src/util";
 import { useWallet } from "src/wallet";
 

@@ -1,7 +1,7 @@
 import Decimal from "decimal.js";
 import { VFC, useState, useEffect } from "react";
 import { Chain } from "src/chain";
-import { ProviderRpcError, ProviderErrorCode } from "src/provider";
+import { ProviderRpcError, ProviderErrorCode } from "src/providerEip1193";
 import { asyncEffect, Result, sleep } from "src/util";
 import { WriteWallet, ConnectedWallet, WalletState } from "src/wallet";
 import { Modal, ModalCloseButton } from "./Modal";
