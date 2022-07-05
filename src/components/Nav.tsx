@@ -28,7 +28,11 @@ import { classes, ellipsisBetween } from "src/util";
 import { useWallet, WalletState } from "src/wallet";
 import * as Eip1193 from "src/providerEip1193";
 import * as WalletConnect from "src/providerWalletConnect";
-import { ProviderProtocol, setPreferredWallet, useProvider } from "./Provider";
+import {
+  ProviderProtocol,
+  setPreferredProtocol,
+  useProvider,
+} from "./Provider";
 import { StaticImg } from "./StaticImg";
 import { WalletProtocolModal } from "./WalletModal";
 
@@ -95,7 +99,7 @@ const Wallet: VFC = () => {
             if (newProvider) {
               setProvider(newProvider);
               setAutoConnect(true);
-              setPreferredWallet(protocol);
+              setPreferredProtocol(protocol);
             }
           }}
         />

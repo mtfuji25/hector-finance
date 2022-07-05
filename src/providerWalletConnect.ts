@@ -1,12 +1,7 @@
 import WalletConnect from "@walletconnect/client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import { z } from "zod";
-import {
-  ProviderErrorCode,
-  ProviderRpcError,
-  WalletConnectErrorCode,
-  WalletProvider,
-} from "./providerEip1193";
+import * as Eip1193 from "./providerEip1193";
 import { hexString } from "./util";
 
 enum WalletConnectEvent {
@@ -43,7 +38,9 @@ const SessionUpdateEvent = z.object({
     .nonempty(),
 });
 
-export async function getProvider(): Promise<WalletProvider | undefined> {
+export async function getProvider(): Promise<
+  Eip1193.WalletProvider | undefined
+> {
   const wc = new WalletConnect({
     bridge: "https://bridge.walletconnect.org",
     qrcodeModal: QRCodeModal,
@@ -78,8 +75,8 @@ export async function getProvider(): Promise<WalletProvider | undefined> {
         case "disconnect":
           wc.on(WalletConnectEvent.Disconnect, (_, payload) => {
             const disconnect = DisconnectEvent.parse(payload);
-            const error: ProviderRpcError = {
-              code: ProviderErrorCode.Disconnected,
+            const error: Eip1193.ProviderRpcError = {
+              code: Eip1193.ProviderErrorCode.Disconnected,
               message: disconnect.message,
             };
             // @ts-ignore
@@ -119,8 +116,8 @@ export async function getProvider(): Promise<WalletProvider | undefined> {
             message = e.message;
           }
         }
-        const error: ProviderRpcError = {
-          code: WalletConnectErrorCode.Error,
+        const error: Eip1193.ProviderRpcError = {
+          code: Eip1193.WalletConnectErrorCode.Error,
           message,
         };
         throw error;

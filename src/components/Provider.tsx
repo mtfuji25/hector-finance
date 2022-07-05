@@ -126,6 +126,6 @@ export function getPreferredProtocol(): ProviderProtocol | undefined {
   return protocol;
 }
 
-export function setPreferredWallet(protocol: ProviderProtocol): void {
+export function setPreferredProtocol(protocol: ProviderProtocol): void {
   localStorage.setItem("PREFERRED_PROTOCOL", protocol);
 }
