@@ -74,7 +74,7 @@ const ExchangePage: NextPage = () => {
     <>
       <main className="w-full space-y-4">
         <Head>
-          <title>Calculator — Hector Finance</title>
+          <title>DEX — Hector Finance</title>
         </Head>
         <div>
           <PageHeader>Exchange</PageHeader>
@@ -248,6 +248,7 @@ const ConfirmationModal: FC<{
     return () => {
       abort = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallet, confirmation, sendChain]);
 
   useEffect(() => {
@@ -270,6 +271,7 @@ const ConfirmationModal: FC<{
     return () => {
       abort = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [confirmation, allowance]);
 
   let chainTask: TaskState = chain ? "Complete" : "InProgress";

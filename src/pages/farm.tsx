@@ -464,6 +464,7 @@ const Stake: VFC<{ onTx: (tx: Transaction) => void }> = ({ onTx }) => {
   const wallet = useWallet(FANTOM);
   const [curve, curveInput, setCurveInput] = useDecimalInput();
   const [curveBalance] = useBalance(FANTOM, FANTOM_CURVE, wallet);
+  const [stakedCurveBalance] = useBalance(FANTOM, FANTOM_STAKED_CURVE, wallet);
   const canStake = wallet.connected && curve.gt(0) && curve.lte(curveBalance);
   return (
     <>
@@ -473,6 +474,14 @@ const Stake: VFC<{ onTx: (tx: Transaction) => void }> = ({ onTx }) => {
         balance={curveBalance}
         token={FANTOM_CURVE}
       />
+      <div className="flex">
+        <div className="flex-1 text-base dark:text-gray-200">
+          Your Staked Balance
+        </div>
+        <div className="dark:text-gray-200">
+          {stakedCurveBalance.toString()}
+        </div>
+      </div>
       {canStake && (
         <Submit
           label="Stake"
@@ -511,6 +520,12 @@ const Unstake: VFC<{ onTx: (tx: Transaction) => void }> = ({ onTx }) => {
         balance={curveBalance}
         token={FANTOM_STAKED_CURVE}
       />
+      <div className="flex">
+        <div className="flex-1 text-base dark:text-gray-200">
+          Your Staked Balance
+        </div>
+        <div className="dark:text-gray-200">{curveBalance.toString()}</div>
+      </div>
       {canWithdraw && (
         <Submit
           label="Unstake"
