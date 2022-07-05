@@ -74,7 +74,7 @@ export const WalletProtocolModal: VFC<{
   onClose: () => void;
   onSelect: (protocol: ProviderProtocol) => void;
 }> = ({ onClose, onSelect }) => (
-  <Modal onClose={onClose} className="max-w-md bg-white">
+  <Modal onClose={onClose} className="max-w-md">
     <div className="space-y-5 p-6">
       <div className="text-lg">Select protocol</div>
       <div className="space-y-6">
@@ -116,6 +116,9 @@ export const WalletProtocolModal: VFC<{
               />
             ))}
           </div>
+        </ProtocolOption>
+        <ProtocolOption onClick={() => onSelect(ProviderProtocol.Disconnect)}>
+          <div className="text-t font-bold">Disconnect all wallets</div>
         </ProtocolOption>
       </div>
     </div>

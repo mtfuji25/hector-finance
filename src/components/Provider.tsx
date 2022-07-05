@@ -70,6 +70,8 @@ export const ProviderProvider: FC = ({ children }) => {
         case ProviderProtocol.WalletConnect:
           WalletConnect.getProvider().then(setProvider);
           break;
+        case ProviderProtocol.Disconnect:
+          break;
         default:
           assertNever(preferredProtocol);
       }
@@ -93,7 +95,7 @@ type ProviderContextProps = {
   provider?: Eip1193.WalletProvider;
   address?: string;
   chain?: number;
-  setProvider: (provider: Eip1193.WalletProvider) => void;
+  setProvider: (provider: Eip1193.WalletProvider | undefined) => void;
 };
 
 const ProviderContext = createContext<ProviderContextProps | undefined>(
@@ -112,6 +114,7 @@ export function useProvider(): ProviderContextProps {
 export enum ProviderProtocol {
   Eip1193 = "EIP-1193",
   WalletConnect = "WalletConnect",
+  Disconnect = "Disconnect",
 }
 
 function isProviderProtocol(protocol: string): protocol is ProviderProtocol {

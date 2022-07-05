@@ -10,6 +10,13 @@ export const Modal: FC<{ className?: string; onClose?: () => void }> = ({
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  useEffect(() => {
     if (!onClose) {
       return;
     }
@@ -35,11 +42,11 @@ export const Modal: FC<{ className?: string; onClose?: () => void }> = ({
   }, [onClose]);
 
   return (
-    <div className="fixed top-0 left-0 right-0 bottom-0 z-10 m-0 bg-gray-900/50 p-4 backdrop-blur-sm dark:text-gray-200">
+    <div className="fixed top-0 left-0 right-0 bottom-0 z-10 m-0 flex items-center justify-center overflow-auto bg-gray-900/50 backdrop-blur-sm dark:text-gray-200">
       <div
         ref={ref}
         className={classes(
-          "relative left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded dark:bg-gray-700 dark:text-gray-200 ",
+          "relative m-auto rounded bg-white dark:bg-gray-700 dark:text-gray-200",
           className,
         )}
       >

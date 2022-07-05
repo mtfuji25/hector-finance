@@ -24,7 +24,7 @@ import Tor from "src/icons/tor.svgr";
 import Twitter from "src/icons/twitter-brands.svgr";
 import WalletRegular from "src/icons/wallet-regular.svgr";
 import WatermelonLight from "src/icons/watermelon-slice-light.svgr";
-import { classes, ellipsisBetween } from "src/util";
+import { assertNever, classes, ellipsisBetween } from "src/util";
 import { useWallet, WalletState } from "src/wallet";
 import * as Eip1193 from "src/providerEip1193";
 import * as WalletConnect from "src/providerWalletConnect";
@@ -34,7 +34,7 @@ import {
   useProvider,
 } from "./Provider";
 import { StaticImg } from "./StaticImg";
-import { WalletProtocolModal } from "./WalletModal";
+import { WalletProtocolModal } from "./WalletProtocolModal";
 
 export default function TopNav() {
   const [isNavOpen, setIsNavOpen] = useState(false);
@@ -94,13 +94,16 @@ const Wallet: VFC = () => {
               case ProviderProtocol.WalletConnect:
                 newProvider = await WalletConnect.getProvider();
                 break;
+              case ProviderProtocol.Disconnect:
+                newProvider = undefined;
+                break;
+              default:
+                assertNever(protocol);
             }
 
-            if (newProvider) {
-              setProvider(newProvider);
-              setAutoConnect(true);
-              setPreferredProtocol(protocol);
-            }
+            setProvider(newProvider);
+            setAutoConnect(true);
+            setPreferredProtocol(protocol);
           }}
         />
       )}
