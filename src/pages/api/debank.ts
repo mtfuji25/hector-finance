@@ -259,7 +259,6 @@ async function getManualCoinInfo(): Promise<ManualCoinInfo[]> {
   const getHarmonyInfo: CoinGeckoInfo = await fetch(
     "https://api.coingecko.com/api/v3/coins/harmony?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false",
   ).then((res) => res.json());
-
   const getHederaInfo: CoinGeckoInfo = await fetch(
     "https://api.coingecko.com/api/v3/coins/hedera-hashgraph?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false",
   ).then((res) => res.json());
@@ -272,6 +271,9 @@ async function getManualCoinInfo(): Promise<ManualCoinInfo[]> {
   const getAVAInfo: CoinGeckoInfo = await fetch(
     "https://api.coingecko.com/api/v3/coins/concierge-io?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false",
   ).then((res) => res.json());
+  const getLQDRInfo: CoinGeckoInfo = await fetch(
+    "https://api.coingecko.com/api/v3/coins/liquiddriver?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false",
+  ).then((res) => res.json());
   return Promise.all([
     { data: getVechainInfo, amount: 39337761 },
     { data: getElrondInfo, amount: 18881 },
@@ -280,15 +282,18 @@ async function getManualCoinInfo(): Promise<ManualCoinInfo[]> {
     { data: getHederaInfo, amount: 2878325 },
     { data: getAlgoInfo, amount: 243468 },
     { data: getStellarInfo, amount: 1727598 },
-    { data: getAVAInfo, amount: 137334 },
+    { data: getAVAInfo, amount: 304705 },
+    { data: getLQDRInfo, amount: 35484 },
   ]);
 }
 
 let data: ChainData[];
 let manualCoins: ManualCoinInfo[];
 setInterval(async () => {
-  data = await getChainTotals();
   manualCoins = await getManualCoinInfo();
+  await getChainTotals().then((repsonse) => {
+    data = [...repsonse, ...getFormattedCoins(manualCoins)];
+  });
 }, 43200000);
 
 function getTreasuryInfo(data: ChainData[]): DeBankData {
@@ -371,6 +376,33 @@ function getTreasuryInfo(data: ChainData[]): DeBankData {
   return { treasuryVal, walletAssets, protocols };
 }
 
+function getFormattedCoins(manualCoins: ManualCoinInfo[]): ChainData[] {
+  return manualCoins.map(
+    (coin) =>
+      ({
+        protocols: [],
+        source: "",
+        chain: "",
+        wallet: [
+          {
+            id: coin.data.id,
+            chain: "ftm",
+            name: coin.data.name,
+            symbol: coin.data.symbol,
+            display_symbol: coin.data.symbol,
+            optimized_symbol: coin.data.symbol,
+            decimals: 0,
+            logo_url: coin.data.image.small,
+            protocol_id: coin.data.id,
+            price: coin.data.market_data.current_price.usd,
+            amount: coin.amount,
+            raw_amount: coin.amount,
+          },
+        ],
+      } as ChainData),
+  );
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -382,35 +414,11 @@ export default async function handler(
 
     await getChainTotals()
       .then((repsonse) => {
-        const coins = manualCoins.map(
-          (coin) =>
-            ({
-              protocols: [],
-              source: "",
-              chain: "",
-              wallet: [
-                {
-                  id: coin.data.id,
-                  chain: "ftm",
-                  name: coin.data.name,
-                  symbol: coin.data.symbol,
-                  display_symbol: coin.data.symbol,
-                  optimized_symbol: coin.data.symbol,
-                  decimals: 0,
-                  logo_url: coin.data.image.small,
-                  protocol_id: coin.data.id,
-                  price: coin.data.market_data.current_price.usd,
-                  amount: coin.amount,
-                  raw_amount: coin.amount,
-                },
-              ],
-            } as ChainData),
-        );
-        data = [...repsonse, ...coins];
+        data = [...repsonse, ...getFormattedCoins(manualCoins)];
       })
       .catch(() => res.status(404).end());
   }
-  if (data) {
+  if (data && manualCoins) {
     res.send(getTreasuryInfo(data));
   }
 }
