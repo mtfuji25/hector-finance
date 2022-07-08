@@ -258,6 +258,9 @@ export default function DashBoard() {
     if (!deBankData) {
       (async () => {
         const res = await fetch("https://app.hector.finance/api/debank");
+        if (res.status === 500) {
+          console.error(res.statusText);
+        }
         const results: DeBankData = await res.json();
         setDeBankData(results);
         setProtocolData(results.protocols);

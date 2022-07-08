@@ -410,13 +410,19 @@ export default async function handler(
   // Run the middleware
   await runMiddleware(req, res, cors);
   if (!data) {
-    manualCoins = await getManualCoinInfo();
+    await getManualCoinInfo()
+      .then((repsonse) => (manualCoins = repsonse))
+      .catch(() =>
+        res.status(500).json({ error: "Failed to get coin gecko info" }),
+      );
 
     await getChainTotals()
       .then((repsonse) => {
         data = [...repsonse, ...getFormattedCoins(manualCoins)];
       })
-      .catch(() => res.status(404).end());
+      .catch(() =>
+        res.status(500).json({ error: "Failed to get Debank data" }),
+      );
   }
   if (data && manualCoins) {
     res.send(getTreasuryInfo(data));
