@@ -257,6 +257,13 @@ export default function StakePage() {
       {!wallet.connected && <Submit label="Connect wallet" disabled />}
 
       <Notice>
+        Insure and add personalized coverage to your portfolio using our new
+        partner {""}
+        <Link href="https://solace.fi/about/cover">
+          <a className="underline">Solace!</a>
+        </Link>
+      </Notice>
+      <Notice>
         Staking is only available on Fantom. If you have HEC on another chain,
         you can{" "}
         <Link href="/bridge">
