@@ -56,12 +56,7 @@ export const Checkbox: FC<{
       "block cursor-pointer select-none items-center gap-2.5 rounded",
     )}
   >
-    <div
-      className={classes(
-        "flex items-center gap-2.5 rounded py-3.5 dark:text-gray-200",
-        "bg-gray-100/80 text-gray-500 dark:bg-gray-700 ",
-      )}
-    >
+    <div className="flex items-center gap-2.5 rounded py-3.5">
       {checked && (
         <SquareChecked className="h-5 w-5 flex-shrink-0 object-contain" />
       )}
