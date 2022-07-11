@@ -34,7 +34,6 @@ export const Level3: FC = ({ children }) => <p className="ml-8">{children}</p>;
 
 export const Terms: VFC = () => (
   <div className="space-y-5">
-    <h1>Terms &amp; Conditions</h1>
     <p>
       Please read these Terms and Conditions (“Terms”) carefully as they form a
       binding legal agreement between you and Hector Enterprise Inc. with its
@@ -609,7 +608,6 @@ export const Terms: VFC = () => (
 
 export const Privacy: VFC = () => (
   <div className="space-y-5">
-    <h1>Privacy Policy</h1>
     <h2>Privacy Notice</h2>
     <p>
       Welcome to the Hector Finance platform (“we”, “us” or “Hector Finance”).
@@ -1066,7 +1064,6 @@ export const Privacy: VFC = () => (
 
 export const Disclaimer: VFC = () => (
   <div className="space-y-5">
-    <h1>Disclaimer</h1>
     <p>
       The information provided in this material does not constitute investment
       advice, financial advice, trading advice, or any other sort of advice. You
