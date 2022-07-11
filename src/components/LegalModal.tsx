@@ -2,7 +2,9 @@ import { FC, useEffect, useState, VFC } from "react";
 import { Modal } from "./Modal";
 import { Checkbox } from "./BasicInput";
 import { Submit } from "./Submit";
-import Link from "next/link";
+import { Disclaimer, Privacy, Terms } from "./Legal";
+import { classes } from "src/util";
+import Chevron from "src/icons/chevron.svgr";
 
 export const Legal: VFC = () => {
   type LegalState =
@@ -51,57 +53,92 @@ const LegalModal: VFC<{
   const [agreedDisclaimer, setAgreedDisclaimer] = useState(false);
   const canAccept = agreedTerms && agreedPrivacy && agreedDisclaimer;
 
+  const [viewing, setViewing] = useState<"terms" | "privacy" | "disclaimer">();
+
   return (
     <Modal className="max-w-md">
       <div className="space-y-5 p-6">
+        <Accordion
+          title="Terms & Conditions"
+          open={viewing === "terms"}
+          onChange={(open) => {
+            setViewing(open ? "terms" : undefined);
+          }}
+        >
+          <Terms />
+        </Accordion>
+        <Accordion
+          title="Privacy Policy"
+          open={viewing === "privacy"}
+          onChange={(open) => {
+            setViewing(open ? "privacy" : undefined);
+          }}
+        >
+          <Privacy />
+        </Accordion>
+        <Accordion
+          title="Disclaimer"
+          open={viewing === "disclaimer"}
+          onChange={(open) => {
+            setViewing(open ? "disclaimer" : undefined);
+          }}
+        >
+          <Disclaimer />
+        </Accordion>
+
         <div>
-          Before participating in Hector Finance, you must understand and accept
-          our{" "}
-          <Link href="/terms" prefetch={false}>
-            <a className="underline">Terms &amp; Conditions</a>
-          </Link>
-          ,{" "}
-          <Link href="/privacy" prefetch={false}>
-            <a className="underline">Privacy Policy</a>
-          </Link>
-          , and{" "}
-          <Link href="/disclaimer" prefetch={false}>
-            <a className="underline">Disclaimer</a>
-          </Link>
-          .
+          <Checkbox checked={agreedTerms} onChange={setAgreedTerms}>
+            I agree to the Terms &amp; Conditions
+          </Checkbox>
+          <Checkbox checked={agreedPrivacy} onChange={setAgreedPrivacy}>
+            I agree to the Privacy Policy
+          </Checkbox>
+          <Checkbox checked={agreedDisclaimer} onChange={setAgreedDisclaimer}>
+            I agree to the Disclaimer
+          </Checkbox>
         </div>
-        <div className="">
+        <Submit label="Accept" disabled={!canAccept} onClick={onAccept} />
+        <div className="text-center text-sm opacity-50">
           The information on this page and all other pages owned, operated by,
           or related to Hector are for educational purposes only and do not
           constitute any sort of advice. Cryptocurrencies, NFTs and other
           blockchain offerings are unregulated assets and users should do
           extensive research into how they work, the potential risks and the tax
           liability of owning them in their native regions. Users should
-          carefully read all the documents below before accepting.
+          carefully read all the documents above before accepting.
         </div>
-
-        <div>
-          <Checkbox checked={agreedTerms} onChange={setAgreedTerms}>
-            I agree to the{" "}
-            <Link href="/terms" prefetch={false}>
-              <a className="underline">Terms &amp; Conditions</a>
-            </Link>
-          </Checkbox>
-          <Checkbox checked={agreedPrivacy} onChange={setAgreedPrivacy}>
-            I agree to the{" "}
-            <Link href="/privacy" prefetch={false}>
-              <a className="underline">Privacy Policy</a>
-            </Link>
-          </Checkbox>
-          <Checkbox checked={agreedDisclaimer} onChange={setAgreedDisclaimer}>
-            I agree to the{" "}
-            <Link href="/disclaimer" prefetch={false}>
-              <a className="underline"> Disclaimer </a>
-            </Link>
-          </Checkbox>
-        </div>
-        <Submit label="Accept" disabled={!canAccept} onClick={onAccept} />
       </div>
     </Modal>
+  );
+};
+
+const Accordion: FC<{
+  title: string;
+  open: boolean;
+  onChange: (open: boolean) => void;
+}> = ({ title, open, onChange, children }) => {
+  return (
+    <div>
+      <button
+        className="flex w-full items-center bg-gray-200 px-4 py-3 text-left dark:bg-gray-500"
+        onClick={() => onChange(!open)}
+      >
+        <div>{title}</div>
+        <Chevron
+          className={classes(
+            "ml-auto h-auto w-4 object-contain",
+            open && "rotate-180",
+          )}
+        />
+      </button>
+      <div
+        className={classes(
+          "overflow-y-scroll bg-gray-100 transition-all dark:bg-gray-800",
+          open ? "max-h-72" : "max-h-0",
+        )}
+      >
+        <div className="p-4">{children}</div>
+      </div>
+    </div>
   );
 };
