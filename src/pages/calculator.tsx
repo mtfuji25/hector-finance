@@ -2,6 +2,7 @@ import { Decimal } from "decimal.js";
 import { NextPage } from "next";
 import Head from "next/head";
 import React, { useState, VFC } from "react";
+import { DappPage } from "src/components/DappPage";
 import { PageHeader, PageSubheader } from "src/components/Header";
 import {
   classes,
@@ -33,63 +34,65 @@ const CalculatorPage: NextPage = () => {
   const roi = finalHec.minus(initialHec).div(initialHec).times(100);
 
   return (
-    <main className="w-full space-y-4">
-      <Head>
-        <title>Calculator — Hector Finance</title>
-      </Head>
+    <DappPage>
+      <main className="w-full space-y-4">
+        <Head>
+          <title>Calculator — Hector Finance</title>
+        </Head>
 
-      <div>
-        <PageHeader>Calculator</PageHeader>
-        <PageSubheader>Plan for the future</PageSubheader>
-      </div>
+        <div>
+          <PageHeader>Calculator</PageHeader>
+          <PageSubheader>Plan for the future</PageSubheader>
+        </div>
 
-      <Input
-        label="sHEC amount"
-        value={initialHecInput}
-        onChange={setInitialHecInput}
-      />
-      <Input label="APY (%)" value={apyInput} onChange={setApyInput} />
-      <Input
-        label="HEC price ($) at purchase"
-        value={initialPriceInput}
-        onChange={setInitialPriceInput}
-      />
-      <Input
-        label={`HEC price ($) after ${days} days`}
-        value={finalPriceInput}
-        onChange={setFinalPriceInput}
-      />
-
-      <label className="block space-y-2 dark:text-gray-200">
-        <div>Stake for {days} days</div>
-        <input
-          min={1}
-          max={365}
-          type="range"
-          value={days}
-          onChange={(e) => setDays(e.target.valueAsNumber)}
-          className="block w-full"
+        <Input
+          label="sHEC amount"
+          value={initialHecInput}
+          onChange={setInitialHecInput}
         />
-      </label>
+        <Input label="APY (%)" value={apyInput} onChange={setApyInput} />
+        <Input
+          label="HEC price ($) at purchase"
+          value={initialPriceInput}
+          onChange={setInitialPriceInput}
+        />
+        <Input
+          label={`HEC price ($) after ${days} days`}
+          value={finalPriceInput}
+          onChange={setFinalPriceInput}
+        />
 
-      <div className="space-y-2 rounded bg-green-50 p-6 text-green-800 dark:bg-gray-700 dark:text-gray-200">
-        <div className="text-xs font-bold uppercase tracking-wide text-green-400 dark:text-gray-200">
-          Results
+        <label className="block space-y-2 dark:text-gray-200">
+          <div>Stake for {days} days</div>
+          <input
+            min={1}
+            max={365}
+            type="range"
+            value={days}
+            onChange={(e) => setDays(e.target.valueAsNumber)}
+            className="block w-full"
+          />
+        </label>
+
+        <div className="space-y-2 rounded bg-green-50 p-6 text-green-800 dark:bg-gray-700 dark:text-gray-200">
+          <div className="text-xs font-bold uppercase tracking-wide text-green-400 dark:text-gray-200">
+            Results
+          </div>
+          <div className="flex justify-between dark:text-gray-200">
+            <div>Initial balance:</div>
+            <div>${initialUsd.toFixed(2)}</div>
+          </div>
+          <div className="flex justify-between dark:text-gray-200">
+            <div>Final balance after {days} days:</div>
+            <div>${finalUsd.toFixed(2)}</div>
+          </div>
+          <div className="flex justify-between dark:text-gray-200">
+            <div>ROI after {days} days:</div>
+            <div>{roi.toFixed(0)}%</div>
+          </div>
         </div>
-        <div className="flex justify-between dark:text-gray-200">
-          <div>Initial balance:</div>
-          <div>${initialUsd.toFixed(2)}</div>
-        </div>
-        <div className="flex justify-between dark:text-gray-200">
-          <div>Final balance after {days} days:</div>
-          <div>${finalUsd.toFixed(2)}</div>
-        </div>
-        <div className="flex justify-between dark:text-gray-200">
-          <div>ROI after {days} days:</div>
-          <div>{roi.toFixed(0)}%</div>
-        </div>
-      </div>
-    </main>
+      </main>
+    </DappPage>
   );
 };
 

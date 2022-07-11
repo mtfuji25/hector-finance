@@ -1,23 +1,17 @@
 import "styles/globals.css";
 import type { AppProps } from "next/app";
-import { Decimal } from "decimal.js";
-import TopNav, { SideNav } from "src/components/Nav";
 import { ProviderProvider } from "src/components/Provider";
+import Decimal from "decimal.js";
+import { useTheme } from "src/hooks/theme";
 
 export default function App({ Component, pageProps }: AppProps) {
   // The default precision of `Decimal` is too low.
   // We're setting the precision here to affect every page.
   Decimal.set({ precision: 38 });
-
+  useTheme();
   return (
     <ProviderProvider>
-      <div className="mx-auto max-w-3xl">
-        <TopNav />
-        <div className="flex gap-8 p-8">
-          <SideNav />
-          <Component {...pageProps} />
-        </div>
-      </div>
+      <Component {...pageProps} />
     </ProviderProvider>
   );
 }

@@ -43,6 +43,7 @@ import wftmLogo from "public/icons/wftm.svg";
 import { StaticImg } from "src/components/StaticImg";
 import { Chain, FANTOM } from "src/chain";
 import BigSpinner from "src/icons/spinner-big.svgr";
+import { DappPage } from "src/components/DappPage";
 
 export interface DeBankData {
   treasuryVal: number;
@@ -531,107 +532,111 @@ export default function DashBoard() {
   useEffect(() => localStorage.setItem("dash", view), [view]);
 
   return (
-    <main className="w-full space-y-6">
-      <Head>
-        <title>Dashboard — Hector Finance</title>
-      </Head>
-      <Tabs>
-        <Tab
-          label="Graphs"
-          selected={view === "graph"}
-          onSelect={() => {
-            setView("graph");
-          }}
-        />
-        <Tab
-          label="Investments"
-          selected={view === "investments"}
-          onSelect={() => {
-            setView("investments");
-          }}
-        />
-      </Tabs>
-      {view === "graph" && (
-        <>
-          <div className="flex flex-wrap items-center justify-between text-center">
-            <div className="mb-2 basis-1/3">
-              <div className="dark:text-gray-200">Market Cap</div>
-              {marketCap && (
-                <div className="text-xl font-medium text-orange-400">
-                  {formatCurrency(marketCap.toNumber())}
-                </div>
-              )}
-            </div>
-            <div className="mb-2 basis-1/3">
-              <div className="dark:text-gray-200">Hec Price</div>
-              {marketPrice && (
-                <div className="text-xl font-medium text-orange-400">
-                  {formatCurrency(marketPrice.toNumber(), 2)}
-                </div>
-              )}
-            </div>
-            <div className="mb-2 basis-1/3">
-              <div className="dark:text-gray-200">Hec Burned</div>
-              {hecBurned && (
-                <div className="text-xl font-medium text-orange-400">
-                  {hecBurned?.toFixed(2)}
-                </div>
-              )}
-            </div>
-            <div className="basis-1/3">
-              <div className="dark:text-gray-200">Circulating Supply</div>
-              {circSupply && totalSupply && (
-                <div className="text-xl font-medium text-orange-400">
-                  {circSupply.toFixed(0) + " / " + totalSupply.toFixed(0)}
-                </div>
-              )}
-            </div>
-            <div className="basis-1/3">
-              <div className="dark:text-gray-200">Treasury</div>
-              {treasuryValue && (
-                <div className="text-xl font-medium text-orange-400">
-                  {formatCurrency(treasuryValue.toNumber(), 2)}
-                </div>
-              )}
-            </div>
-            <div className="basis-1/3">
-              <div className="dark:text-gray-200">Current Index</div>
-              {currentIndex && (
-                <div className="text-xl font-medium text-orange-400">
-                  {currentIndex?.toFixed(2)}
-                </div>
-              )}
-            </div>
-          </div>
-          <Graphs graphData={graphData}></Graphs>
-        </>
-      )}
-      {!deBankData && view === "investments" && (
-        <BigSpinner
-          className={classes(
-            "pointer-events-none text-blue-500 transition-opacity delay-75 duration-500",
-          )}
-        />
-      )}
-
-      {view === "investments" &&
-        treasuryValue &&
-        deBankData &&
-        investmentsData &&
-        protocolData && (
+    <DappPage>
+      <main className="w-full space-y-6">
+        <Head>
+          <title>Dashboard — Hector Finance</title>
+        </Head>
+        <Tabs>
+          <Tab
+            label="Graphs"
+            selected={view === "graph"}
+            onSelect={() => {
+              setView("graph");
+            }}
+          />
+          <Tab
+            label="Investments"
+            selected={view === "investments"}
+            onSelect={() => {
+              setView("investments");
+            }}
+          />
+        </Tabs>
+        {view === "graph" && (
           <>
-            <GlobalInfo
-              transactions={sortedTransactions}
-              treasuryValue={treasuryValue}
-            ></GlobalInfo>
-            <Investments metrics={investmentsData}></Investments>
-            <Protocols protocols={protocolData}></Protocols>
-            {sortedTransactions && (
-              <LatestTransactions ftmScanTransactionData={sortedTransactions} />
-            )}
+            <div className="flex flex-wrap items-center justify-between text-center">
+              <div className="mb-2 basis-1/3">
+                <div className="dark:text-gray-200">Market Cap</div>
+                {marketCap && (
+                  <div className="text-xl font-medium text-orange-400">
+                    {formatCurrency(marketCap.toNumber())}
+                  </div>
+                )}
+              </div>
+              <div className="mb-2 basis-1/3">
+                <div className="dark:text-gray-200">Hec Price</div>
+                {marketPrice && (
+                  <div className="text-xl font-medium text-orange-400">
+                    {formatCurrency(marketPrice.toNumber(), 2)}
+                  </div>
+                )}
+              </div>
+              <div className="mb-2 basis-1/3">
+                <div className="dark:text-gray-200">Hec Burned</div>
+                {hecBurned && (
+                  <div className="text-xl font-medium text-orange-400">
+                    {hecBurned?.toFixed(2)}
+                  </div>
+                )}
+              </div>
+              <div className="basis-1/3">
+                <div className="dark:text-gray-200">Circulating Supply</div>
+                {circSupply && totalSupply && (
+                  <div className="text-xl font-medium text-orange-400">
+                    {circSupply.toFixed(0) + " / " + totalSupply.toFixed(0)}
+                  </div>
+                )}
+              </div>
+              <div className="basis-1/3">
+                <div className="dark:text-gray-200">Treasury</div>
+                {treasuryValue && (
+                  <div className="text-xl font-medium text-orange-400">
+                    {formatCurrency(treasuryValue.toNumber(), 2)}
+                  </div>
+                )}
+              </div>
+              <div className="basis-1/3">
+                <div className="dark:text-gray-200">Current Index</div>
+                {currentIndex && (
+                  <div className="text-xl font-medium text-orange-400">
+                    {currentIndex?.toFixed(2)}
+                  </div>
+                )}
+              </div>
+            </div>
+            <Graphs graphData={graphData}></Graphs>
           </>
         )}
-    </main>
+        {!deBankData && view === "investments" && (
+          <BigSpinner
+            className={classes(
+              "pointer-events-none text-blue-500 transition-opacity delay-75 duration-500",
+            )}
+          />
+        )}
+
+        {view === "investments" &&
+          treasuryValue &&
+          deBankData &&
+          investmentsData &&
+          protocolData && (
+            <>
+              <GlobalInfo
+                transactions={sortedTransactions}
+                treasuryValue={treasuryValue}
+              ></GlobalInfo>
+              <Investments metrics={investmentsData}></Investments>
+              <Protocols protocols={protocolData}></Protocols>
+              {sortedTransactions && (
+                <LatestTransactions
+                  ftmScanTransactionData={sortedTransactions}
+                />
+              )}
+            </>
+          )}
+      </main>
+    </DappPage>
   );
 }
 

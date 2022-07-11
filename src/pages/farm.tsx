@@ -7,7 +7,7 @@ import * as Staking from "src/contracts/staking";
 import * as FarmAggregator from "src/contracts/farmAggregator";
 import React, { FC, useEffect, useState, VFC } from "react";
 import { CoinInput } from "src/components/CoinInput";
-import { Radio, RadioGroup } from "src/components/Radio";
+import { Radio, RadioGroup } from "src/components/BasicInput";
 import { Submit } from "src/components/Submit";
 import { Allowance, useAllowance } from "src/hooks/allowance";
 import { useBalance } from "src/hooks/balance";
@@ -29,35 +29,40 @@ import Decimal from "decimal.js";
 import { FANTOM } from "src/chain";
 import { TorStats } from "src/contracts/farmAggregator";
 import { Transaction, TransactionModal } from "src/components/Transaction";
+import { DappPage } from "src/components/DappPage";
 
 const FarmPage: NextPage = () => {
   const wallet = useWallet(FANTOM);
   const [tx, setTx] = useState<Transaction>();
   return (
-    <main className="w-full space-y-5">
-      <Head>
-        <title>Farm — Hector Finance</title>
-      </Head>
-      <div className="">
-        <PageHeader>Farm</PageHeader>
-        <PageSubheader>Earn passive income by lending to Hector</PageSubheader>
-      </div>
-      <FarmStats></FarmStats>
-      <Pool onTx={setTx} />
-      <Farm onTx={setTx} />
-      <Claim onTx={setTx} />
-      <div>
-        {wallet.connected && tx && (
-          <TransactionModal
-            tx={tx}
-            wallet={wallet}
-            onClose={() => {
-              setTx(undefined);
-            }}
-          />
-        )}
-      </div>
-    </main>
+    <DappPage>
+      <main className="w-full space-y-5">
+        <Head>
+          <title>Farm — Hector Finance</title>
+        </Head>
+        <div className="">
+          <PageHeader>Farm</PageHeader>
+          <PageSubheader>
+            Earn passive income by lending to Hector
+          </PageSubheader>
+        </div>
+        <FarmStats></FarmStats>
+        <Pool onTx={setTx} />
+        <Farm onTx={setTx} />
+        <Claim onTx={setTx} />
+        <div>
+          {wallet.connected && tx && (
+            <TransactionModal
+              tx={tx}
+              wallet={wallet}
+              onClose={() => {
+                setTx(undefined);
+              }}
+            />
+          )}
+        </div>
+      </main>
+    </DappPage>
   );
 };
 

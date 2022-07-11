@@ -7,6 +7,7 @@ import TorLogo from "public/icons/tor.svg";
 import React, { useEffect, useState, VFC } from "react";
 import { FANTOM } from "src/chain";
 import { CoinInput } from "src/components/CoinInput";
+import { DappPage } from "src/components/DappPage";
 import { PageHeader, PageSubheader } from "src/components/Header";
 import { StaticImg } from "src/components/StaticImg";
 import { Submit } from "src/components/Submit";
@@ -60,127 +61,129 @@ const MintPage: NextPage = () => {
   }, [wallet]);
 
   return (
-    <main className="w-full space-y-4">
-      <Head>
-        <title>Mint — Hector Finance</title>
-      </Head>
-      <div>
-        <PageHeader>Mint</PageHeader>
-        <PageSubheader>
-          Buy and sell Tor, Hector&apos;s stablecoin
-        </PageSubheader>
-      </div>
+    <DappPage>
+      <main className="w-full space-y-4">
+        <Head>
+          <title>Mint — Hector Finance</title>
+        </Head>
+        <div>
+          <PageHeader>Mint</PageHeader>
+          <PageSubheader>
+            Buy and sell Tor, Hector&apos;s stablecoin
+          </PageSubheader>
+        </div>
 
-      {/* Choose mint or redeem. */}
-      <Tabs>
-        <Tab
-          selected={view === "mint"}
-          label="Mint"
-          onSelect={() => {
-            refreshDaiBalance();
-            setDaiInput("");
-            setTorInput("");
-            setView("mint");
-          }}
-        />
-        <Tab
-          selected={view === "redeem"}
-          label="Redeem"
-          onSelect={() => {
-            refreshTorBalance();
-            setDaiInput("");
-            setTorInput("");
-            setView("redeem");
-          }}
-        />
-      </Tabs>
-
-      {/* Mint */}
-      {view === "mint" && (
-        <>
-          <CoinInput
-            label="Selling"
-            amount={daiInput}
-            onChange={setDaiInput}
-            balance={daiBalance}
-            token={FANTOM_DAI}
-          />
-
-          <Buying amount={dai} tokenImage={TorLogo} tokenName="Tor" />
-          <div className="flex text-base dark:text-gray-200">
-            <div className="flex-1">Mint Limit</div>
-            {mintLimit && <div>{mintLimit.toFixed(2)}</div>}
-          </div>
-
-          <Submit
+        {/* Choose mint or redeem. */}
+        <Tabs>
+          <Tab
+            selected={view === "mint"}
             label="Mint"
-            disabled={dai.lte(0) || dai.gt(daiBalance) || !wallet.connected}
-            onClick={() => {
-              setTx({
-                title: "Mint",
-                chain: FANTOM,
-                allowance: {
-                  token: FANTOM_DAI,
-                  spender: FANTOM_ADDRESS.TOR_MINTER,
-                  amount: dai,
-                },
-                send: (wallet) =>
-                  Minter.mintWithDai(wallet.provider, wallet.address, dai),
-              });
-            }}
-          />
-        </>
-      )}
-      {/* Redeem */}
-      {view === "redeem" && (
-        <>
-          <CoinInput
-            label="Selling"
-            amount={torInput}
-            onChange={setTorInput}
-            balance={torBalance}
-            token={FANTOM_TOR}
-          />
-
-          <Buying amount={tor} tokenImage={DaiLogo} tokenName="Dai" />
-          <div className="flex text-base dark:text-gray-200">
-            <div className="flex-1 ">Redeem Limit</div>
-            {redeemLimit && <div>{redeemLimit.toFixed(2)}</div>}
-          </div>
-
-          <Submit
-            label="Redeem"
-            disabled={tor.lte(0) || tor.gt(torBalance) || !wallet.connected}
-            onClick={() => {
-              setTx({
-                title: "Redeem",
-                chain: FANTOM,
-                allowance: {
-                  token: FANTOM_TOR,
-                  spender: FANTOM_ADDRESS.TOR_MINTER,
-                  amount: tor,
-                },
-                send: (wallet) =>
-                  Minter.redeemToDai(wallet.provider, wallet.address, tor),
-              });
-            }}
-          />
-        </>
-      )}
-      {wallet.connected && tx && (
-        <TransactionModal
-          tx={tx}
-          wallet={wallet}
-          onClose={(success) => {
-            setTx(undefined);
-            if (success) {
+            onSelect={() => {
+              refreshDaiBalance();
               setDaiInput("");
               setTorInput("");
-            }
-          }}
-        />
-      )}
-    </main>
+              setView("mint");
+            }}
+          />
+          <Tab
+            selected={view === "redeem"}
+            label="Redeem"
+            onSelect={() => {
+              refreshTorBalance();
+              setDaiInput("");
+              setTorInput("");
+              setView("redeem");
+            }}
+          />
+        </Tabs>
+
+        {/* Mint */}
+        {view === "mint" && (
+          <>
+            <CoinInput
+              label="Selling"
+              amount={daiInput}
+              onChange={setDaiInput}
+              balance={daiBalance}
+              token={FANTOM_DAI}
+            />
+
+            <Buying amount={dai} tokenImage={TorLogo} tokenName="Tor" />
+            <div className="flex text-base dark:text-gray-200">
+              <div className="flex-1">Mint Limit</div>
+              {mintLimit && <div>{mintLimit.toFixed(2)}</div>}
+            </div>
+
+            <Submit
+              label="Mint"
+              disabled={dai.lte(0) || dai.gt(daiBalance) || !wallet.connected}
+              onClick={() => {
+                setTx({
+                  title: "Mint",
+                  chain: FANTOM,
+                  allowance: {
+                    token: FANTOM_DAI,
+                    spender: FANTOM_ADDRESS.TOR_MINTER,
+                    amount: dai,
+                  },
+                  send: (wallet) =>
+                    Minter.mintWithDai(wallet.provider, wallet.address, dai),
+                });
+              }}
+            />
+          </>
+        )}
+        {/* Redeem */}
+        {view === "redeem" && (
+          <>
+            <CoinInput
+              label="Selling"
+              amount={torInput}
+              onChange={setTorInput}
+              balance={torBalance}
+              token={FANTOM_TOR}
+            />
+
+            <Buying amount={tor} tokenImage={DaiLogo} tokenName="Dai" />
+            <div className="flex text-base dark:text-gray-200">
+              <div className="flex-1 ">Redeem Limit</div>
+              {redeemLimit && <div>{redeemLimit.toFixed(2)}</div>}
+            </div>
+
+            <Submit
+              label="Redeem"
+              disabled={tor.lte(0) || tor.gt(torBalance) || !wallet.connected}
+              onClick={() => {
+                setTx({
+                  title: "Redeem",
+                  chain: FANTOM,
+                  allowance: {
+                    token: FANTOM_TOR,
+                    spender: FANTOM_ADDRESS.TOR_MINTER,
+                    amount: tor,
+                  },
+                  send: (wallet) =>
+                    Minter.redeemToDai(wallet.provider, wallet.address, tor),
+                });
+              }}
+            />
+          </>
+        )}
+        {wallet.connected && tx && (
+          <TransactionModal
+            tx={tx}
+            wallet={wallet}
+            onClose={(success) => {
+              setTx(undefined);
+              if (success) {
+                setDaiInput("");
+                setTorInput("");
+              }
+            }}
+          />
+        )}
+      </main>
+    </DappPage>
   );
 };
 

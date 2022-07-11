@@ -33,6 +33,7 @@ import SmallSpinner from "src/icons/spinner-small.svgr";
 import { Erc20TokenResult } from "src/pages/api/tokens";
 import { assertExists, classes, sleep, useDecimalInput } from "src/util";
 import { ConnectedWallet, useWallet, Wallet, WalletState } from "src/wallet";
+import { DappPage } from "src/components/DappPage";
 
 const ExchangePage: NextPage = () => {
   const [sendToken, setSendToken] = useState(FANTOM_HEC);
@@ -71,7 +72,7 @@ const ExchangePage: NextPage = () => {
   }
 
   return (
-    <>
+    <DappPage>
       <main className="w-full space-y-4">
         <Head>
           <title>DEX — Hector Finance</title>
@@ -161,7 +162,7 @@ const ExchangePage: NextPage = () => {
           onClose={() => setConfirmation(undefined)}
         />
       )}
-    </>
+    </DappPage>
   );
 };
 

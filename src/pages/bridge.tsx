@@ -5,7 +5,7 @@ import React, { useEffect, useState, VFC } from "react";
 import { CoinInput } from "src/components/CoinInput";
 import { PageHeader, PageSubheader } from "src/components/Header";
 import { Notice } from "src/components/Notice";
-import { Radio, RadioGroup } from "src/components/Radio";
+import { Radio, RadioGroup } from "src/components/BasicInput";
 import { StaticImg } from "src/components/StaticImg";
 import { Submit } from "src/components/Submit";
 import { Transaction, TransactionModal } from "src/components/Transaction";
@@ -14,6 +14,7 @@ import { useBalance } from "src/hooks/balance";
 import ArrowRight from "src/icons/arrow-right-long-regular.svgr";
 import { classes, useDecimalInput } from "src/util";
 import { useWallet } from "src/wallet";
+import { DappPage } from "src/components/DappPage";
 
 type BridgePair = {
   minBridge: Decimal;
@@ -70,84 +71,86 @@ const BRIDGES: BridgePair[] = [
 const BridgePage: NextPage = () => {
   const [bridge, setBridge] = useState<BridgePair>(BRIDGES[0]!);
   return (
-    <main className="w-full space-y-4">
-      <Head>
-        <title>Bridge — Hector Finance</title>
-      </Head>
-      <div>
-        <PageHeader>Bridge</PageHeader>
-        <PageSubheader>Swap tokens between chains</PageSubheader>
-      </div>
+    <DappPage>
+      <main className="w-full space-y-4">
+        <Head>
+          <title>Bridge — Hector Finance</title>
+        </Head>
+        <div>
+          <PageHeader>Bridge</PageHeader>
+          <PageSubheader>Swap tokens between chains</PageSubheader>
+        </div>
 
-      <RadioGroup label="Source and destination">
-        {BRIDGES.map((b) => {
-          const isSelected = b.uuid === bridge.uuid;
-          return (
-            <Radio
-              key={b.uuid}
-              checked={isSelected}
-              onCheck={() => setBridge(b)}
-            >
-              <div className="flex items-center gap-4">
-                <div className="flex flex-grow items-center gap-2">
-                  <StaticImg
-                    src={b.from.token.logo}
-                    alt=""
-                    className="h-5 w-5"
+        <RadioGroup label="Source and destination">
+          {BRIDGES.map((b) => {
+            const isSelected = b.uuid === bridge.uuid;
+            return (
+              <Radio
+                key={b.uuid}
+                checked={isSelected}
+                onCheck={() => setBridge(b)}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="flex flex-grow items-center gap-2">
+                    <StaticImg
+                      src={b.from.token.logo}
+                      alt=""
+                      className="h-5 w-5"
+                    />
+                    <div>{b.from.token.symbol}</div>
+                  </div>
+                  <div
+                    className={classes(
+                      "h-7 w-7 flex-shrink-0 rounded-full p-1.5",
+                      !isSelected && "opacity-30",
+                    )}
+                    style={{ backgroundColor: b.from.chain.color }}
+                  >
+                    <StaticImg
+                      src={b.from.chain.logo}
+                      alt=""
+                      className="object-fit h-full w-full"
+                      style={{ color: b.from.chain.color }}
+                    />
+                  </div>
+                  <ArrowRight
+                    className={classes("h-4 w-4", !isSelected && "opacity-50")}
                   />
-                  <div>{b.from.token.symbol}</div>
+                  <div
+                    className={classes(
+                      "h-7 w-7 flex-shrink-0 rounded-full p-1.5",
+                      !isSelected && "opacity-30",
+                    )}
+                    style={{ backgroundColor: b.to.chain.color }}
+                  >
+                    <StaticImg
+                      src={b.to.chain.logo}
+                      alt=""
+                      className="object-fit h-full w-full"
+                      style={{ color: b.to.chain.color }}
+                    />
+                  </div>
                 </div>
-                <div
-                  className={classes(
-                    "h-7 w-7 flex-shrink-0 rounded-full p-1.5",
-                    !isSelected && "opacity-30",
-                  )}
-                  style={{ backgroundColor: b.from.chain.color }}
-                >
-                  <StaticImg
-                    src={b.from.chain.logo}
-                    alt=""
-                    className="object-fit h-full w-full"
-                    style={{ color: b.from.chain.color }}
-                  />
-                </div>
-                <ArrowRight
-                  className={classes("h-4 w-4", !isSelected && "opacity-50")}
-                />
-                <div
-                  className={classes(
-                    "h-7 w-7 flex-shrink-0 rounded-full p-1.5",
-                    !isSelected && "opacity-30",
-                  )}
-                  style={{ backgroundColor: b.to.chain.color }}
-                >
-                  <StaticImg
-                    src={b.to.chain.logo}
-                    alt=""
-                    className="object-fit h-full w-full"
-                    style={{ color: b.to.chain.color }}
-                  />
-                </div>
-              </div>
-            </Radio>
-          );
-        })}
-      </RadioGroup>
+              </Radio>
+            );
+          })}
+        </RadioGroup>
 
-      <Swap bridge={bridge} />
+        <Swap bridge={bridge} />
 
-      <Notice>
-        If liquidity is too low, you will receive{" "}
-        <a
-          className="underline"
-          target="_blank"
-          rel="noreferrer"
-          href={`${bridge.to.chain.explorers[0]}/token/${bridge.to.anyswap.address}`}
-        >
-          {bridge.to.anyswap.symbol} on {bridge.to.chain.longName}
-        </a>
-      </Notice>
-    </main>
+        <Notice>
+          If liquidity is too low, you will receive{" "}
+          <a
+            className="underline"
+            target="_blank"
+            rel="noreferrer"
+            href={`${bridge.to.chain.explorers[0]}/token/${bridge.to.anyswap.address}`}
+          >
+            {bridge.to.anyswap.symbol} on {bridge.to.chain.longName}
+          </a>
+        </Notice>
+      </main>
+    </DappPage>
   );
 };
 

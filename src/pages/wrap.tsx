@@ -16,6 +16,7 @@ import { asyncEffect, useDecimalInput } from "src/util";
 import { useWallet } from "src/wallet";
 import Link from "next/link";
 import { Notice } from "src/components/Notice";
+import { DappPage } from "src/components/DappPage";
 
 export default function WrapPage() {
   const wallet = useWallet(FANTOM);
@@ -62,174 +63,177 @@ export default function WrapPage() {
   }, [sHecPrice, currentIndex]);
 
   return (
-    <main className="w-full space-y-4">
-      <Head>
-        <title>Wrap — Hector Finance</title>
-      </Head>
+    <DappPage>
+      <main className="w-full space-y-4">
+        <Head>
+          <title>Wrap — Hector Finance</title>
+        </Head>
 
-      <div>
-        <PageHeader>Wrap</PageHeader>
-        <PageSubheader>Utilize your staked HEC tokens and wrap</PageSubheader>
-      </div>
-
-      <div className="flex flex-wrap justify-between text-center">
         <div>
-          <div className="dark:text-gray-200">sHEC Price</div>
-          {sHecPrice && (
-            <div className="text-2xl font-medium text-orange-400">
-              ${sHecPrice?.toFixed(2)}
-            </div>
-          )}
+          <PageHeader>Wrap</PageHeader>
+          <PageSubheader>Utilize your staked HEC tokens and wrap</PageSubheader>
         </div>
-        <div>
-          <div className="dark:text-gray-200">Current Index</div>
-          <div className="text-xl font-medium text-orange-400">
-            {currentIndex && (
+
+        <div className="flex flex-wrap justify-between text-center">
+          <div>
+            <div className="dark:text-gray-200">sHEC Price</div>
+            {sHecPrice && (
               <div className="text-2xl font-medium text-orange-400">
-                {currentIndex?.toFixed(2)}
+                ${sHecPrice?.toFixed(2)}
+              </div>
+            )}
+          </div>
+          <div>
+            <div className="dark:text-gray-200">Current Index</div>
+            <div className="text-xl font-medium text-orange-400">
+              {currentIndex && (
+                <div className="text-2xl font-medium text-orange-400">
+                  {currentIndex?.toFixed(2)}
+                </div>
+              )}
+            </div>
+          </div>
+          <div>
+            <div className="dark:text-gray-200">wsHEC Price</div>
+            {wsHecPrice && (
+              <div className="text-2xl font-medium text-orange-400">
+                ${wsHecPrice?.toFixed(2)}
               </div>
             )}
           </div>
         </div>
-        <div>
-          <div className="dark:text-gray-200">wsHEC Price</div>
-          {wsHecPrice && (
-            <div className="text-2xl font-medium text-orange-400">
-              ${wsHecPrice?.toFixed(2)}
-            </div>
-          )}
-        </div>
-      </div>
-      <Tabs>
-        <Tab
-          label="Wrap"
-          selected={view === "wrap"}
-          onSelect={() => {
-            setwsHecInput("");
-            setsHecInput("");
-            refreshsHecBalance();
-            setView("wrap");
-          }}
-        />
-        <Tab
-          label="Unwrap"
-          selected={view === "unwrap"}
-          onSelect={() => {
-            setwsHecInput("");
-            setsHecInput("");
-            refreshwsHecBalance();
-            setView("unwrap");
-          }}
-        />
-      </Tabs>
-      <div>
-        {sHecBalance && view === "wrap" && (
-          <CoinInput
-            amount={sHecInput}
-            token={FANTOM_sHEC}
-            onChange={setsHecInput}
-            balance={sHecBalance}
-          />
-        )}
-        {wsHecBalance && view === "unwrap" && (
-          <CoinInput
-            amount={wsHecInput}
-            token={FANTOM_wsHEC}
-            onChange={setwsHecInput}
-            balance={wsHecBalance}
-          />
-        )}
-      </div>
-      {view === "wrap" && sHecPrice && wsHecPrice && sHec.greaterThan(0) && (
-        <div className="dark:text-gray-200">
-          Wrapping <span className="text-orange-400">{sHec.toString()}</span>{" "}
-          sHEC will result in wsHEC{" "}
-          <span className="text-orange-400">
-            {sHec
-              .times(sHecPrice)
-              .div(wsHecPrice)
-              .toFixed(FANTOM_sHEC.decimals)}
-          </span>
-        </div>
-      )}
-      {view === "unwrap" && sHecPrice && wsHecPrice && wsHec.greaterThan(0) && (
-        <div className="dark:text-gray-200">
-          Unwrapping <span className="text-orange-400">{wsHec.toString()}</span>{" "}
-          wsHEC will result in sHEC{" "}
-          <span className="text-orange-400">
-            {wsHec
-              .times(wsHecPrice)
-              .div(sHecPrice)
-              .toFixed(FANTOM_wsHEC.decimals)}
-          </span>
-        </div>
-      )}
-      {wallet.connected && (
-        <>
-          {view === "wrap" && (
-            <Submit
-              label="Wrap"
-              onClick={() =>
-                setTx({
-                  title: "Wrap",
-                  chain: FANTOM,
-                  allowance: {
-                    token: FANTOM_sHEC,
-                    spender: FANTOM_wsHEC.address,
-                    amount: sHec,
-                  },
-                  send: (wallet) =>
-                    Staking.wrap(wallet.provider, wallet.address, sHec),
-                })
-              }
-              disabled={sHec.isZero() || sHec.gt(sHecBalance)}
-            />
-          )}
-          {view === "unwrap" && (
-            <Submit
-              label="Unwrap"
-              onClick={() =>
-                setTx({
-                  title: "Unwrap",
-                  chain: FANTOM,
-                  allowance: {
-                    token: FANTOM_wsHEC,
-                    spender: FANTOM_wsHEC.address,
-                    amount: wsHec,
-                  },
-                  send: (wallet) =>
-                    Staking.unwrap(wallet.provider, wallet.address, wsHec),
-                })
-              }
-              disabled={wsHec.isZero() || wsHec.gt(wsHecBalance)}
-            />
-          )}
-        </>
-      )}
-      {!wallet.connected && <Submit label="Connect wallet" />}
-
-      <Notice>
-        Wrapping is only available on Fantom. If you have HEC on another chain,
-        you can{" "}
-        <Link href="/bridge">
-          <a className="underline">bridge</a>
-        </Link>{" "}
-        it to Fantom.
-      </Notice>
-
-      {tx && wallet.connected && (
-        <TransactionModal
-          wallet={wallet}
-          tx={tx}
-          onClose={(success) => {
-            setTx(undefined);
-            if (success) {
-              setsHecInput("");
+        <Tabs>
+          <Tab
+            label="Wrap"
+            selected={view === "wrap"}
+            onSelect={() => {
               setwsHecInput("");
-            }
-          }}
-        />
-      )}
-    </main>
+              setsHecInput("");
+              refreshsHecBalance();
+              setView("wrap");
+            }}
+          />
+          <Tab
+            label="Unwrap"
+            selected={view === "unwrap"}
+            onSelect={() => {
+              setwsHecInput("");
+              setsHecInput("");
+              refreshwsHecBalance();
+              setView("unwrap");
+            }}
+          />
+        </Tabs>
+        <div>
+          {sHecBalance && view === "wrap" && (
+            <CoinInput
+              amount={sHecInput}
+              token={FANTOM_sHEC}
+              onChange={setsHecInput}
+              balance={sHecBalance}
+            />
+          )}
+          {wsHecBalance && view === "unwrap" && (
+            <CoinInput
+              amount={wsHecInput}
+              token={FANTOM_wsHEC}
+              onChange={setwsHecInput}
+              balance={wsHecBalance}
+            />
+          )}
+        </div>
+        {view === "wrap" && sHecPrice && wsHecPrice && sHec.greaterThan(0) && (
+          <div className="dark:text-gray-200">
+            Wrapping <span className="text-orange-400">{sHec.toString()}</span>{" "}
+            sHEC will result in wsHEC{" "}
+            <span className="text-orange-400">
+              {sHec
+                .times(sHecPrice)
+                .div(wsHecPrice)
+                .toFixed(FANTOM_sHEC.decimals)}
+            </span>
+          </div>
+        )}
+        {view === "unwrap" && sHecPrice && wsHecPrice && wsHec.greaterThan(0) && (
+          <div className="dark:text-gray-200">
+            Unwrapping{" "}
+            <span className="text-orange-400">{wsHec.toString()}</span> wsHEC
+            will result in sHEC{" "}
+            <span className="text-orange-400">
+              {wsHec
+                .times(wsHecPrice)
+                .div(sHecPrice)
+                .toFixed(FANTOM_wsHEC.decimals)}
+            </span>
+          </div>
+        )}
+        {wallet.connected && (
+          <>
+            {view === "wrap" && (
+              <Submit
+                label="Wrap"
+                onClick={() =>
+                  setTx({
+                    title: "Wrap",
+                    chain: FANTOM,
+                    allowance: {
+                      token: FANTOM_sHEC,
+                      spender: FANTOM_wsHEC.address,
+                      amount: sHec,
+                    },
+                    send: (wallet) =>
+                      Staking.wrap(wallet.provider, wallet.address, sHec),
+                  })
+                }
+                disabled={sHec.isZero() || sHec.gt(sHecBalance)}
+              />
+            )}
+            {view === "unwrap" && (
+              <Submit
+                label="Unwrap"
+                onClick={() =>
+                  setTx({
+                    title: "Unwrap",
+                    chain: FANTOM,
+                    allowance: {
+                      token: FANTOM_wsHEC,
+                      spender: FANTOM_wsHEC.address,
+                      amount: wsHec,
+                    },
+                    send: (wallet) =>
+                      Staking.unwrap(wallet.provider, wallet.address, wsHec),
+                  })
+                }
+                disabled={wsHec.isZero() || wsHec.gt(wsHecBalance)}
+              />
+            )}
+          </>
+        )}
+        {!wallet.connected && <Submit label="Connect wallet" />}
+
+        <Notice>
+          Wrapping is only available on Fantom. If you have HEC on another
+          chain, you can{" "}
+          <Link href="/bridge">
+            <a className="underline">bridge</a>
+          </Link>{" "}
+          it to Fantom.
+        </Notice>
+
+        {tx && wallet.connected && (
+          <TransactionModal
+            wallet={wallet}
+            tx={tx}
+            onClose={(success) => {
+              setTx(undefined);
+              if (success) {
+                setsHecInput("");
+                setwsHecInput("");
+              }
+            }}
+          />
+        )}
+      </main>
+    </DappPage>
   );
 }
