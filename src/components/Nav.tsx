@@ -1,6 +1,6 @@
 import Link from "next/link";
-import DarkHectorLogoLarge from "public/dark-hec-logo.svg";
-import HectorLogoLarge from "public/light-hec-logo.svg";
+import DarkHectorLogoLarge from "public/dark-hec-logo.webp";
+import LightHectorLogoLarge from "public/light-hec-logo.webp";
 import { FC, useEffect, useRef, useState, VFC } from "react";
 import { useTheme } from "src/hooks/theme";
 import ArrowUpRightFromSquareRegular from "src/icons/arrow-up-right-from-square-regular.svgr";
@@ -38,16 +38,21 @@ import { WalletProtocolModal } from "./WalletProtocolModal";
 
 export default function TopNav() {
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const [theme] = useTheme();
   return (
     <>
       <div className="flex flex-row items-center justify-between px-8 py-6">
-        {/* Logo */}
-        <StaticImg
-          src={theme === "dark" ? DarkHectorLogoLarge : HectorLogoLarge}
-          alt="Hector Finance"
-          className="hidden h-10 w-auto object-contain sm:block"
-        />
+        <div className="hidden sm:block">
+          <StaticImg
+            src={LightHectorLogoLarge}
+            alt="Hector Finance"
+            className="h-10 w-auto object-contain dark:hidden"
+          />
+          <StaticImg
+            src={DarkHectorLogoLarge}
+            alt="Hector Finance"
+            className="hidden h-10 w-auto object-contain dark:block"
+          />
+        </div>
         <Bars
           onClick={() => setIsNavOpen((prev) => !prev)}
           className="mr-3 h-6 w-6 cursor-pointer dark:text-gray-200 sm:hidden"
@@ -189,9 +194,9 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
     >
       {isNavOpen && (
         <StaticImg
-          src={theme === "dark" ? DarkHectorLogoLarge : HectorLogoLarge}
+          src={theme === "dark" ? DarkHectorLogoLarge : LightHectorLogoLarge}
           alt="Hector Finance"
-          className=" h-6 w-auto object-contain sm:block"
+          className=" h-8 w-auto object-contain sm:block"
         />
       )}
       <div onClick={closeMenu}>
