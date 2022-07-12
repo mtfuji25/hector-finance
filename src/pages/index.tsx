@@ -440,14 +440,21 @@ export default function DashBoard() {
         ),
       );
       const groupedBuybackData = daoUniqueBlocks
-        .map((blockNumber) =>
-          daoBuybackData.filter(
+        .map((blockNumber) => {
+          const hasMoreTransactions = daoBuybackData.some(
+            (data) =>
+              data.blockNumber === blockNumber && data.tokenSymbol === "TOR",
+          );
+          if (hasMoreTransactions) {
+            return [];
+          }
+          return daoBuybackData.filter(
             (transaction) =>
               transaction.blockNumber === blockNumber &&
               (transaction?.tokenSymbol === "HEC" ||
                 transaction?.tokenSymbol === "DAI"),
-          ),
-        )
+          );
+        })
         .filter((group) => group.length === 2);
       formatFTMScanData([
         ...groupedData,
