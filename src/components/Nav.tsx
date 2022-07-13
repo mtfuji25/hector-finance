@@ -271,7 +271,7 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
         <SocialNav href="https://t.me/hectorDAO" title="Telegram">
           <Telegram width={16} height={16} />
         </SocialNav>
-        <SocialNav href="https://medium.com/@HectorDAO" title="Medium">
+        <SocialNav href="https://medium.com/@Hector_Network" title="Medium">
           <Medium width={16} height={16} />
         </SocialNav>
         <SocialNav href="https://twitter.com/HectorDAO_HEC" title="Twitter">
