@@ -105,28 +105,47 @@ type FarmStats = {
   apr: Decimal;
 };
 async function getFarmStats(farm: SpookyFarm.Farm): Promise<FarmStats> {
-  const prices = await coingeckoPrices(
-    FARMS.flatMap((farm) => [
-      farm.token0.coingecko!,
-      farm.token1.coingecko!,
-    ]).concat(["spookyswap"]),
-  );
+  const [
+    prices,
+    reserves,
+    balance,
+    totalSupply,
+    poolInfo,
+    booPerSecond,
+    totalAllocPoint,
+  ] = await Promise.all([
+    coingeckoPrices(
+      FARMS.flatMap((farm) => [
+        farm.token0.coingecko!,
+        farm.token1.coingecko!,
+      ]).concat(["spookyswap"]),
+    ),
+    SpookyFarm.getReserves(FANTOM, farm),
+    Erc20.balanceOf(FANTOM, farm.lp, SPOOKY_MASTER_CHEF),
+    SpookyFarm.totalSupply(FANTOM, farm),
+    SpookyMasterChef.poolInfo(FANTOM, SPOOKY_MASTER_CHEF, farm.pid),
+    SpookyMasterChef.booPerSecond(FANTOM, SPOOKY_MASTER_CHEF),
+    SpookyMasterChef.totalAllocPoint(FANTOM, SPOOKY_MASTER_CHEF),
+  ]);
 
-  const priceBoo = prices.get("spookyswap");
-
-  const reserves = await SpookyFarm.getReserves(FANTOM, farm);
   if (!reserves.isOk) {
     throw new Error("failed to get reserves");
   }
-
-  const balance = await Erc20.balanceOf(FANTOM, farm.lp, SPOOKY_MASTER_CHEF);
   if (!balance.isOk) {
     throw new Error("failed to get balance");
   }
-
-  const totalSupply = await SpookyFarm.totalSupply(FANTOM, farm);
   if (!totalSupply.isOk) {
     throw new Error("failed to get total supply");
+  }
+  if (!poolInfo.isOk) {
+    throw new Error("failed to get pool info");
+  }
+  if (!booPerSecond.isOk) {
+    throw new Error("failed to get boo per second");
+  }
+
+  if (!totalAllocPoint.isOk) {
+    throw new Error("failed to get total alloc point");
   }
 
   const priceToken0 = prices.get(farm.token0.coingecko!)!;
@@ -137,34 +156,9 @@ async function getFarmStats(farm: SpookyFarm.Farm): Promise<FarmStats> {
   const totalUsd = usdToken0.add(usdToken1);
   const tvl = totalUsd.mul(balance.value).div(totalSupply.value);
 
-  const poolInfo = await SpookyMasterChef.poolInfo(
-    FANTOM,
-    SPOOKY_MASTER_CHEF,
-    farm.pid,
-  );
-  if (!poolInfo.isOk) {
-    throw new Error("failed to get pool info");
-  }
-
   const { allocPoint } = poolInfo.value;
-
-  const booPerSecond = await SpookyMasterChef.booPerSecond(
-    FANTOM,
-    SPOOKY_MASTER_CHEF,
-  );
-  if (!booPerSecond.isOk) {
-    throw new Error("failed to get boo per second");
-  }
-
-  const totalAllocPoint = await SpookyMasterChef.totalAllocPoint(
-    FANTOM,
-    SPOOKY_MASTER_CHEF,
-  );
-  if (!totalAllocPoint.isOk) {
-    throw new Error("failed to get total alloc point");
-  }
-
   const SECONDS_PER_YEAR = new Decimal(365.2425).mul(24).mul(60).mul(60);
+  const priceBoo = prices.get("spookyswap");
   const apr = booPerSecond.value
     .mul(allocPoint.div(totalAllocPoint.value))
     .mul(SECONDS_PER_YEAR)
