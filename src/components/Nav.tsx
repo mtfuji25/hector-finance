@@ -212,9 +212,17 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
           <BoxDollarLight width={16} height={16} />
           Wrap
         </InternalNav>
+        <InternalNav href="/farm">
+          <SeedlingLight width={16} height={16} />
+          Farm
+        </InternalNav>
         <InternalNav href="/bond" disabled>
           <SealLight width={16} height={16} />
           Bond
+        </InternalNav>
+        <InternalNav href="/mint">
+          <Tor width={16} height={16} />
+          Mint
         </InternalNav>
         <InternalNav href="/exchange">
           <ScaleBalancedLight width={16} height={16} />
@@ -223,14 +231,6 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
         <InternalNav href="/bridge">
           <BridgeLight width={16} height={16} />
           Bridge
-        </InternalNav>
-        <InternalNav href="/farm">
-          <SeedlingLight width={16} height={16} />
-          Farm
-        </InternalNav>
-        <InternalNav href="/mint">
-          <Tor width={16} height={16} />
-          Mint
         </InternalNav>
 
         {/* <InternalNav href="/calculator">

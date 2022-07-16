@@ -256,6 +256,7 @@ export const FANTOM_USDC: Erc20Token = {
 export const FANTOM_TOR: Erc20Token = {
   name: "Tor",
   symbol: "TOR",
+  coingecko: "tor",
   logo: TorLogo,
   address: FANTOM_ADDRESS.TOR,
   chain: FANTOM.id,
@@ -266,6 +267,7 @@ export const FANTOM_TOR: Erc20Token = {
 export const FANTOM_WFTM: Erc20Token = {
   name: "Wrapped Fantom",
   symbol: "wFTM",
+  coingecko: "wrapped-fantom",
   logo: WftmLogo,
   address: FANTOM_ADDRESS.WFTM,
   chain: FANTOM.id,
@@ -288,6 +290,26 @@ export const FANTOM_STAKED_CURVE: Erc20Token = {
   symbol: "crvLP",
   logo: CurveLogo,
   address: FANTOM_ADDRESS.DAI_TOR_USDC_FARM,
+  chain: FANTOM.id,
+  decimals: 18,
+  wei: new Decimal(10 ** 18),
+};
+
+export const FANTOM_SPOOKY_FTM_TOR: Erc20Token = {
+  name: "FTM+TOR Spooky LP",
+  symbol: "spLP",
+  address: "0x41d88635029c4402bf9914782ae55c412f8f2142",
+  logo: TorLogo,
+  chain: FANTOM.id,
+  decimals: 18,
+  wei: new Decimal(10 ** 18),
+};
+
+export const FANTOM_SPOOKY_FTM_WSHEC: Erc20Token = {
+  name: "FTM+WSHEC Spooky LP",
+  symbol: "spLP",
+  address: "0x0bfe6f893a6bc443b575ddf361a30f39aa03e59c",
+  logo: HecLogo,
   chain: FANTOM.id,
   decimals: 18,
   wei: new Decimal(10 ** 18),
@@ -336,6 +358,7 @@ export const FANTOM_sHEC: Erc20Token = {
 export const FANTOM_wsHEC: Erc20Token = {
   name: "Wrapped Staked Hector",
   symbol: "wsHEC",
+  coingecko: "wrapped-hec",
   logo: HecLogo,
   address: FANTOM_ADDRESS.WSHEC,
   chain: FANTOM.id,

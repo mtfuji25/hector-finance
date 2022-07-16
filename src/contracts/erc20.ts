@@ -25,6 +25,8 @@ export interface Erc20Token {
   address: TokenAddress;
   chain: number;
 
+  coingecko?: string;
+
   /**
    * The number of decimal places this token can represent.
    * Otherwise known as _precision_.
