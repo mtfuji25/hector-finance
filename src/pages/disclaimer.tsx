@@ -1,10 +1,11 @@
 import { NextPage } from "next";
+import { DappPage } from "src/components/DappPage";
 import { Disclaimer, LegalPage } from "src/components/Legal";
 
 const DisclaimerPage: NextPage = () => (
-  <LegalPage title="Disclaimer">
+  <DappPage>
     <Disclaimer />
-  </LegalPage>
+  </DappPage>
 );
 
 export default DisclaimerPage;

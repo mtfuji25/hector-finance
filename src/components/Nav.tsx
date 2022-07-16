@@ -23,6 +23,7 @@ import Telegram from "src/icons/telegram-brands.svgr";
 import Tor from "src/icons/tor.svgr";
 import Twitter from "src/icons/twitter-brands.svgr";
 import WalletRegular from "src/icons/wallet-regular.svgr";
+import FileCertificate from "src/icons/file-certificate.svgr";
 import WatermelonLight from "src/icons/watermelon-slice-light.svgr";
 import { assertNever, classes, ellipsisBetween } from "src/util";
 import { useWallet, WalletState } from "src/wallet";
@@ -252,6 +253,21 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
           <BookLight width={16} height={16} />
           Docs
         </ExternalNav>
+      </div>
+      <Divider />
+      <div>
+        <InternalNav href="/privacy">
+          <FileCertificate width={16} height={16} />
+          Privacy Policy
+        </InternalNav>
+        <InternalNav href="/disclaimer">
+          <FileCertificate width={16} height={16} />
+          Disclaimer
+        </InternalNav>
+        <InternalNav href="/terms">
+          <FileCertificate width={16} height={16} />
+          Terms &amp; Conditions
+        </InternalNav>
       </div>
       <Divider />
       <div>

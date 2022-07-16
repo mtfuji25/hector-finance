@@ -1,11 +1,12 @@
 import { NextPage } from "next";
-import { LegalPage, Terms } from "src/components/Legal";
+import { DappPage } from "src/components/DappPage";
+import { Terms } from "src/components/Legal";
 
 const TermsPage: NextPage = () => {
   return (
-    <LegalPage title="Terms & Conditions">
+    <DappPage>
       <Terms />
-    </LegalPage>
+    </DappPage>
   );
 };
 

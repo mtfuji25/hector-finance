@@ -1,10 +1,11 @@
 import { NextPage } from "next";
+import { DappPage } from "src/components/DappPage";
 import { LegalPage, Privacy } from "src/components/Legal";
 
 const PrivacyPage: NextPage = () => (
-  <LegalPage title="Privacy Policy">
+  <DappPage>
     <Privacy />
-  </LegalPage>
+  </DappPage>
 );
 
 export default PrivacyPage;
