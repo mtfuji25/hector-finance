@@ -12,6 +12,7 @@ import { ProviderProtocol } from "./Provider";
 import SteakLogo from "public/wallet/steak.png";
 import RainbowLogo from "public/wallet/rainbow.png";
 import GnosisLogo from "public/wallet/gnosis.svg";
+import Lock from "src/icons/lock.svgr";
 
 export type WalletInfo = {
   name: string;
@@ -118,7 +119,10 @@ export const WalletProtocolModal: VFC<{
           </div>
         </ProtocolOption>
         <ProtocolOption onClick={() => onSelect(ProviderProtocol.Disconnect)}>
-          <div className="text-t font-bold">Disconnect all wallets</div>
+          <div className="flex items-center gap-2.5">
+            <Lock className="mb-0.5 h-4 w-4" />
+            <div className="text-t font-bold">Disconnect all wallets</div>
+          </div>
         </ProtocolOption>
       </div>
     </div>
