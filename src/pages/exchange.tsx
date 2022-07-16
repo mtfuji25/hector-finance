@@ -142,12 +142,18 @@ const ExchangePage: NextPage = () => {
           setSendToken(token);
           setSelectingSendToken(false);
         }}
+        onCancel={() => {
+          setSelectingSendToken(false);
+        }}
       />
       <TokenModal
         open={selectingReceiveToken}
         onSelect={(chain, token) => {
           setReceiveChain(chain);
           setReceiveToken(token);
+          setSelectingReceiveToken(false);
+        }}
+        onCancel={() => {
           setSelectingReceiveToken(false);
         }}
       />
@@ -392,7 +398,8 @@ const Task: FC<{ label: string; state: TaskState }> = ({ label, state }) => (
 const TokenModal: FC<{
   open: boolean;
   onSelect: (chain: Chain, token: Erc20Token) => void;
-}> = ({ open, onSelect }) => {
+  onCancel: () => void;
+}> = ({ open, onSelect, onCancel }) => {
   const [search, setSearch] = useState("");
   const [chain, setChain] = useState<Chain>(FANTOM);
   const [results, isSearching] = useTokenSearch(chain.id, search);
@@ -407,6 +414,7 @@ const TokenModal: FC<{
           setChain(chain);
           setSelectingChain(false);
         }}
+        onCancel={onCancel}
       />
     );
   } else {
@@ -419,6 +427,7 @@ const TokenModal: FC<{
         onSelect={(token) => onSelect(chain, token)}
         chain={chain}
         results={results}
+        onCancel={onCancel}
       />
     );
   }
@@ -426,8 +435,12 @@ const TokenModal: FC<{
 
 const SelectChain: VFC<{
   onSelect: (chain: Chain) => void;
-}> = ({ onSelect }) => (
-  <Modal className="flex h-full max-h-[500px] w-full max-w-xs flex-col gap-3 overflow-hidden overflow-y-auto bg-white p-3">
+  onCancel: () => void;
+}> = ({ onSelect, onCancel }) => (
+  <Modal
+    onClose={onCancel}
+    className="flex h-full max-h-[500px] w-full max-w-xs flex-col gap-3 overflow-hidden overflow-y-auto bg-white p-3"
+  >
     {CHAINS.map((chain) => (
       <ChainButton
         key={chain.id}
@@ -444,6 +457,7 @@ const SelectToken: VFC<{
   onSearch: (value: string) => void;
   onChangeChain: () => void;
   onSelect: (token: Erc20Token) => void;
+  onCancel: () => void;
   chain: Chain;
   results: Erc20TokenResult[];
 }> = ({
@@ -452,10 +466,14 @@ const SelectToken: VFC<{
   onSearch,
   onChangeChain,
   onSelect,
+  onCancel,
   chain,
   results,
 }) => (
-  <Modal className="flex h-full max-h-[500px] w-full max-w-xs flex-col gap-3 overflow-hidden bg-white pt-3">
+  <Modal
+    onClose={onCancel}
+    className="flex h-full max-h-[500px] w-full max-w-xs flex-col gap-3 overflow-hidden bg-white pt-3"
+  >
     {/* Chain */}
     <div className="px-3">
       <ChainButton

@@ -7,8 +7,6 @@ export const Modal: FC<{ className?: string; onClose?: () => void }> = ({
   className,
   onClose,
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -16,43 +14,26 @@ export const Modal: FC<{ className?: string; onClose?: () => void }> = ({
     };
   }, []);
 
-  useEffect(() => {
-    if (!onClose) {
-      return;
-    }
-
-    const onClickOutside = (e: MouseEvent) => {
-      if (!(e.target instanceof Node)) {
-        return;
-      }
-      let target: Node | null = e.target;
-      while (target) {
-        if (target === ref.current) {
-          return;
-        }
-        target = target.parentNode;
-      }
-      onClose();
-    };
-
-    window.addEventListener("click", onClickOutside);
-    return () => {
-      window.removeEventListener("click", onClickOutside);
-    };
-  }, [onClose]);
-
   return (
-    <div className="fixed top-0 left-0 right-0 bottom-0 z-10 m-0 flex items-center justify-center overflow-auto bg-gray-900/50 backdrop-blur-sm dark:text-gray-200">
+    <>
+      {/* Backdrop and close */}
       <div
-        ref={ref}
-        className={classes(
-          "relative m-auto w-full rounded bg-white dark:bg-gray-700 dark:text-gray-200",
-          className,
-        )}
-      >
-        {children}
+        onClick={onClose}
+        className="fixed top-0 left-0 right-0 bottom-0 z-10 m-0 bg-gray-900/50 backdrop-blur-sm"
+      />
+
+      {/* Content */}
+      <div className="transparent pointer-events-none fixed top-0 left-0 right-0 bottom-0 z-20 m-0 flex items-center justify-center overflow-auto">
+        <div
+          className={classes(
+            "pointer-events-auto relative m-auto w-full rounded bg-white dark:bg-gray-700 dark:text-gray-200",
+            className,
+          )}
+        >
+          {children}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
