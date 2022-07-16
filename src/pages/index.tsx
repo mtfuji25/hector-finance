@@ -401,7 +401,7 @@ export default function DashBoard() {
         },
       },
     ).then((res) => res.json());
-    const getBuybackTransactions = fetch(
+    const getDaoBuybackTxs = fetch(
       `https://api.ftmscan.com/api?module=account&action=tokentx&address=${FANTOM_ADDRESS.DAO_WALLET}&startblock=40511244&endblock=99999999&sort=desc&apikey=HEB98UTKTRQYD7R4UG383BNGJZ82B4M1E8`,
       {
         headers: {
@@ -409,16 +409,42 @@ export default function DashBoard() {
         },
       },
     ).then((res) => res.json());
+    const getManualBuybackTxs = fetch(
+      `https://api.ftmscan.com/api?module=account&action=tokentx&address=0xa3529B2168771aF08d1F74f907F1aA9eb367A134&startblock=42616573&endblock=99999999&sort=desc&apikey=HEB98UTKTRQYD7R4UG383BNGJZ82B4M1E8`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    ).then((res) => res.json());
+    const getManualBuybackTxs2 = fetch(
+      `https://api.ftmscan.com/api?module=account&action=tokentx&address=0x8a43e670619973944cb573bb23688c24cc0b5131&startblock=42523557&endblock=99999999&sort=desc&apikey=HEB98UTKTRQYD7R4UG383BNGJZ82B4M1E8`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    ).then((res) => res.json());
     async function getTransactionData() {
-      const [transactions, oldTransactions, buyBackTransactions] =
-        await Promise.all([
-          getHecBurnTransactions,
-          getOldHecBurnTransactions,
-          getBuybackTransactions,
-        ]);
+      const [
+        transactions,
+        oldTransactions,
+        buyBackTransactions,
+        manualBuybackTxs,
+        manualBuybackTxs2,
+      ] = await Promise.all([
+        getHecBurnTransactions,
+        getOldHecBurnTransactions,
+        getDaoBuybackTxs,
+        getManualBuybackTxs,
+        getManualBuybackTxs2,
+      ]);
       const hecburnData: FTMScanTransaction[] = transactions.result;
       const oldHecburnData: FTMScanTransaction[] = oldTransactions.result;
       const daoBuybackData: FTMScanTransaction[] = buyBackTransactions.result;
+      const manualBuybackData: FTMScanTransaction[] = manualBuybackTxs.result;
+      const manualBuybacksData2: FTMScanTransaction[] =
+        manualBuybackTxs2.result;
 
       const uniqueBlocks = Array.from(
         new Set(hecburnData.map((transactions) => transactions.blockNumber)),
@@ -428,6 +454,16 @@ export default function DashBoard() {
       );
       const daoUniqueBlocks = Array.from(
         new Set(daoBuybackData.map((transactions) => transactions.blockNumber)),
+      );
+      const manualUniqueBlocks = Array.from(
+        new Set(
+          manualBuybackData.map((transactions) => transactions.blockNumber),
+        ),
+      );
+      const manualUniqueBlocks2 = Array.from(
+        new Set(
+          manualBuybacksData2.map((transactions) => transactions.blockNumber),
+        ),
       );
       const groupedData = uniqueBlocks.map((blockNumber) =>
         hecburnData.filter(
@@ -439,16 +475,35 @@ export default function DashBoard() {
           (transaction) => transaction.blockNumber === blockNumber,
         ),
       );
-      const groupedBuybackData = daoUniqueBlocks
+      const daoGroupedData = getGroupedData(daoUniqueBlocks, daoBuybackData);
+      const manualData = getGroupedData(manualUniqueBlocks, manualBuybackData);
+      const manual2Data = getGroupedData(
+        manualUniqueBlocks2,
+        manualBuybacksData2,
+      );
+      formatFTMScanData([
+        ...groupedData,
+        ...oldGroupedData,
+        ...daoGroupedData,
+        ...manualData,
+        ...manual2Data,
+      ]);
+    }
+
+    const getGroupedData = (
+      uniqueBlocks: string[],
+      buyBackData: FTMScanTransaction[],
+    ) => {
+      return uniqueBlocks
         .map((blockNumber) => {
-          const hasMoreTransactions = daoBuybackData.some(
+          const hasMoreTransactions = buyBackData.some(
             (data) =>
               data.blockNumber === blockNumber && data.tokenSymbol === "TOR",
           );
           if (hasMoreTransactions) {
             return [];
           }
-          return daoBuybackData.filter(
+          return buyBackData.filter(
             (transaction) =>
               transaction.blockNumber === blockNumber &&
               (transaction?.tokenSymbol === "HEC" ||
@@ -456,12 +511,7 @@ export default function DashBoard() {
           );
         })
         .filter((group) => group.length === 2);
-      formatFTMScanData([
-        ...groupedData,
-        ...oldGroupedData,
-        ...groupedBuybackData,
-      ]);
-    }
+    };
 
     const getTokens = (data: FTMScanTransaction[]): TokenDetail[] => {
       return data
