@@ -46,7 +46,7 @@ export const Modal: FC<{ className?: string; onClose?: () => void }> = ({
       <div
         ref={ref}
         className={classes(
-          "relative m-auto rounded bg-white dark:bg-gray-700 dark:text-gray-200",
+          "relative m-auto w-full rounded bg-white dark:bg-gray-700 dark:text-gray-200",
           className,
         )}
       >

@@ -302,7 +302,7 @@ const ConfirmationModal: FC<{
     return <></>;
   }
   return (
-    <Modal className="relative max-w-md bg-white p-5">
+    <Modal className="relative w-full max-w-md bg-white p-5">
       <ModalCloseButton onClick={onClose} />
       <div className="space-y-5">
         <div className="text-xl font-medium ">
@@ -427,7 +427,7 @@ const TokenModal: FC<{
 const SelectChain: VFC<{
   onSelect: (chain: Chain) => void;
 }> = ({ onSelect }) => (
-  <Modal className="flex h-full max-h-[500px] max-w-xs flex-col gap-3 overflow-hidden overflow-y-auto bg-white p-3">
+  <Modal className="flex h-full max-h-[500px] w-full max-w-xs flex-col gap-3 overflow-hidden overflow-y-auto bg-white p-3">
     {CHAINS.map((chain) => (
       <ChainButton
         key={chain.id}
@@ -455,7 +455,7 @@ const SelectToken: VFC<{
   chain,
   results,
 }) => (
-  <Modal className="flex h-full max-h-[500px] max-w-xs flex-col gap-3 overflow-hidden bg-white pt-3">
+  <Modal className="flex h-full max-h-[500px] w-full max-w-xs flex-col gap-3 overflow-hidden bg-white pt-3">
     {/* Chain */}
     <div className="px-3">
       <ChainButton
