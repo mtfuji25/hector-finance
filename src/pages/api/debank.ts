@@ -250,6 +250,9 @@ async function getManualCoinInfo(): Promise<ManualCoinInfo[]> {
   const getVechainInfo: CoinGeckoInfo = await fetch(
     "https://api.coingecko.com/api/v3/coins/vechain?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false",
   ).then((res) => res.json());
+  const getBtcInfo: CoinGeckoInfo = await fetch(
+    "https://api.coingecko.com/api/v3/coins/bitcoin?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false",
+  ).then((res) => res.json());
   const getElrondInfo: CoinGeckoInfo = await fetch(
     "https://api.coingecko.com/api/v3/coins/elrond-erd-2?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false",
   ).then((res) => res.json());
@@ -274,16 +277,25 @@ async function getManualCoinInfo(): Promise<ManualCoinInfo[]> {
   const getLQDRInfo: CoinGeckoInfo = await fetch(
     "https://api.coingecko.com/api/v3/coins/liquiddriver?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false",
   ).then((res) => res.json());
+  const getACHInfo: CoinGeckoInfo = await fetch(
+    "https://api.coingecko.com/api/v3/coins/alchemy-pay?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false",
+  ).then((res) => res.json());
+  const getDOTInfo: CoinGeckoInfo = await fetch(
+    "https://api.coingecko.com/api/v3/coins/polkadot?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false",
+  ).then((res) => res.json());
   return Promise.all([
-    { data: getVechainInfo, amount: 39337761 },
+    { data: getVechainInfo, amount: 50729817 },
+    { data: getBtcInfo, amount: 26 },
     { data: getElrondInfo, amount: 18881 },
     { data: getNearInfo, amount: 59566 },
-    { data: getHarmonyInfo, amount: 12579378 },
-    { data: getHederaInfo, amount: 2878325 },
-    { data: getAlgoInfo, amount: 243468 },
-    { data: getStellarInfo, amount: 1727598 },
-    { data: getAVAInfo, amount: 304705 },
+    { data: getHarmonyInfo, amount: 4503992 },
+    { data: getHederaInfo, amount: 2122976 },
+    { data: getAlgoInfo, amount: 682032 },
+    { data: getStellarInfo, amount: 1279540 },
+    { data: getAVAInfo, amount: 140334 },
     { data: getLQDRInfo, amount: 35484 },
+    { data: getACHInfo, amount: 8673963 },
+    { data: getDOTInfo, amount: 9676 },
   ]);
 }
 
