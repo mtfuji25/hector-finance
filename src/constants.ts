@@ -316,7 +316,7 @@ export const FANTOM_SPOOKY_FTM_WSHEC: Erc20Token = {
 };
 
 export const FANTOM_HEC: Erc20Token = {
-  name: "Hector Finance",
+  name: "Hector Network",
   symbol: "HEC",
   logo: HecLogo,
   address: FANTOM_ADDRESS.HEC,
@@ -326,7 +326,7 @@ export const FANTOM_HEC: Erc20Token = {
 };
 
 export const FANTOM_ANYSWAP_HEC: Erc20Token = {
-  name: "Anyswap Hector Finance",
+  name: "Anyswap Hector Network",
   symbol: "anyHEC",
   logo: HecLogo,
   address: "0x8564bA78F88B744FcC6F9407B9AF503Ad35adAFC",
@@ -373,7 +373,7 @@ export const LP_FARM: Farm = {
 };
 
 export const ETHEREUM_HEC: Erc20Token = {
-  name: "Hector Finance",
+  name: "Hector Network",
   symbol: "HEC",
   logo: HecLogo,
   address: "0x29b3d220f0f1E37b342Cf7c48c1164BF5bf79eFa",
@@ -383,7 +383,7 @@ export const ETHEREUM_HEC: Erc20Token = {
 };
 
 export const BINANCE_HEC: Erc20Token = {
-  name: "Hector Finance",
+  name: "Hector Network",
   symbol: "HEC",
   logo: HecLogo,
   address: "0x638EEBe886B0e9e7C6929E69490064a6C94d204d",
@@ -393,7 +393,7 @@ export const BINANCE_HEC: Erc20Token = {
 };
 
 export const BINANCE_ANYSWAP_HEC: Erc20Token = {
-  name: "Anyswap Hector Finance",
+  name: "Anyswap Hector Network",
   symbol: "anyHEC",
   logo: HecLogo,
   address: "0xe98803E5cE78Cf8AAD43267d9852A4057423Cb1d",
@@ -413,7 +413,7 @@ export const BINANCE_ANYSWAP_TOR: Erc20Token = {
 };
 
 export const AVALANCHE_HEC: Erc20Token = {
-  name: "Hector Finance",
+  name: "Hector Network",
   symbol: "HEC",
   logo: HecLogo,
   address: "0x0149E2FA4104666f6af136f731757A04df5C8A68",

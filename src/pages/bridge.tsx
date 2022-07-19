@@ -74,7 +74,7 @@ const BridgePage: NextPage = () => {
     <DappPage>
       <main className="w-full space-y-4">
         <Head>
-          <title>Bridge — Hector Finance</title>
+          <title>Bridge — Hector Network</title>
         </Head>
         <div>
           <PageHeader>Bridge</PageHeader>

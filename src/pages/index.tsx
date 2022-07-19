@@ -592,7 +592,7 @@ export default function DashBoard() {
     <DappPage>
       <main className="w-full space-y-6">
         <Head>
-          <title>Dashboard — Hector Finance</title>
+          <title>Dashboard — Hector Network</title>
         </Head>
         <Tabs>
           <Tab

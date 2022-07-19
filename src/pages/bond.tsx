@@ -7,7 +7,7 @@ const BondPage: NextPage = () => {
     <DappPage>
       <main className="w-full">
         <Head>
-          <title>Bond — Hector Finance</title>
+          <title>Bond — Hector Network</title>
         </Head>
         <div>
           <h1 className="font-semibold text-2xl">Bond</h1>

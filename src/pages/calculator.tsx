@@ -37,7 +37,7 @@ const CalculatorPage: NextPage = () => {
     <DappPage>
       <main className="w-full space-y-4">
         <Head>
-          <title>Calculator — Hector Finance</title>
+          <title>Calculator — Hector Network</title>
         </Head>
 
         <div>

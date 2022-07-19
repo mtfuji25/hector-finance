@@ -66,7 +66,7 @@ export default function WrapPage() {
     <DappPage>
       <main className="w-full space-y-4">
         <Head>
-          <title>Wrap — Hector Finance</title>
+          <title>Wrap — Hector Network</title>
         </Head>
 
         <div>

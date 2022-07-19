@@ -1,5 +1,5 @@
 {
-  "name": "hector-finance",
+  "name": "hector-network",
   "private": true,
   "scripts": {
     "dev": "next dev",
