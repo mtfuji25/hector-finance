@@ -31,7 +31,7 @@ const FarmPage: NextPage = () => {
     <DappPage>
       <main className="w-full space-y-5">
         <Head>
-          <title>Farm — Hector Network</title>
+          <title>Farm — Hector Finance</title>
         </Head>
         <div className="">
           <PageHeader>Farm</PageHeader>

@@ -45,7 +45,7 @@ export async function getProvider(): Promise<
     bridge: "https://bridge.walletconnect.org",
     qrcodeModal: QRCodeModal,
     clientMeta: {
-      name: "Hector Network",
+      name: "Hector Finance",
       description: "A financial center on the Fantom Opera Chain and beyond.",
       icons: ["https://app.hector.finance/favicon.ico"],
       url: "https://hector.finance",

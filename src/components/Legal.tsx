@@ -12,12 +12,12 @@ export const LegalPage: FC<{ title: string }> = ({ title, children }) => (
     <StaticImg
       className="mx-auto w-60 dark:hidden"
       src={LightHectorLogoLarge}
-      alt="Hector Network"
+      alt="Hector Finance"
     />
     <StaticImg
       className="mx-auto hidden w-60 dark:block"
       src={DarkHectorLogoLarge}
-      alt="Hector Network"
+      alt="Hector Finance"
     />
     <div className="space-y-5">{children}</div>
   </main>
@@ -38,11 +38,11 @@ export const Terms: VFC = () => (
       Please read these Terms and Conditions (“Terms”) carefully as they form a
       binding legal agreement between you and Hector Enterprise Inc. with its
       registered office at Trinity Chambers, PO Box 4301, Road Town, Tortola,
-      British Virgin Islands (“Hector Network” or “we” or “our” and its
+      British Virgin Islands (“Hector Finance” or “we” or “our” and its
       derivatives). Our website (
       <LegalLink href="https://hector.finance/" />) and any other sites or
-      subdomains of Hector Network (collectively, the “Site”) and the
-      information on it are controlled by Hector Network. These Terms govern the
+      subdomains of Hector Finance (collectively, the “Site”) and the
+      information on it are controlled by Hector Finance. These Terms govern the
       use of the Site and apply to all visitors to the Site and those who use
       the services and resources available or enabled via the Site (each a
       “Service” and collectively, the “Services”).
@@ -58,7 +58,7 @@ export const Terms: VFC = () => (
       privilege.
     </p>
     <p>
-      Hector Network may modify these Terms at any time and in our sole
+      Hector Finance may modify these Terms at any time and in our sole
       discretion. If we do so, we will change the “Last Updated Date” at the
       beginning of these Terms. You must consent to any updated Terms before you
       continue using the Services following an update to these Terms. Your
@@ -125,7 +125,7 @@ export const Terms: VFC = () => (
       greater) or controlled business enterprise;
     </Level3>
     <Level3>
-      1.1.9. “Hector Network Content” means the Services and the information and
+      1.1.9. “Hector Finance Content” means the Services and the information and
       content available therein;
     </Level3>
     <Level3>
@@ -136,7 +136,7 @@ export const Terms: VFC = () => (
       1.1.11. “Prohibited Jurisdictions” means any state, country, territory or
       other jurisdiction where your use of the Services would be illegal or
       where your use of the Services would amount to any violation of any
-      Applicable Law either by you or by Hector Network;
+      Applicable Law either by you or by Hector Finance;
     </Level3>
     <Level3>
       1.1.12. “Prohibited Conduct” has the meaning set out in section 6 of these
@@ -161,7 +161,7 @@ export const Terms: VFC = () => (
 
     <h2>2. Disclaimer on the Services Provided</h2>
     <Level2>
-      2.1. Hector Network IS NOT A BANK, SECURITIES FIRM, FINANCIAL INSTITUTION,
+      2.1. HECTOR FINANCE IS NOT A BANK, SECURITIES FIRM, FINANCIAL INSTITUTION,
       FINANCIAL SERVICES PROVIDER OR PROVIDER OF SIMILAR SERVICES AND DOES NOT
       PROVIDE INVESTMENT OR FINANCIAL ADVICE, FINANCIAL SERVICES OR CONSULTING
       SERVICES TO USERS OF THE SERVICES. WE ARE SOLELY THE PROVIDER OF THE
@@ -176,7 +176,7 @@ export const Terms: VFC = () => (
       (a) you have read, understand, and agree to be bound by the Terms, (b) you
       are 18 years or older, or of the age of majority in your local
       jurisdiction, whichever is higher, and legally capable of forming a
-      binding contract with Hector Network, and (c) you have the authority to
+      binding contract with Hector Finance, and (c) you have the authority to
       enter into the Terms personally or on behalf of the legal entity for whom
       you are using the services. The term “you” refers to you individually or
       the legal entity on whose behalf you use the Services, as applicable. If
@@ -213,10 +213,10 @@ export const Terms: VFC = () => (
       Rewards are not guaranteed and the timing of the Rewards may vary. Such
       rates have no relationship to and may not be competitive with benchmark
       interest rates observed in the market for bank deposit accounts. You agree
-      and understand that Hector Network does not guarantee that you will
+      and understand that Hector Finance does not guarantee that you will
       receive these Rewards and that the applicable percentage or nominal value
       is an estimate only and not guaranteed and may change at any time in
-      Hector Network’s sole discretion.
+      Hector Finance’s sole discretion.
     </Level2>
     <Level2>
       4.3. The Services are evolving and you may be required to accept updates
@@ -229,7 +229,7 @@ export const Terms: VFC = () => (
       4.4. The Services may provide access to, integrate, or create user
       interfaces or interactions with Third Party Services. Access to Third
       Party Services may be geo-blocked for residents of certain countries. You
-      agree that it is impossible for Hector Network to monitor Third Party
+      agree that it is impossible for Hector Finance to monitor Third Party
       Services and that you access them at your own risk. Do not share any
       credential, private key, or other sensitive or confidential information
       with any third party without validating their legitimacy. Third Party
@@ -272,31 +272,31 @@ export const Terms: VFC = () => (
 
     <h2>5. Intellectual Property</h2>
     <Level2>
-      5.1. Hector Network (and/or its suppliers, where applicable) owns all
-      right, title and interest in and to the Hector Network Content and the
+      5.1. Hector Finance (and/or its suppliers, where applicable) owns all
+      right, title and interest in and to the Hector Finance Content and the
       Site. You shall not remove, alter or obscure any copyright, trademark,
       service mark or other proprietary rights notices incorporated in or
-      accompanying the Hector Network Content.
+      accompanying the Hector Finance Content.
     </Level2>
     <Level2>
-      5.2. Hector Network and other related graphics, logos, service marks and
-      trade names including but not limited to the Hector Network Content used
+      5.2. Hector Finance and other related graphics, logos, service marks and
+      trade names including but not limited to the Hector Finance Content used
       on or in connection with the Services are intellectual property of Hector
       Finance and may not be used without permission in connection with any
       third-party products or services. Other trademarks, service marks and
       trade names that may appear on or in the Services are the property of
-      their respective owners including but not limited to Hector Network’s
+      their respective owners including but not limited to Hector Finance’s
       suppliers.
     </Level2>
     <Level2>
-      5.3. The Hector Network Content is protected worldwide by copyright,
+      5.3. The Hector Finance Content is protected worldwide by copyright,
       trademark, or other intellectual property protection legally available.
-      Subject to the Terms, Hector Network grants you a personal, restricted,
+      Subject to the Terms, Hector Finance grants you a personal, restricted,
       non-exclusive, non-transferable, non-sublicensable, revocable and limited
-      license to reproduce portions of Hector Network Content solely as required
+      license to reproduce portions of Hector Finance Content solely as required
       to use the Services for your personal or internal business purposes.
-      Unless otherwise specified by Hector Network in a separate license, your
-      right to use any Hector Network Content is subject to these Terms.
+      Unless otherwise specified by Hector Finance in a separate license, your
+      right to use any Hector Finance Content is subject to these Terms.
     </Level2>
     <Level2>
       5.4. You own your User Content. By posting, displaying, sharing or
@@ -309,13 +309,13 @@ export const Terms: VFC = () => (
       Services, to (a) comply with any Applicable Law, regulation and/or order
       of a competent authority; (b) enforce these Terms, (c) respond to your
       requests for customer service, (d) protect the rights, property or
-      personal safety of Hector Network, our employees, directors, officers,
+      personal safety of Hector Finance, our employees, directors, officers,
       partners, suppliers, customers, agents, or members of the public, or (e)
       for any other purpose legally possible reasonably determined by us.
     </Level2>
     <Level2>
-      5.5. You may provide Feedback to Hector Network through any means, and you
-      grant Hector Network a fully paid, royalty-free, perpetual, irrevocable,
+      5.5. You may provide Feedback to Hector Finance through any means, and you
+      grant Hector Finance a fully paid, royalty-free, perpetual, irrevocable,
       worldwide, exclusive, and sublicensable right and license to use the
       Feedback for any purpose.
     </Level2>
@@ -338,7 +338,7 @@ export const Terms: VFC = () => (
       the Site or any Services to evade taxes under the Laws of the British
       Virgin Islands or any other jurisdiction(s) applicable to you or the Site;
       (e) use the Site or any Services to engage in conduct that is detrimental
-      to Hector Network or to any other Site user or any other third party; (f)
+      to Hector Finance or to any other Site user or any other third party; (f)
       use the Site or any Services to: engage or attempt to engage in wash
       trading, spoofing, fictitious trading or price manipulation; enter orders
       or quotes in any Digital Assets market with the intent to disrupt, or with
@@ -352,10 +352,10 @@ export const Terms: VFC = () => (
     <Level2>
       6.2. By accessing the Services, you also agree not to: (a) license, sell,
       rent, lease, transfer, assign, reproduce, distribute, host or otherwise
-      commercially exploit the Services or Hector Network Content, or any
+      commercially exploit the Services or Hector Finance Content, or any
       portion thereof; (b) frame or enclose any trademark, logo, or other Hector
       Finance Content, (including images, text, page layout or form); (c) use
-      any metatags or other “hidden text” using Hector Network’s name or
+      any metatags or other “hidden text” using Hector Finance’s name or
       trademarks; (d) modify, translate, adapt, merge, make derivative works of,
       disassemble, decompile, reverse compile or reverse engineer any part of
       the Services (except to the extent this restriction is expressly
@@ -367,12 +367,12 @@ export const Terms: VFC = () => (
       indices (but not caches or archives) of such content); (f) access the
       Services in order to build similar or competitive services; (g) copy,
       reproduce, distribute, republish, download, display, post or transmit any
-      Hector Network Content except as expressly permitted herein; and (h)
+      Hector Finance Content except as expressly permitted herein; and (h)
       remove or destroy any copyright notices or other proprietary markings
-      contained on or in the Services or Hector Network Content. Hector Network,
+      contained on or in the Services or Hector Finance Content. Hector Finance,
       its suppliers and service providers reserve all rights not expressly
       granted by these Terms. Any unauthorized use of the Services terminates
-      the licenses and/or rights granted by Hector Network herein.{" "}
+      the licenses and/or rights granted by Hector Finance herein.{" "}
     </Level2>
     <Level2>
       6.3. You shall not (and shall not permit any third party to) take any
@@ -419,10 +419,10 @@ export const Terms: VFC = () => (
 
     <h2>9. Investigations</h2>
     <Level2>
-      9.1. Although Hector Network does not generally monitor your use of the
-      Services, if Hector Network becomes aware of or suspects any possible
+      9.1. Although Hector Finance does not generally monitor your use of the
+      Services, if Hector Finance becomes aware of or suspects any possible
       violations by you of any provision of the Terms or any Applicable Law,
-      Hector Network may investigate such violations and, at its sole
+      Hector Finance may investigate such violations and, at its sole
       discretion, take any actions it deems appropriate including but not
       limited to terminating your access to the Services, putting your access to
       the Services on hold, putting your account on hold or terminating it
@@ -431,23 +431,23 @@ export const Terms: VFC = () => (
 
     <h2>10. Indemnification</h2>
     <Level2>
-      10.1. You agree to indemnify and hold Hector Network harmless from any
+      10.1. You agree to indemnify and hold Hector Finance harmless from any
       losses, costs, liabilities and expenses (including legal fees) relating to
       or arising out of: (a) your use of, or inability to use, the Site or the
       Services; (b) your violation of the Terms; (c) your violation of any
       rights of another party, including but not limited to any other users of
-      the Services; or (d) your violation of any Applicable Laws. Hector Network
+      the Services; or (d) your violation of any Applicable Laws. Hector Finance
       may, at its own discretion, assume the exclusive defense and control of
       any matter otherwise subject to indemnification by you, in which event you
-      shall fully cooperate with Hector Network in asserting any available
-      defenses. This provision does not require you to indemnify Hector Network
-      for any fraud, gross negligence, or wilful misconduct of Hector Network.
+      shall fully cooperate with Hector Finance in asserting any available
+      defenses. This provision does not require you to indemnify Hector Finance
+      for any fraud, gross negligence, or wilful misconduct of Hector Finance.
     </Level2>
 
     <h2>11. Disclaimer of Warranties</h2>
     <Level2>
       11.1. THE SERVICES ARE PROVIDED ON AN “AS IS” AND “AS AVAILABLE” BASIS,
-      WITH ALL FAULTS, AND Hector Network EXPRESSLY DISCLAIMS ALL WARRANTIES,
+      WITH ALL FAULTS, AND HECTOR FINANCE EXPRESSLY DISCLAIMS ALL WARRANTIES,
       REPRESENTATIONS, AND CONDITIONS OF ANY KIND ARISING FROM OR RELATED TO
       THESE TERMS OR YOUR USE OF THE SERVICES, INCLUDING BUT NOT LIMITED TO THE
       IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -455,8 +455,8 @@ export const Terms: VFC = () => (
       ALL RISK OF USE OF THE SERVICES RESTS ENTIRELY WITH YOU.
     </Level2>
     <Level2>
-      11.2. Hector Network IS NOT LIABLE, AND YOU AGREE NOT TO SEEK TO HOLD
-      Hector Network LIABLE, FOR THE CONDUCT OF THIRD PARTIES ON OR ACCESSED VIA
+      11.2. HECTOR FINANCE IS NOT LIABLE, AND YOU AGREE NOT TO SEEK TO HOLD
+      HECTOR FINANCE LIABLE, FOR THE CONDUCT OF THIRD PARTIES ON OR ACCESSED VIA
       THE SERVICES, INCLUDING THE USE OF THIRD PARTY SERVICES. THE RISK OF
       DAMAGE, LOSS OR INJURY FROM USE OF SUCH THIRD PARTY SERVICES RESTS
       ENTIRELY WITH YOU.
@@ -472,11 +472,11 @@ export const Terms: VFC = () => (
       any of the Services.
     </Level2>
     <Level2>
-      12.2. IN NO EVENT WILL Hector Network BE LIABLE FOR ANY LOST PROFITS,
+      12.2. IN NO EVENT WILL HECTOR FINANCE BE LIABLE FOR ANY LOST PROFITS,
       REVENUE OR DATA, INDIRECT, INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES,
       OR DAMAGES OR COSTS DUE TO LOSS OF PRODUCTION OR USE, BUSINESS
       INTERRUPTION, OR PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES ARISING OUT
-      OF OR IN CONNECTION WITH THE SERVICES, WHETHER OR NOT Hector Network HAS
+      OF OR IN CONNECTION WITH THE SERVICES, WHETHER OR NOT HECTOR FINANCE HAS
       BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES, AND REGARDLESS OF THE
       LIABILITY ASSERTED. IF ANY DISCLAIMER OR LIMITATION IN THIS SECTION 12.2.
       IS DEEMED INVALID, UNENFORCEABLE OR INEFFECTIVE BY THE APPLICABLE LAW,
@@ -484,7 +484,7 @@ export const Terms: VFC = () => (
       MAXIMUM EXTENT PERMITTED BY THE APPLICABLE LAW.
     </Level2>
     <Level2>
-      12.3. UNDER NO CIRCUMSTANCES WILL Hector Network BE LIABLE TO YOU FOR
+      12.3. UNDER NO CIRCUMSTANCES WILL HECTOR FINANCE BE LIABLE TO YOU FOR
       DAMAGES ARISING OUT OF YOUR USE OF THE SERVICES EXCEEDING 100 USD. IF ANY
       DISCLAIMER OR LIMITATION IN THIS SECTION 12.3. IS DEEMED INVALID,
       UNENFORCEABLE OR INEFFECTIVE BY THE APPLICABLE LAW, SUCH DISCLAIMER OR
@@ -495,7 +495,7 @@ export const Terms: VFC = () => (
       12.4. THE LIMITATIONS IN SECTIONS 12.1. AND 12.2. WILL NOT APPLY TO
       DAMAGES CAUSED BY FRAUD, GROSS NEGLIGENCE, OR WILFUL MISCONDUCT OF HECTOR
       FINANCE, OR TO THE EXTENT SUCH LIMITATIONS ARE PRECLUDED BY APPLICABLE LAW
-      (IN WHICH CASE Hector Network’S LIABILITY SHALL BE INCREASED TO THE
+      (IN WHICH CASE HECTOR FINANCE’S LIABILITY SHALL BE INCREASED TO THE
       MINIMUM AMOUNT REQUIRED TO COMPLY WITH SUCH LAW).
     </Level2>
 
@@ -507,14 +507,14 @@ export const Terms: VFC = () => (
       accordance with the Terms.
     </Level2>
     <Level2>
-      13.2. Hector Network may, at any time and for any reason, cease providing
+      13.2. Hector Finance may, at any time and for any reason, cease providing
       the Site or any or all of the Services, and/or terminate the Terms.
       Without limiting the foregoing, we may also terminate your access to any
-      or all of the Hector Network Content and/or the Services.
+      or all of the Hector Finance Content and/or the Services.
     </Level2>
     <Level2>
       13.3. Upon termination of the Services, your right to use the Services
-      will automatically terminate immediately. Hector Network will not have any
+      will automatically terminate immediately. Hector Finance will not have any
       liability whatsoever to you for any suspension or termination. All
       provisions of the Terms which by their nature should survive termination
       of these Terms or the Services will do so, including but not limited to
@@ -523,38 +523,38 @@ export const Terms: VFC = () => (
 
     <h2>14. Miscellaneous</h2>
     <Level2>
-      14.1. Communications to you from Hector Network use electronic means,
-      whether made via the Services or sent via email, or whether Hector Network
+      14.1. Communications to you from Hector Finance use electronic means,
+      whether made via the Services or sent via email, or whether Hector Finance
       posts notices on the Services. For contractual purposes, you (1) consent
-      to receive communications from Hector Network in an electronic form; and
+      to receive communications from Hector Finance in an electronic form; and
       (2) agree that all terms and conditions, agreements, notices, disclosures,
-      and other communications that Hector Network provides to you
+      and other communications that Hector Finance provides to you
       electronically satisfy any legal requirement that such communications
       would satisfy if it were to be in writing in a physical copy. The
       foregoing shall not affect your statutory rights.
     </Level2>
     <Level2>
-      14.2. Where Hector Network requires that you provide an email address, you
-      are responsible for providing Hector Network with your most current and
+      14.2. Where Hector Finance requires that you provide an email address, you
+      are responsible for providing Hector Finance with your most current and
       correct email address. In the event that the last email address you
-      provided to Hector Network is not valid, or for any reason is not capable
+      provided to Hector Finance is not valid, or for any reason is not capable
       of delivering to you any notices required/permitted by the Terms, Hector
       Finance’s dispatch of the email containing such notice will nonetheless
-      constitute effective notice. You may give notice to Hector Network at the
+      constitute effective notice. You may give notice to Hector Finance at the
       following email address only: privacy@hector.finance. Such notice shall be
       deemed delivered when the receipt of such notice is confirmed by Hector
-      Finance to the email address you provided to Hector Network.
+      Finance to the email address you provided to Hector Finance.
     </Level2>
     <Level2>
       14.3. The Terms, and your rights and obligations hereunder, may not be
       assigned, subcontracted, delegated or otherwise transferred by you without
-      the prior written consent of Hector Network. Any attempt by you to assign
+      the prior written consent of Hector Finance. Any attempt by you to assign
       these Terms without written consent is void. These Terms, and any of the
       rights, duties, and obligations contained herein, are freely assignable by
-      Hector Network without notice or your consent.
+      Hector Finance without notice or your consent.
     </Level2>
     <Level2>
-      14.4. Hector Network will not be liable for any delay or failure to
+      14.4. Hector Finance will not be liable for any delay or failure to
       perform resulting from causes outside its reasonable control, including
       but not limited to acts of God, war, terrorism, riots, pandemics or
       epidemics, embargos, acts of civil or military authorities, fire, floods,
@@ -573,11 +573,11 @@ export const Terms: VFC = () => (
       Agreement are to be settled exclusively by the competent courts in the
       British Virgin Islands. For the avoidance of doubt, and without limiting
       the generality of the foregoing, this provision expressly applies to any
-      claim, whether in tort, contract or otherwise, against Hector Network. You
+      claim, whether in tort, contract or otherwise, against Hector Finance. You
       irrevocably and unconditionally agree and consent to the jurisdiction and
       venue of the courts of the British Virgin Islands, and you waive any
       objections thereto, including under the doctrine of forum non conveniens
-      or other similar doctrines. You and Hector Network agree that any Party
+      or other similar doctrines. You and Hector Finance agree that any Party
       hereto may bring claims against the others only on an individual basis and
       not as a plaintiff or class member in any purported class or
       representative action or proceeding. Any relief awarded to any one user of
@@ -599,9 +599,9 @@ export const Terms: VFC = () => (
     </Level2>
     <Level2>
       14.9. These Terms are the final, complete and exclusive agreement between
-      you and Hector Network with respect to the subject matter hereof and
+      you and Hector Finance with respect to the subject matter hereof and
       supersedes and merges all prior discussions, agreements or representations
-      between you and Hector Network with respect to such subject matter.
+      between you and Hector Finance with respect to such subject matter.
     </Level2>
   </div>
 );
@@ -610,16 +610,16 @@ export const Privacy: VFC = () => (
   <div className="space-y-5">
     <h2>Privacy Notice</h2>
     <p>
-      Welcome to the Hector Network platform (“we”, “us” or “Hector Network”).
-      Hector Network is developing an ecosystem which consists of various
-      innovative developments and applications (“Services”). The Hector Network
+      Welcome to the Hector Finance platform (“we”, “us” or “Hector Finance”).
+      Hector Finance is developing an ecosystem which consists of various
+      innovative developments and applications (“Services”). The Hector Finance
       platform is accessible on www.hector.finance and any other sites or
-      subdomains of Hector Network (“Site”).
+      subdomains of Hector Finance (“Site”).
     </p>
     <p>
       To provide our Services we may collect some of your data some of which may
       under certain circumstances be considered personal information. We at
-      Hector Network are committed to fully protecting your privacy and being a
+      Hector Finance are committed to fully protecting your privacy and being a
       responsible and transparent custodian of the information we collect.
     </p>
     <p>
@@ -958,7 +958,7 @@ export const Privacy: VFC = () => (
       our environment shared by third parties (for example, on messaging
       applications, social media, message boards, web logs, or emails), that
       personal information may be viewed, saved, collected, heard, used and/or
-      shared by third parties outside of Hector Network. We are not responsible
+      shared by third parties outside of Hector Finance. We are not responsible
       for any unauthorised third party using such information. Please be mindful
       whenever you share any information in such environments.
     </p>
@@ -978,7 +978,7 @@ export const Privacy: VFC = () => (
       appropriate and feasible, obtaining written assurances from third parties
       that may access your personal information that they will protect the
       information with safeguards designed to provide a level of protection
-      equivalent to that adopted by Hector Network.
+      equivalent to that adopted by Hector Finance.
     </p>
     <p>
       We may store the information we collect on our servers both cloud-based or
@@ -1080,17 +1080,17 @@ export const Disclaimer: VFC = () => (
         intended to provide accounting, legal, or tax advice, or investment
         recommendations, or
       </li>
-      <li>an official statement of HEC Token/Hector Network.</li>
+      <li>an official statement of HEC Token/Hector Finance.</li>
     </ul>
 
     <p>
       No representation or warranty is made, expressed or implied, with respect
       to the accuracy or completeness of the information or to the future
       performance of any digital asset, financial instrument, or other market or
-      economic measure. The HEC Token/Hector Network team does not recommend
+      economic measure. The HEC Token/Hector Finance team does not recommend
       that any cryptocurrency should be bought, sold, or held by you. Do conduct
       your due diligence and consult your financial advisor before making any
-      investment decisions. By purchasing any Hector Network token or
+      investment decisions. By purchasing any Hector Finance token or
       interacting monetarily with the Hector Project, you agree that you are not
       purchasing a security or investment, and you agree to hold the team
       harmless and not liable for any losses or taxes you may incur. You also
@@ -1098,7 +1098,7 @@ export const Disclaimer: VFC = () => (
       required to provide any support or services. You should have no
       expectation of any form from HEC Token/Finance and its team. The team
       strongly recommends that citizens in areas with government bans on
-      cryptocurrencies do not interact with Hector Network because the team
+      cryptocurrencies do not interact with Hector Finance because the team
       cannot ensure compliance with established regulations within certain
       territories. Always make sure that you comply with your local laws and
       regulations before you make any purchase.
@@ -1106,11 +1106,11 @@ export const Disclaimer: VFC = () => (
 
     <p>
       Please note that there are always risks associated with smart contracts.
-      Please use them at your own risk. Hector Network is not a registered
+      Please use them at your own risk. Hector Finance is not a registered
       broker, analyst, or investment advisor. Everything that is provided in
       this material is purely for guidance, informational and educational
       purposes. All information contained herein should be independently
-      verified and confirmed. Hector Network Team does not accept any liability
+      verified and confirmed. Hector Finance Team does not accept any liability
       for any loss or damage whatsoever caused in reliance upon such information
       or services. Please be aware of the risks involved with any trading done
       in any financial market. Do not trade with money that you cannot afford to

@@ -111,7 +111,7 @@ export default function StakePage() {
     <DappPage>
       <main className="w-full space-y-4">
         <Head>
-          <title>Stake — Hector Network</title>
+          <title>Stake — Hector Finance</title>
         </Head>
         <div>
           <PageHeader>Stake (3,3)</PageHeader>

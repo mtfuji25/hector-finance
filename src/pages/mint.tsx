@@ -64,7 +64,7 @@ const MintPage: NextPage = () => {
     <DappPage>
       <main className="w-full space-y-4">
         <Head>
-          <title>Mint — Hector Network</title>
+          <title>Mint — Hector Finance</title>
         </Head>
         <div>
           <PageHeader>Mint</PageHeader>

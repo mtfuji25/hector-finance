@@ -45,12 +45,12 @@ export default function TopNav() {
         <div className="hidden sm:block">
           <StaticImg
             src={LightHectorLogoLarge}
-            alt="Hector Network"
+            alt="Hector Finance"
             className="h-10 w-auto object-contain dark:hidden"
           />
           <StaticImg
             src={DarkHectorLogoLarge}
-            alt="Hector Network"
+            alt="Hector Finance"
             className="hidden h-10 w-auto object-contain dark:block"
           />
         </div>
@@ -196,7 +196,7 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
       {isNavOpen && (
         <StaticImg
           src={theme === "dark" ? DarkHectorLogoLarge : LightHectorLogoLarge}
-          alt="Hector Network"
+          alt="Hector Finance"
           className=" h-8 w-auto object-contain sm:block"
         />
       )}

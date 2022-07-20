@@ -75,7 +75,7 @@ const ExchangePage: NextPage = () => {
     <DappPage>
       <main className="w-full space-y-4">
         <Head>
-          <title>DEX — Hector Network</title>
+          <title>DEX — Hector Finance</title>
         </Head>
         <div>
           <PageHeader>Exchange</PageHeader>
