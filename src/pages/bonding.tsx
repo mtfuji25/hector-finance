@@ -7,10 +7,10 @@ const BondPage: NextPage = () => {
     <DappPage>
       <main className="w-full">
         <Head>
-          <title>Bond — Hector Finance</title>
+          <title>Bonding — Hector Finance</title>
         </Head>
         <div>
-          <h1 className="font-semibold text-2xl">Bond</h1>
+          <h1 className="font-semibold text-2xl">Bonding</h1>
           <h2>Swap selected tokens in exchange for HEC</h2>
         </div>
         <div className="mt-24 text-center">

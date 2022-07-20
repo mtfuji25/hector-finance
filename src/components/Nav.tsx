@@ -217,9 +217,9 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
           <SeedlingLight width={16} height={16} />
           Farm
         </InternalNav>
-        <InternalNav href="/bond" disabled>
+        <InternalNav href="/bonding" disabled>
           <SealLight width={16} height={16} />
-          Bond
+          Bonding
         </InternalNav>
         <InternalNav href="/mint">
           <Tor width={16} height={16} />
