@@ -256,6 +256,10 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
       </div>
       <Divider />
       <div>
+        <InternalNav href="/terms">
+          <FileCertificate width={16} height={16} />
+          Terms &amp; Conditions
+        </InternalNav>
         <InternalNav href="/privacy">
           <FileCertificate width={16} height={16} />
           Privacy Policy
@@ -263,10 +267,6 @@ export const SideNav: VFC<{ isNavOpen?: boolean; closeMenu?: () => void }> = ({
         <InternalNav href="/disclaimer">
           <FileCertificate width={16} height={16} />
           Disclaimer
-        </InternalNav>
-        <InternalNav href="/terms">
-          <FileCertificate width={16} height={16} />
-          Terms &amp; Conditions
         </InternalNav>
       </div>
       <Divider />
